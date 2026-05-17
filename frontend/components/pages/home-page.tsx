@@ -1,4 +1,6 @@
 import { AboutUsSection } from "../sections/about-us";
+import { CategoriesSection } from "../sections/categories";
+import { ContactCtaSection } from "../sections/contact-cta";
 import { WhyChooseUsSection } from "../sections/why-choose-us";
 import Hero from "../sections/hero";
 
@@ -8,6 +10,8 @@ export function HomePage() {
 			<Hero />
 			<AboutUsSection />
 			<WhyChooseUsSection />
+			<CategoriesSection />
+			<ContactCtaSection />
 		</section>
 	);
 }

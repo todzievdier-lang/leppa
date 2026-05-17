@@ -98,11 +98,6 @@ const Header = () => {
 					<button
 						type='button'
 						className='flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas text-ink-muted shadow-control transition-all duration-300 hover:bg-ink hover:text-on-dark'>
-						<SearchIcon className='h-4 w-4' />
-					</button>
-					<button
-						type='button'
-						className='flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas text-ink-muted shadow-control transition-all duration-300 hover:bg-ink hover:text-on-dark'>
 						<Heart className='h-4 w-4' />
 					</button>
 					<button

@@ -4,6 +4,8 @@ import Link from "next/link";
 
 import { useApi } from "@/hooks/useApi";
 
+import { getPhoneHref } from "@/lib/contact-actions";
+import { FALLBACK_CATEGORIES, FALLBACK_CONTACTS } from "@/lib/fallbacks";
 import { getCategories, getContacts } from "@/lib/api";
 
 import type { Category, Contacts } from "@/types";
@@ -12,22 +14,19 @@ export function Footer() {
 	const {
 		data: categories,
 		loading: categoriesLoading,
-		error: categoriesError,
-	} = useApi<Category[]>(getCategories);
+	} = useApi<Category[]>(getCategories, FALLBACK_CATEGORIES);
 
 	const {
 		data: contacts,
 		loading: contactsLoading,
-		error: contactsError,
-	} = useApi<Contacts>(getContacts);
+	} = useApi<Contacts>(getContacts, FALLBACK_CONTACTS);
 
 	if (categoriesLoading || contactsLoading) {
 		return <footer>Loading...</footer>;
 	}
 
-	if (categoriesError || contactsError || !categories || !contacts) {
-		return <footer>Something went wrong</footer>;
-	}
+	const footerCategories = categories ?? FALLBACK_CATEGORIES;
+	const footerContacts = contacts ?? FALLBACK_CONTACTS;
 
 	return (
 		<footer className='border-t border-hairline bg-canvas'>
@@ -36,11 +35,11 @@ export function Footer() {
 					<Link
 						href='/'
 						className='text-xl font-semibold text-ink'>
-						{contacts.company}
+						{footerContacts.company}
 					</Link>
 
 					<p className='mt-4 max-w-md text-sm text-ink-muted'>
-						{contacts.description}
+						{footerContacts.description}
 					</p>
 				</div>
 
@@ -48,7 +47,7 @@ export function Footer() {
 					<h2 className='text-sm font-semibold text-ink'>Каталог</h2>
 
 					<nav className='mt-4 grid gap-2 text-sm text-ink-muted'>
-						{categories.map((category) => (
+						{footerCategories.map((category) => (
 							<Link
 								key={category.id}
 								href={`/categories/${category.handle}`}
@@ -64,7 +63,7 @@ export function Footer() {
 
 					<div className='mt-4 flex flex-col gap-3 text-sm text-ink-muted'>
 						<div className='flex flex-wrap gap-3'>
-							{contacts.messengers.map((messenger) => (
+							{footerContacts.messengers.map((messenger) => (
 								<a
 									key={messenger.label}
 									href={messenger.href}
@@ -76,15 +75,15 @@ export function Footer() {
 							))}
 						</div>
 						<a
-							href={`tel:${contacts.phone.replaceAll(" ", "")}`}
+							href={getPhoneHref(footerContacts.phone)}
 							className='transition-colors hover:text-ink'>
-							{contacts.phone}
+							{footerContacts.phone}
 						</a>
 
 						<a
-							href={`mailto:${contacts.email}`}
+							href={`mailto:${footerContacts.email}`}
 							className='transition-colors hover:text-ink'>
-							{contacts.email}
+							{footerContacts.email}
 						</a>
 
 						<a
@@ -92,7 +91,7 @@ export function Footer() {
 							target='_blank'
 							rel='noreferrer'
 							className='max-w-xs leading-relaxed transition-colors hover:text-ink'>
-							{contacts.address}
+							{footerContacts.address}
 						</a>
 					</div>
 				</div>

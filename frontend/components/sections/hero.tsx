@@ -24,7 +24,7 @@ const Hero = () => {
 					Премиальная сантехника и архитектура ванной комнаты: выразительные
 					материалы, точная геометрия и эстетика спокойной роскоши.
 				</p>
-				<Link href='/categories'>
+				<Link href='#categories'>
 					<Button
 						type='button'
 						variant='secondary'>

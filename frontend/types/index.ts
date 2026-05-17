@@ -5,6 +5,8 @@ export type Category = {
 	description: string;
 	parentId: string | null;
 	imageTone: string;
+	imageUrl?: string;
+	imageAlt?: string;
 	featured: boolean;
 	sortOrder: number;
 };
