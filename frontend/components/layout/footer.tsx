@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 import { useApi } from "@/hooks/useApi";
 
 import { getCategories, getContacts } from "@/lib/api";
@@ -67,14 +69,18 @@ export function Footer() {
 						{contacts?.messengers.length ? (
 							<div className='flex flex-wrap gap-3'>
 								{contacts.messengers.map((messenger) => (
-									<a
+									<Button
 										key={messenger.label}
-										href={messenger.href}
-										target='_blank'
-										rel='noreferrer'
-										className='rounded-full border border-hairline px-3 py-1.5 text-xs transition-all hover:border-ink hover:text-ink'>
-										{messenger.label}
-									</a>
+										asChild
+										variant='secondary'
+										size='sm'>
+										<a
+											href={messenger.href}
+											target='_blank'
+											rel='noreferrer'>
+											{messenger.label}
+										</a>
+									</Button>
 								))}
 							</div>
 						) : null}

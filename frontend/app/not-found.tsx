@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+
 export default function NotFound() {
 	return (
 		<div className='mx-auto flex w-full min-h-screen flex-1 items-center justify-center px-4'>
@@ -15,11 +17,12 @@ export default function NotFound() {
 				<p className='mt-3 max-w-md text-sm text-ink-muted'>
 					Такого раздела или товара нет в текущем каталоге.
 				</p>
-				<Link
-					href='/catalog'
-					className='mt-7 rounded-full bg-ink px-5 py-3 text-sm font-medium text-on-dark shadow-control'>
-					Вернуться в каталог
-				</Link>
+				<Button
+					asChild
+					variant='dark'
+					className='mt-7'>
+					<Link href='/catalog'>Вернуться в каталог</Link>
+				</Button>
 			</div>
 		</div>
 	);

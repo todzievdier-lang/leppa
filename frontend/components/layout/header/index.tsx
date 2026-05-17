@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, SearchIcon, Heart, Menu, X } from "lucide-react";
+import { ShoppingBag, Heart, Menu, X } from "lucide-react";
 
 import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
 
 import { NAV_ITEMS } from "./data";
 
@@ -95,25 +97,26 @@ const Header = () => {
 
 				{/* Icons on right */}
 				<div className='flex items-center justify-end gap-2 md:gap-3'>
-					<button
+					<Button
 						type='button'
-						className='flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas text-ink-muted shadow-control transition-all duration-300 hover:bg-ink hover:text-on-dark'>
+						variant='secondary'
+						size='icon'
+						aria-label='Открыть избранное'>
 						<Heart className='h-4 w-4' />
-					</button>
-					<button
+					</Button>
+					<Button
 						type='button'
-						className='flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas text-ink-muted shadow-control transition-all duration-300 hover:bg-ink hover:text-on-dark'>
+						variant='secondary'
+						size='icon'
+						aria-label='Открыть корзину'>
 						<ShoppingBag className='h-4 w-4' />
-					</button>
+					</Button>
 					{/* Mobile menu toggle */}
 					<div className='relative md:hidden'>
-						<button
+						<Button
 							type='button'
-							className={`flex size-8 items-center justify-center rounded-full border border-hairline shadow-control transition-all duration-300 ${
-								isOpen
-									? "bg-ink text-on-dark"
-									: "bg-canvas text-ink-muted hover:bg-ink hover:text-on-dark"
-							}`}
+							variant={isOpen ? "primary" : "secondary"}
+							size='icon'
 							aria-controls='mobile-navigation-menu'
 							aria-expanded={isOpen}
 							aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
@@ -123,7 +126,7 @@ const Header = () => {
 							) : (
 								<Menu className='h-4 w-4 transition-all duration-300' />
 							)}
-						</button>
+						</Button>
 
 						{/* Mobile menu */}
 						<div

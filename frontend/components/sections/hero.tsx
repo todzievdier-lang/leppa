@@ -24,13 +24,13 @@ const Hero = () => {
 					Премиальная сантехника и архитектура ванной комнаты: выразительные
 					материалы, точная геометрия и эстетика спокойной роскоши.
 				</p>
-				<Link href='#categories'>
-					<Button
-						type='button'
-						variant='secondary'>
+				<Button
+					asChild
+					variant='primary'>
+					<Link href='#categories'>
 						Смотреть каталог
-					</Button>
-				</Link>
+					</Link>
+				</Button>
 			</div>
 		</div>
 	);

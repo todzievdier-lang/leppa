@@ -7,6 +7,7 @@ import { useApi } from "@/hooks/useApi";
 
 import { getCategories } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 import type { Category } from "@/types";
 
@@ -57,7 +58,11 @@ function CategoryCard({
 						</h3>
 					</div>
 
-					<span className='flex size-10 shrink-0 items-center justify-center rounded-sm border border-hairline bg-frost text-ink transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-ink group-hover:bg-ink group-hover:text-on-dark'>
+					<span
+						className={cn(
+							buttonVariants({ variant: "secondary", size: "icon" }),
+							"pointer-events-none group-hover:-translate-y-0.5 group-hover:border-hairline-strong group-hover:bg-toolbar group-hover:shadow-control",
+						)}>
 						<ArrowUpRight
 							aria-hidden='true'
 							className='h-5 w-5'

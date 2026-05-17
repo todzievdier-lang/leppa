@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import type { AboutSubsection } from "./types";
+import { Button } from "@/components/ui/button";
 import { AboutSlideDots } from "./about-slide-dots";
 import { AboutSlideIndicator } from "./about-slide-indicator";
 
@@ -107,11 +108,12 @@ export function AboutDesktopSlider({
 					<nav
 						aria-label='About section slides'
 						className='flex w-fit items-center gap-3 rounded-full border border-hairline bg-frost p-2 shadow-surface-lg backdrop-blur md:flex-col md:px-3 md:py-2.5'>
-						<button
+						<Button
 							type='button'
+							variant='secondary'
+							size='icon'
 							aria-label='Show previous about slide'
-							onClick={onPrevious}
-							className='flex size-8 shrink-0 items-center justify-center rounded-full border border-hairline bg-canvas text-ink shadow-control transition-colors duration-200 hover:bg-ink hover:text-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2'>
+							onClick={onPrevious}>
 							<ChevronUp
 								aria-hidden='true'
 								className='h-4 w-4 hidden md:block'
@@ -120,7 +122,7 @@ export function AboutDesktopSlider({
 								aria-hidden='true'
 								className='h-4 w-4 md:hidden'
 							/>
-						</button>
+						</Button>
 						<div className='flex md:flex-col items-center gap-2'>
 							<AboutSlideDots
 								activeIndex={activeIndex}
@@ -129,11 +131,12 @@ export function AboutDesktopSlider({
 								orientation='horizontal'
 							/>
 						</div>
-						<button
+						<Button
 							type='button'
+							variant='secondary'
+							size='icon'
 							aria-label='Show next about slide'
-							onClick={onNext}
-							className='flex size-8 shrink-0 items-center justify-center rounded-full border border-hairline bg-canvas text-ink shadow-control transition-colors duration-200 hover:bg-ink hover:text-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2'>
+							onClick={onNext}>
 							<ChevronDown
 								aria-hidden='true'
 								className='h-4 w-4 hidden md:block'
@@ -142,7 +145,7 @@ export function AboutDesktopSlider({
 								aria-hidden='true'
 								className='h-4 w-4 md:hidden'
 							/>
-						</button>
+						</Button>
 					</nav>
 				</div>
 			</div>

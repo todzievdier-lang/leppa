@@ -5,29 +5,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+	"btn-motion inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-semibold tracking-normal shadow-control hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none aria-disabled:pointer-events-none aria-disabled:opacity-45 aria-disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0 hover:shadow-control",
 	{
 		variants: {
 			variant: {
-				default: "bg-primary text-primary-foreground hover:bg-primary/90",
-				destructive:
-					"bg-destructive text-destructive-foreground hover:bg-destructive/90",
-				outline:
-					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+				primary:
+					"border-canvas bg-canvas text-ink hover:border-frost hover:bg-frost",
 				secondary:
-					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
-				ghost: "hover:bg-accent hover:text-accent-foreground",
-				link: "text-primary underline-offset-4 hover:underline",
+					"border-hairline bg-frost text-ink shadow-none hover:border-hairline-strong hover:bg-toolbar hover:shadow-control",
+				dark:
+					"border-ink bg-ink text-on-dark hover:border-ink-muted hover:bg-ink-muted",
 			},
 			size: {
-				default: "h-10 px-4 py-2",
-				sm: "h-9 rounded-md px-3",
-				lg: "h-11 rounded-md px-8",
-				icon: "h-10 w-10",
+				default: "min-h-12 px-6 py-3",
+				sm: "min-h-9 px-4 py-2 text-xs",
+				icon: "size-9 p-0",
 			},
 		},
 		defaultVariants: {
-			variant: "default",
+			variant: "primary",
 			size: "default",
 		},
 	},

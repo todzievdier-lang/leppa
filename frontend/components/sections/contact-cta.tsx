@@ -76,7 +76,24 @@ export function ContactCtaSection() {
 						<div className='mt-8 flex flex-col justify-center gap-3 sm:flex-row'>
 							<Button
 								asChild
-								className='h-12 w-full rounded-md bg-canvas px-6 text-sm font-semibold text-ink shadow-control transition-all duration-200 hover:-translate-y-0.5 hover:bg-frost hover:opacity-100 sm:w-auto'>
+								// variant='secondary'
+								variant="dark"
+								className='w-full sm:w-auto border-neutral-line'>
+								<a
+									href={phoneHref}
+									aria-label={`${phoneButtonLabel}${phoneLabel ? `: ${phoneLabel}` : ""}`}>
+									<Phone
+										aria-hidden='true'
+										strokeWidth={1.8}
+									/>
+									{phoneButtonLabel}
+								</a>
+							</Button>
+							<Button
+								asChild
+								variant='primary'
+								// variant="dark"
+								className='w-full sm:w-auto'>
 								<a
 									href={whatsappHref}
 									target='_blank'
@@ -84,26 +101,9 @@ export function ContactCtaSection() {
 									aria-label={`${whatsappButtonLabel}: ${whatsappLabel}`}>
 									<MessageCircle
 										aria-hidden='true'
-										className='mr-2 h-5 w-5'
 										strokeWidth={1.8}
 									/>
 									{whatsappButtonLabel}
-								</a>
-							</Button>
-
-							<Button
-								asChild
-								variant='outline'
-								className='h-12 w-full rounded-md border-white/22 bg-white/10 px-6 text-sm font-semibold text-on-dark shadow-control backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/16 hover:text-on-dark hover:opacity-100 sm:w-auto'>
-								<a
-									href={phoneHref}
-									aria-label={`${phoneButtonLabel}${phoneLabel ? `: ${phoneLabel}` : ""}`}>
-									<Phone
-										aria-hidden='true'
-										className='mr-2 h-5 w-5'
-										strokeWidth={1.8}
-									/>
-									{phoneButtonLabel}
 								</a>
 							</Button>
 						</div>
