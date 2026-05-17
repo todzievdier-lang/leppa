@@ -96,20 +96,20 @@ const Header = () => {
 				</nav>
 
 				{/* Icons on right */}
-				<div className='flex items-center justify-end gap-2 md:gap-3'>
+				<div className='flex items-center justify-end gap-2'>
 					<Button
 						type='button'
 						variant='secondary'
 						size='icon'
 						aria-label='Открыть избранное'>
-						<Heart className='h-4 w-4' />
+						<Heart  />
 					</Button>
 					<Button
 						type='button'
 						variant='secondary'
 						size='icon'
 						aria-label='Открыть корзину'>
-						<ShoppingBag className='h-4 w-4' />
+						<ShoppingBag  />
 					</Button>
 					{/* Mobile menu toggle */}
 					<div className='relative md:hidden'>
@@ -122,9 +122,9 @@ const Header = () => {
 							aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
 							onClick={() => handleOpenChange(!isOpen)}>
 							{isOpen ? (
-								<X className='h-4 w-4 transition-all duration-300' />
+								<X />
 							) : (
-								<Menu className='h-4 w-4 transition-all duration-300' />
+								<Menu />
 							)}
 						</Button>
 

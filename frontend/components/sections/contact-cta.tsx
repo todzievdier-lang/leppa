@@ -10,6 +10,31 @@ import { getContacts } from "@/lib/api";
 
 import type { Contacts } from "@/types";
 
+function ContactCtaLoadingState() {
+	return (
+		<p
+			role='status'
+			aria-live='polite'
+			className='mt-5 flex items-center justify-center gap-3 text-sm text-on-dark/55'>
+			<span
+				aria-hidden='true'
+				className='size-2 rounded-full bg-on-dark/55 animate-pulse'
+			/>
+			<span>Загружаем актуальные контакты...</span>
+		</p>
+	);
+}
+
+function ContactCtaErrorState() {
+	return (
+		<p
+			role='status'
+			className='mt-5 text-sm text-on-dark/55'>
+			Не удалось загрузить актуальные контакты.
+		</p>
+	);
+}
+
 export function ContactCtaSection() {
 	const {
 		data: contacts,
@@ -32,12 +57,6 @@ export function ContactCtaSection() {
 		whatsappMessenger?.href ?? (whatsappPhone ? `https://wa.me/${whatsappPhone}` : "#");
 	const whatsappLabel = whatsappMessenger?.label ?? "WhatsApp";
 	const phoneLabel = contacts?.phone ?? "";
-
-	const statusText = loading
-		? "Загружаем актуальные контакты..."
-		: error
-			? "Не удалось загрузить актуальные контакты."
-			: "";
 
 	return (
 		<section
@@ -76,7 +95,6 @@ export function ContactCtaSection() {
 						<div className='mt-8 flex flex-col justify-center gap-3 sm:flex-row'>
 							<Button
 								asChild
-								// variant='secondary'
 								variant="dark"
 								className='w-full sm:w-auto border-neutral-line'>
 								<a
@@ -108,11 +126,11 @@ export function ContactCtaSection() {
 							</Button>
 						</div>
 
-						<p
-							aria-live='polite'
-							className='mt-5 min-h-5 text-sm text-on-dark/55'>
-							{statusText}
-						</p>
+						{loading ? (
+							<ContactCtaLoadingState />
+						) : error ? (
+							<ContactCtaErrorState />
+						) : null}
 					</div>
 				</div>
 			</div>
