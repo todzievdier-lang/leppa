@@ -5,8 +5,8 @@ export type Category = {
 	description: string;
 	parentId: string | null;
 	image?: string | null;
-	featured: boolean;
-	sortOrder: number;
+	featured?: boolean;
+	sortOrder?: number;
 };
 
 export type Messenger = {

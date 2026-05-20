@@ -6,12 +6,7 @@ import { getCategories } from "@/lib/api";
 
 import { CategoryCard } from "./category-card";
 import { CategoryState } from "./category-state";
-import {
-	getCategoryCardLayoutClassName,
-	getCategoryGridClassName,
-	shouldFeatureFirstCategory,
-	sortCategories,
-} from "./category-layout";
+import { getCategoryGridClassName } from "./category-layout";
 
 import type { Category } from "@/types";
 
@@ -21,10 +16,8 @@ export function CategoriesSection() {
 		loading,
 		error,
 	} = useApi<Category[]>(getCategories);
-
-	const sortedCategories = sortCategories(categories ?? []);
-	const categoryCount = sortedCategories.length;
-	const shouldShowFeaturedCard = shouldFeatureFirstCategory(categoryCount);
+	const visibleCategories = categories ?? [];
+	const categoryCount = visibleCategories.length;
 
 	return (
 		<section
@@ -52,15 +45,10 @@ export function CategoriesSection() {
 							categoryCount,
 							"mt-10 lg:mt-12",
 						)}>
-						{sortedCategories.map((category, index) => (
+						{visibleCategories.map((category) => (
 							<CategoryCard
 								key={category.id}
 								category={category}
-								isFeatured={shouldShowFeaturedCard && index === 0}
-								layoutClassName={getCategoryCardLayoutClassName(
-									index,
-									categoryCount,
-								)}
 							/>
 						))}
 					</div>

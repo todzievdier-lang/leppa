@@ -1,7 +1,6 @@
 import { CategoryCardSkeleton } from "./category-card-skeleton";
 import {
 	CATEGORY_SKELETON_COUNT,
-	getCategoryCardLayoutClassName,
 	getCategoryGridClassName,
 } from "./category-layout";
 
@@ -29,13 +28,7 @@ export function CategoryState({ variant }: { variant: CategoryStateVariant }) {
 						"mt-8 lg:mt-10",
 					)}>
 					{Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, index) => (
-						<CategoryCardSkeleton
-							key={index}
-							layoutClassName={getCategoryCardLayoutClassName(
-								index,
-								CATEGORY_SKELETON_COUNT,
-							)}
-						/>
+						<CategoryCardSkeleton key={index} />
 					))}
 				</div>
 			</div>

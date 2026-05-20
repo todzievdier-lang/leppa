@@ -11,7 +11,7 @@ type UseApiReturn<T> = {
 };
 
 export function useApi<T>(apiFunction: AsyncFunction<T>): UseApiReturn<T> {
-	const [data, setData] = useState<T | null>(null);
+	const [data, setData] = useState<T | null >(null);
 
 	const [loading, setLoading] = useState(true);
 
