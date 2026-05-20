@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
-import type { AboutSubsection } from "./types";
+import type { AboutSubsection } from "@/types";
 
 type AboutSlideDotsProps = {
   activeIndex: number;

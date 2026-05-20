@@ -1,10 +1,4 @@
-type AboutSubsection = {
-	id: string;
-	title: string;
-	body: string;
-	seo_keywords?: string[];
-	order: number;
-};
+import type { AboutSubsection } from "@/types";
 
 type AboutSubsectionContentProps = {
 	subsection: AboutSubsection;

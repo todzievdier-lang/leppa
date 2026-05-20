@@ -8,7 +8,7 @@ import {
 	ChevronUp,
 } from "lucide-react";
 
-import type { AboutSubsection } from "./types";
+import type { AboutSubsection } from "@/types";
 import { Button } from "@/components/ui/button";
 import { AboutSlideDots } from "./about-slide-dots";
 import { AboutSlideIndicator } from "./about-slide-indicator";
