@@ -69,7 +69,7 @@ export function ContactSection() {
 			id="contact"
 			aria-labelledby="contact-title"
 			className="bg-canvas text-ink">
-			<div className="mx-auto w-full max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-36 lg:px-14 lg:pb-24 lg:pt-40">
+			<div className="mx-auto w-full max-w-6xl px-5 pb-16 pt-44 sm:px-8 sm:pb-20 sm:pt-48 lg:px-14 lg:pb-24 lg:pt-52">
 				<div className="mx-auto max-w-3xl text-center">
 					<h1
 						id="contact-title"

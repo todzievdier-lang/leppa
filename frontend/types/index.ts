@@ -6,6 +6,8 @@ export type Category = {
 	image?: string | null;
 };
 
+export type CategoryLink = Pick<Category, "id" | "slug" | "name">;
+
 export type Messenger = {
 	label: string;
 	value: string;

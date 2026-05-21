@@ -1,4 +1,4 @@
-import { Mail, MessageCircle, MessageSquareText, Phone } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 
 import {
 	getEmailHref,
@@ -10,7 +10,7 @@ import {
 import { ContactCard } from "./contact-card";
 import { getContactGridClassName } from "./contact-layout";
 
-import type { Contact, Messenger } from "@/types";
+import type { Contact } from "@/types";
 import type { LucideIcon } from "lucide-react";
 
 export type ContactCardItem = {
@@ -21,13 +21,6 @@ export type ContactCardItem = {
 	icon: LucideIcon;
 	external?: boolean;
 };
-
-function getMessengerIcon(messenger: Messenger): LucideIcon {
-	const searchValue =
-		`${messenger.label} ${messenger.href}`.toLocaleLowerCase("ru-RU");
-
-	return searchValue.includes("viber") ? MessageSquareText : MessageCircle;
-}
 
 export function getContactCardItems(contact: Contact): ContactCardItem[] {
 	const items: ContactCardItem[] = [];
@@ -58,7 +51,7 @@ export function getContactCardItems(contact: Contact): ContactCardItem[] {
 			title: messenger.label,
 			value: messenger.value,
 			href: messenger.href,
-			icon: getMessengerIcon(messenger),
+			icon: MessageCircle,
 			external: isExternalContactHref(messenger.href),
 		});
 	});

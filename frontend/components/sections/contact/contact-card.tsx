@@ -34,7 +34,7 @@ export function ContactCard({
 				{title}
 			</span>
 
-			<span className="mt-3 block max-w-full break-words text-base leading-relaxed text-ink-muted">
+			<span className="mt-3 block max-w-full truncate text-sm leading-relaxed text-ink-muted sm:text-base">
 				{value}
 			</span>
 		</a>

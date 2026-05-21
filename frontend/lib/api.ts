@@ -1,6 +1,6 @@
 import contacts from "@/data/contacts.json";
 
-import type { Category, Contact } from "@/types";
+import type { Category, CategoryLink, Contact } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -68,30 +68,57 @@ function getImageUrl(imageUrl?: string | null) {
 	return API_URL ? `${API_URL}${imageUrl}` : imageUrl;
 }
 
-export async function getCategories(): Promise<Category[]> {
+function mapCategoryLink(item: StrapiCategory): CategoryLink {
+	return {
+		id: String(item.id),
+		name: item.name ?? "",
+		slug: item.slug ?? "",
+	};
+}
+
+async function fetchCategoryItems(
+	query: string,
+	errorMessage: string,
+): Promise<StrapiCategory[]> {
 	try {
-		const response = await fetch(`${API_URL}/api/categories?populate=image`, {
+		const response = await fetch(`${API_URL}/api/categories?${query}`, {
 			cache: "no-store",
 		});
 
 		if (!response.ok) {
-			throw new Error("Failed to fetch categories");
+			throw new Error(errorMessage);
 		}
 
 		const json = (await response.json()) as StrapiCategoriesResponse;
 
-		return json.data.map((item) => ({
-			id: String(item.id),
-			name: item.name ?? "",
-			slug: item.slug ?? "",
-			description: parseDescription(item.description),
-			image: getImageUrl(item.image?.url),
-		}));
+		return json.data;
 	} catch (error) {
-		console.error("Failed to get categories", error);
+		console.error(errorMessage, error);
 
 		throw error;
 	}
+}
+
+export async function getCategories(): Promise<Category[]> {
+	const categories = await fetchCategoryItems(
+		"populate=image",
+		"Failed to get categories",
+	);
+
+	return categories.map((item) => ({
+		...mapCategoryLink(item),
+		description: parseDescription(item.description),
+		image: getImageUrl(item.image?.url),
+	}));
+}
+
+export async function getFooterCategories(): Promise<CategoryLink[]> {
+	const categories = await fetchCategoryItems(
+		"fields[0]=name&fields[1]=slug",
+		"Failed to get footer categories",
+	);
+
+	return categories.map(mapCategoryLink);
 }
 
 export async function getContact(): Promise<Contact> {

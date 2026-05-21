@@ -8,9 +8,21 @@ import { usePathname } from "next/navigation";
 
 import { Heart, Menu, ShoppingBag, X } from "lucide-react";
 
-import navItems from "@/data/header.json";
-
 const Header = () => {
+	const navItems = [
+		{
+			label: "Главная",
+			href: "/",
+		},
+		{
+			label: "Каталог",
+			href: "/catalog",
+		},
+		{
+			label: "Контакты",
+			href: "/contact",
+		},
+	];
 	const [isOpen, setIsOpen] = useState(false);
 
 	const pathname = usePathname();
