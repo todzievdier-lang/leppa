@@ -102,7 +102,7 @@ export function CategoryCard({
 	return (
 		<article className="group hover-lift-card relative flex h-full min-w-0 flex-col rounded-md border border-hairline bg-canvas p-3 shadow-control">
 			<Link
-				href={`/catalog/${category.handle}`}
+				href={`/catalog/${category.slug}`}
 				aria-label={`Открыть категорию ${category.name}`}
 				className="absolute inset-0 z-10 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
 				<span className="sr-only">Открыть категорию {category.name}</span>

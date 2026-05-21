@@ -3,26 +3,20 @@ import { MessageCircle, Phone } from "lucide-react";
 import contacts from "@/data/contacts.json";
 
 import { Button } from "@/components/ui/button";
+import {
+	getFallbackWhatsAppHref,
+	getPhoneHref,
+	getPrimaryMessenger,
+} from "@/lib/contact";
 
 const whatsappButtonLabel = "Написать в WhatsApp";
 const phoneButtonLabel = "Позвонить сейчас";
 
 export function ContactCtaSection() {
-	const normalizedPhone = contacts.phone.replace(/[^\d+]/g, "");
-
-	const phoneHref = `tel:${normalizedPhone}`;
-
-	const whatsappMessenger = contacts.messengers.find((messenger) => {
-		const searchValue =
-			`${messenger.label} ${messenger.href}`.toLocaleLowerCase("ru-RU");
-
-		return searchValue.includes("whatsapp") || searchValue.includes("wa.me");
-	});
-
-	const whatsappPhone = normalizedPhone.replace(/^\+/, "");
-
+	const phoneHref = getPhoneHref(contacts.phone);
 	const whatsappHref =
-		whatsappMessenger?.href ?? `https://wa.me/${whatsappPhone}`;
+		getPrimaryMessenger(contacts)?.href ??
+		getFallbackWhatsAppHref(contacts.phone);
 
 	return (
 		<section

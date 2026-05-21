@@ -1,40 +1,29 @@
 {
-  "company": "Leppa & WenSton",
-  "headline": "Подберем сантехнику и зеркала под ваш проект",
-  "description": "Работаем с частными клиентами, дизайнерами, проектными организациями и оптовыми запросами. Подготовим подборку, спецификацию и коммерческое предложение.",
-  "phone": "+7 926 126-00-06",
-  "email": "jora41san@yandex.ru",
-  "messengers": [
-    {
-      "label": "WhatsApp 1",
-      "value": "+7 926 126-00-06",
-      "href": "https://wa.me/79261260006"
-    },
-    {
-      "label": "WhatsApp 2",
-      "value": "+7 980 011-88-03",
-      "href": "https://wa.me/79800118803"
-    }
-  ],
-  "address": "ТЦ Сантехника, павильон A 19/4-5",
-  "hours": [
-    {
-      "label": "Пн-Пт",
-      "value": "10:00-19:00"
-    },
-    {
-      "label": "Сб",
-      "value": "11:00-17:00"
-    },
-    {
-      "label": "Вс",
-      "value": "по договоренности"
-    }
-  ],
-  "requestTypes": [
-    "Розничный заказ",
-    "Оптовая поставка",
-    "Комплектация проекта",
-    "Запрос образцов"
-  ]
+	"phone": "+7 926 126-00-06",
+	"email": "jora41san@yandex.ru",
+	"messengers": [
+		{
+			"label": "WhatsApp 1",
+			"value": "+7 926 126-00-06",
+			"href": "https://wa.me/79261260006"
+		},
+		{
+			"label": "WhatsApp 2",
+			"value": "+7 980 011-88-03",
+			"href": "https://wa.me/79800118803"
+		},
+		{
+			"label": "Viber",
+			"value": "+7 980 011-88-03",
+			"href": "viber://add?number=79800118803"
+		}
+	],
+	"address": "ТЦ Сантехника, павильон A 19/4-5",
+	"hours": [
+		{
+			"label": "Пн-Пт",
+			"value": "9:00-18:00"
+		}
+	],
+	"mapEmbed": "https://yandex.ru/map-widget/v1/?um=constructor%3A8c021b21ed9423cac6605630d3db6c59511c60e32e8e044c27882801f736778b&source=constructor"
 }

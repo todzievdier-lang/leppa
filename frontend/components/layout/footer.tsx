@@ -5,7 +5,12 @@ import contacts from "@/data/contacts.json";
 import { Button } from "@/components/ui/button";
 import { useApi } from "@/hooks/useApi";
 import { getCategories } from "@/lib/api";
+import { getPhoneHref, isExternalContactHref } from "@/lib/contact";
 import type { Category } from "@/types";
+
+const footerBrandName = "Leppa & WenSton";
+const footerDescription =
+	"Премиальная сантехника, зеркала и оборудование для современных ванных комнат.";
 
 export function Footer() {
 	const {
@@ -38,7 +43,7 @@ export function Footer() {
 
 	const footerCategories = categories ?? [];
 
-	const phoneHref = `tel:${contacts.phone.replace(/[^\d+]/g, "")}`;
+	const phoneHref = getPhoneHref(contacts.phone);
 
 	return (
 		<footer className="border-t border-hairline bg-canvas">
@@ -47,11 +52,11 @@ export function Footer() {
 					<Link
 						href="/"
 						className="text-xl font-semibold text-ink">
-						{contacts.company}
+						{footerBrandName}
 					</Link>
 
 					<p className="mt-4 max-w-md text-sm text-ink-muted">
-						{contacts.description}
+						{footerDescription}
 					</p>
 				</div>
 
@@ -62,7 +67,7 @@ export function Footer() {
 						{footerCategories.map((category) => (
 							<Link
 								key={category.id}
-								href={`/catalog/${category.handle}`}
+								href={`/catalog/${category.slug}`}
 								className="hover:text-ink">
 								{category.name}
 							</Link>
@@ -76,20 +81,24 @@ export function Footer() {
 					<div className="mt-4 flex flex-col gap-3 text-sm text-ink-muted">
 						{contacts.messengers.length > 0 ? (
 							<div className="flex flex-wrap gap-3">
-								{contacts.messengers.map((messenger) => (
-									<Button
-										key={messenger.label}
-										asChild
-										variant="secondary"
-										size="sm">
-										<a
-											href={messenger.href}
-											target="_blank"
-											rel="noreferrer">
-											{messenger.label}
-										</a>
-									</Button>
-								))}
+								{contacts.messengers.map((messenger) => {
+									const isExternal = isExternalContactHref(messenger.href);
+
+									return (
+										<Button
+											key={messenger.label}
+											asChild
+											variant="secondary"
+											size="sm">
+											<a
+												href={messenger.href}
+												target={isExternal ? "_blank" : undefined}
+												rel={isExternal ? "noreferrer" : undefined}>
+												{messenger.label}
+											</a>
+										</Button>
+									);
+								})}
 							</div>
 						) : null}
 
