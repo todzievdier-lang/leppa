@@ -103,7 +103,7 @@ export function ProductDetail({
 							</p>
 						) : null}
 
-						<div className="mt-6 border-y border-hairline py-5">
+						<div className="mt-6 border-b border-hairline py-5">
 							<p className="text-3xl font-semibold tracking-normal text-ink">
 								{formatProductPrice(product)}
 							</p>
@@ -128,7 +128,7 @@ export function ProductDetail({
 							</Button>
 						</div>
 
-						<dl className="mt-6 grid grid-cols-2 gap-3 border-t border-hairline pt-5">
+						{/* <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-hairline pt-5">
 							<div
 								className={cn(
 									surfaceVariants({ variant: "muted" }),
@@ -149,7 +149,7 @@ export function ProductDetail({
 									{product.model ?? product.sku ?? "—"}
 								</dd>
 							</div>
-						</dl>
+						</dl> */}
 					</div>
 				</div>
 

@@ -28,7 +28,7 @@ export function CatalogPagination({
 	return (
 		<nav
 			aria-label="Навигация по страницам каталога"
-			className="mt-10 flex flex-wrap items-center justify-center gap-2">
+			className="w-fit mx-auto mt-10 flex flex-wrap items-center justify-center gap-1 rounded-full border border-hairline bg-frost p-2 shadow-surface-lg backdrop-blur">
 			<Link
 				href={createCatalogHref(basePath, {
 					...query,
@@ -55,6 +55,7 @@ export function CatalogPagination({
 						href={createCatalogHref(basePath, { ...query, page })}
 						aria-current={isActive ? "page" : undefined}
 							className={buttonVariants({
+								className: "border-none",
 								variant: isActive ? "dark" : "secondary",
 								size: "icon",
 							})}>

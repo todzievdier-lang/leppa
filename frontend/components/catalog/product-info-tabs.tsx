@@ -44,7 +44,9 @@ function getDescriptionParagraphs(description: string): string[] {
 		.map((block) => block.trim())
 		.filter(Boolean);
 
-	return paragraphs.length > 0 ? paragraphs : [description.trim()].filter(Boolean);
+	return paragraphs.length > 0
+		? paragraphs
+		: [description.trim()].filter(Boolean);
 }
 
 export function ProductInfoTabs({
@@ -82,10 +84,7 @@ export function ProductInfoTabs({
 				<div
 					role="tablist"
 					aria-label="Информация о товаре"
-					className={cn(
-						surfaceVariants({ variant: "muted" }),
-						"grid grid-cols-2 gap-1 p-1 sm:min-w-80",
-					)}>
+					className={cn("grid grid-cols-2 gap-1 p-1 sm:min-w-80")}>
 					<Button
 						type="button"
 						role="tab"
@@ -113,7 +112,11 @@ export function ProductInfoTabs({
 				</div>
 			</div>
 
-			<div className={cn(surfaceVariants({ variant: "card" }), "mt-6 overflow-hidden")}>
+			<div
+				className={cn(
+					surfaceVariants({ variant: "card" }),
+					"mt-6 overflow-hidden",
+				)}>
 				{activeTab === "description" ? (
 					<div
 						role="tabpanel"
