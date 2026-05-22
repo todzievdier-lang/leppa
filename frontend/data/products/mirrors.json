@@ -1,0 +1,2624 @@
+{
+  "schemaVersion": 1,
+  "category": {
+    "key": "mirrors",
+    "strapiId": 10,
+    "name": "Зеркала",
+    "englishName": "Mirrors",
+    "slug": "zerkala"
+  },
+  "products": [
+    {
+      "id": "product-mirrors-base-600x800x20",
+      "slug": "wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-600x800x20",
+      "sku": null,
+      "name": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BASE",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 600*800*20 мм\nЦвет рамы: Матовое золото\nМатериал рамы: Анодированный алюминий\nФункция антизапотевания\n\nЗеркало BASE WenSton в ванную с подсветкой 600х800 мм для ванной комнаты, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/dAop7SOgWYde2w",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wbm3qFCU58XLmw",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zrYI01yW8zQb7Q",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 600,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-base-700x800x20",
+      "slug": "wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-700x800x20",
+      "sku": null,
+      "name": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BASE",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 700*800*20 мм\nЦвет рамы: Матовое золото\nМатериал рамы: Анодированный алюминий\nФункция антизапотевания\n\nЗеркало BASE WenSton в ванную с подсветкой 700х800 мм для ванной комнаты, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/T8yOOf_daG3y8A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/f3pH4V93LQddCg",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/Zwx1qUx081nuGg",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 700,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-base-800x800x20",
+      "slug": "wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x20",
+      "sku": null,
+      "name": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BASE",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\nГабаритные размеры ШхВхГ: 800*800*20 мм\nЦвет рамы: Матовое золото\nМатериал рамы: Анодированный алюминий\nФункция антизапотевания\n\nЗеркало BASE WenSton в ванную с подсветкой 800х800 мм для ванной комнаты, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/T8yOOf_daG3y8A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/f3pH4V93LQddCg",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/3cuH4FwKBBbVtg",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-base-1000x800x20",
+      "slug": "wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1000x800x20",
+      "sku": null,
+      "name": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BASE",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\nГабаритные размеры ШхВхГ: 1000*800*20 мм\nЦвет рамы: Матовое золото\nМатериал рамы: Анодированный алюминий\nФункция антизапотевания\n\nЗеркало BASE WenSton в ванную с подсветкой 1000х800 мм для ванной комнаты, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/T8yOOf_daG3y8A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/f3pH4V93LQddCg",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/3cuH4FwKBBbVtg",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1000,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-base-1200x800x20",
+      "slug": "wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1200x800x20",
+      "sku": null,
+      "name": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BASE",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\nГабаритные размеры ШхВхГ: 1200*800*20 мм\nЦвет рамы: Матовое золото\nМатериал рамы: Анодированный алюминий\nФункция антизапотевания\n\nЗеркало BASE WenSton в ванную с подсветкой 1200х800 мм для ванной комнаты, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/cIY5E8nbFcQAlg",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/yoPympZeC458sw",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/74hZfQwtjXUsuw",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BASE с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1200,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-400x700x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-400x700x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 400*700*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 400х700 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/-zTgnIeMD-f47Q",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 400,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 700,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-500x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-500x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 500*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 500х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/gDQDmnA6nPJkng",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 500,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-600x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-600x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 600*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 600х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/gDQDmnA6nPJkng",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/I5BK0GXanZhgVQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 600,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-700x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-700x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 700*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 700х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/jFOO3K2_-j9L_A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/I5BK0GXanZhgVQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 700,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-800x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 800*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 800х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/jFOO3K2_-j9L_A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/I5BK0GXanZhgVQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-1000x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1000x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 1000*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 1000х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/LL4cSdDGKcZEAA",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/I5BK0GXanZhgVQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1000,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-berta-1200x800x26",
+      "slug": "wenston-zerkalo-berta-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1200x800x26",
+      "sku": null,
+      "name": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "BERTA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 1200*800*26 мм\n\nЦвет рамы: Матовый хром\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 1200х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/h_9clvUjFbopZw",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/da2QTc8aT_z3_g",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sgKi3WwvykUhzg",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/YT8d6faxa2FmCg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало BERTA с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Хром матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1200,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-laura-800x800x40",
+      "slug": "wenston-zerkalo-laura-s-podsvetkoy-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x40",
+      "sku": null,
+      "name": "Зеркало LAURA с подсветкой, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "LAURA",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 800*800*40 мм\nЦвет рамы: матовое золото\nМатериал рамы: анодированный алюминий / Пластик прозрачный\nФункция антизапотевания\n\nЗеркало LAURA WenSton в ванную с подсветкой 800х800 мм для ванной комнаты круглые, со встроенной LED подсветкой холодной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем.",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/eoAtQP8I3B1BKQ",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало LAURA с подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/3-7qI5gxStfbdQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало LAURA с подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/Z5DN9scPv3vOfQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало LAURA с подсветкой, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 40,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Пластик"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "прозрачное"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Холодный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-leon-800x800x20",
+      "slug": "wenston-zerkalo-leon-s-podsvetkoy-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x20",
+      "sku": null,
+      "name": "Зеркало LEON с подсветкой, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "LEON",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 800*800*20 мм\nЦвет рамы: Без рамы\nМатериал рамы: без рамы\nФункция антизапотевания\n\nЗеркало LEON WenSton в ванную с подсветкой 800х800 мм для ванной комнаты круглые, со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/N5pu0kmxzk7hLQ",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало LEON с подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/SLZPGX5_KO-Yag",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало LEON с подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/y4jpR9ktIP6yAQ",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало LEON с подсветкой, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 20,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Без корпуса"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "без корпуса"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-lord-800x800x50",
+      "slug": "wenston-zerkalo-lord-s-podsvetkoy-s-sensornym-vklyucheniem-sistema-antizapotevaniya-v-rame-khrustal-800x800x50",
+      "sku": null,
+      "name": "Зеркало LORD с подсветкой, с сенсорным включением. Система антизапотевания. В раме хрусталь.",
+      "brand": "WenSton",
+      "model": "LORD",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 800*800*50 мм\n\nЦвет рамы: прозрачное\n\nМатериал рамы: Пластик прозрачный\n\nФункция антизапотевания\n\nЗеркало LORD WenSton в ванную с подсветкой 800х800 мм для ванной комнаты круглые, со встроенной LED подсветкой теплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/bBDSTcYD-fWi4w",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало LORD с подсветкой, с сенсорным включением. Система антизапотевания. В раме хрусталь."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zBscwEGdUiPIqg",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало LORD с подсветкой, с сенсорным включением. Система антизапотевания. В раме хрусталь."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/12r8Vp1H2x2AQA",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало LORD с подсветкой, с сенсорным включением. Система антизапотевания. В раме хрусталь."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Прозрачное"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 50,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Хрусталь"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "прозрачное"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-mio-800x800x30",
+      "slug": "wenston-zerkalo-mio-s-paryaschey-podsvetkoy-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x30",
+      "sku": null,
+      "name": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "MIO",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 800*800*30 мм\nЦвет рамы: Без рамы\nМатериал рамы: без рамы\nФункция антизапотевания\n\nЗеркало MIO WenSton в ванную с подсветкой 800х800 мм для ванной комнаты круглые, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/cqUGNclwNdoZ5w",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/m8HlQfB20Dkhhw",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/PcwjImhXIx--lw",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 30,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Без корпуса"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "без корпуса"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-mio-600x600x30",
+      "slug": "wenston-zerkalo-mio-s-paryaschey-podsvetkoy-s-sensornym-vklyucheniem-sistema-antizapotevaniya-600x600x30",
+      "sku": null,
+      "name": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "MIO",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 600*600*30 мм\nЦвет рамы: Без рамы\nМатериал рамы: без рамы\nФункция антизапотевания\n\nЗеркало MIO WenSton в ванную с подсветкой 600х600 мм для ванной комнаты круглые, со встроенной LED подсветкой тёплой температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/cqUGNclwNdoZ5w",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/m8HlQfB20Dkhhw",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало MIO с парящей подсветкой, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 600,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 600,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 30,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Без корпуса"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "без корпуса"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Теплый"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-royal-600x800x26",
+      "slug": "wenston-zerkalo-royal-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-600x800x26",
+      "sku": null,
+      "name": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "ROYAL",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 600*800*26 мм\n\nЦвет рамы: Матовый черный\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 600х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/gDQDmnA6nPJkng",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wjvwuWd3jJM2EQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/A3XwtkRIqHLK2g",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sGDAL5q3u_o0dA",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zO0-tm9Qjb9JPg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Черный матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 600,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-royal-700x800x26",
+      "slug": "wenston-zerkalo-royal-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-700x800x26",
+      "sku": null,
+      "name": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "ROYAL",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 700*800*26 мм\n\nЦвет рамы: Матовый черный\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 700х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/AyPpTpSnh8RUuw",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wjvwuWd3jJM2EQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/GT0uOvkOLug_mA",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sGDAL5q3u_o0dAм",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zO0-tm9Qjb9JPg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Черный матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 700,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-royal-800x800x26",
+      "slug": "wenston-zerkalo-royal-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x26",
+      "sku": null,
+      "name": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "ROYAL",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 800*800*26 мм\n\nЦвет рамы: Матовый черный\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 800х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/AyPpTpSnh8RUuw",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wjvwuWd3jJM2EQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/GT0uOvkOLug_mA",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sGDAL5q3u_o0dAм",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zO0-tm9Qjb9JPg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Черный матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-royal-1000x800x26",
+      "slug": "wenston-zerkalo-royal-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1000x800x26",
+      "sku": null,
+      "name": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "ROYAL",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 1000*800*26 мм\n\nЦвет рамы: Матовый черный\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 1000х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/LL4cSdDGKcZEAA",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/GT0uOvkOLug_mA",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wjvwuWd3jJM2EQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sGDAL5q3u_o0dAм",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zO0-tm9Qjb9JPg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Черный матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1000,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-royal-1200x800x26",
+      "slug": "wenston-zerkalo-royal-s-podsvetkoy-v-tonkoy-alyuminievoy-rame-zaschischaet-ot-skolov-i-treschin-s-sensornym-vklyucheniem-sistema-antizapotevaniya-1200x800x26",
+      "sku": null,
+      "name": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "ROYAL",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "Производитель: WenSton\n\nГабаритные размеры ШхВхГ: 1200*800*26 мм\n\nЦвет рамы: Матовый черный\n\nМатериал рамы: Алюминий\n\nФункция антизапотевания\n\nЗеркало BERTA WenSton в ванную с подсветкой 1200х800 мм для ванной комнаты, в тонкой латунной раме (защищает от сколов и трещин) со встроенной LED подсветкой нейтральной температуры, с подогревом полотна (антизапотеванием), с сенсорным выключателем, осветленное стекло (повышенная четкость изображения).",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/CyXXXNJGjfoEhw",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/GT0uOvkOLug_mA",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/wjvwuWd3jJM2EQ",
+          "role": "detail",
+          "label": "Увеличенное изображение 2",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/sGDAL5q3u_o0dAм",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/zO0-tm9Qjb9JPg",
+          "role": "side",
+          "label": "Вид сбоку",
+          "alt": "Зеркало ROYAL с подсветкой в тонкой алюминиевой раме (защищает от сколов и трещин), с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Черный матовый"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 1200,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 26,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Нейтральный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    },
+    {
+      "id": "product-mirrors-runo-800x800x25",
+      "slug": "wenston-zerkalo-runo-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x25",
+      "sku": null,
+      "name": "Зеркало RUNO с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания.",
+      "brand": "WenSton",
+      "model": "RUNO",
+      "category": {
+        "key": "mirrors",
+        "strapiId": 10,
+        "name": "Зеркала",
+        "englishName": "Mirrors",
+        "slug": "zerkala"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Производитель: WenSton\nГабаритные размеры ШхВхГ: 800*800*25 мм\nЦвет рамы: матовое золото\nМатериал рамы: анодированный алюминий\nФункция антизапотевания\n\nЗеркало RUNO WenSton в ванную с подсветкой 800х800 мм для ванной комнаты круглые, со встроенной LED подсветкой теплой температуры, с подогревом полополотна (антизапотеванием), с сенсорным выключателем.",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/4GLzI69Lt_jI2A",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Зеркало RUNO с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/7_i2LeG5s6C6pw",
+          "role": "detail",
+          "label": "Увеличенное изображение 1",
+          "alt": "Зеркало RUNO с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        },
+        {
+          "url": "https://disk.yandex.ru/i/4dbkP_0aaSEeow",
+          "role": "front",
+          "label": "Вид спереди",
+          "alt": "Зеркало RUNO с подсветкой в алюминиевой раме, с сенсорным включением. Система антизапотевания."
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "productType",
+          "label": "Тип изделия",
+          "value": "Зеркала"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Золото матовое"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 800,
+          "unit": "mm"
+        },
+        {
+          "key": "depthMm",
+          "label": "Глубина",
+          "value": 25,
+          "unit": "mm"
+        },
+        {
+          "key": "bodyMaterial",
+          "label": "Материал корпуса",
+          "value": "Алюминий"
+        },
+        {
+          "key": "bodyFinish",
+          "label": "Покрытие корпуса",
+          "value": "матовое"
+        },
+        {
+          "key": "facadeMaterial",
+          "label": "Материал фасада",
+          "value": "Зеркальное полотно"
+        },
+        {
+          "key": "mountingMethod",
+          "label": "Способ монтажа",
+          "value": "Подвесной"
+        },
+        {
+          "key": "lampType",
+          "label": "Тип лампы",
+          "value": "светодиодный"
+        },
+        {
+          "key": "lightingColor",
+          "label": "Цвет подсветки",
+          "value": "Холодный"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Китай"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 1 год"
+        }
+      ]
+    }
+  ]
+}

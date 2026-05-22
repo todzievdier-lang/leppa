@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "category": {
+    "key": "sinks",
+    "strapiId": 6,
+    "name": "Раковины",
+    "englishName": "Sinks",
+    "slug": "rakoviny"
+  },
+  "products": [
+    {
+      "id": "product-sinks-8089",
+      "slug": "leppa-napolnaya-rakovina-leppa-8089",
+      "sku": "8089",
+      "name": "Напольная раковина Leppa 8089",
+      "brand": "Leppa",
+      "model": "8089",
+      "category": {
+        "key": "sinks",
+        "strapiId": 6,
+        "name": "Раковины",
+        "englishName": "Sinks",
+        "slug": "rakoviny"
+      },
+      "price": null,
+      "currency": null,
+      "description": "\"Название: Напольная двойная раковина для рук и ног Leppa 8089\nПроизводитель: Китай\nАртикул: 8089\nЦвет: Белый\nМатериал: Фарфор\nГабариты (ШхВхД): 525×850×440 мм\n\nСанитарные изделия двойного назначения: Напольная раковина для рук и ног.",
+      "images": [
+        {
+          "url": "https://disk.yandex.ru/i/emoNkBbVBFDHdw",
+          "role": "main",
+          "label": "Основное изображение",
+          "alt": "Напольная раковина Leppa 8089"
+        },
+        {
+          "url": "https://disk.yandex.ru/i/9rtLJDqXT54KRg",
+          "role": "detail",
+          "label": "Увеличенное изображение",
+          "alt": "Напольная раковина Leppa 8089"
+        },
+        {
+          "url": "https://disk.yandex.ru/i/WF9bGCwTC3NT0A",
+          "role": "closed",
+          "label": "В закрытом виде",
+          "alt": "Напольная раковина Leppa 8089"
+        },
+        {
+          "url": "https://disk.yandex.ru/i/onP4lc1UhGciYA",
+          "role": "open-lid",
+          "label": "Вид с открытой крышкой",
+          "alt": "Напольная раковина Leppa 8089"
+        }
+      ],
+      "videos": [],
+      "attributes": [
+        {
+          "key": "mounting",
+          "label": "Монтаж",
+          "value": "Напольный"
+        },
+        {
+          "key": "color",
+          "label": "Цвет",
+          "value": "Белый"
+        },
+        {
+          "key": "seatColor",
+          "label": "Цвет сиденья",
+          "value": "Белый"
+        },
+        {
+          "key": "hardwareColor",
+          "label": "Цвет фурнитуры",
+          "value": "Хром"
+        },
+        {
+          "key": "surface",
+          "label": "Поверхность",
+          "value": "Глянцевая"
+        },
+        {
+          "key": "material",
+          "label": "Материал",
+          "value": "Фарфор"
+        },
+        {
+          "key": "widthMm",
+          "label": "Ширина",
+          "value": 525,
+          "unit": "mm"
+        },
+        {
+          "key": "heightMm",
+          "label": "Высота",
+          "value": 850,
+          "unit": "mm"
+        },
+        {
+          "key": "lengthMm",
+          "label": "Длина",
+          "value": 440,
+          "unit": "mm"
+        },
+        {
+          "key": "countryOfOrigin",
+          "label": "Страна происхождения",
+          "value": "Италия"
+        },
+        {
+          "key": "warranty",
+          "label": "Гарантия",
+          "value": "Гарантийный срок 10 лет"
+        }
+      ]
+    }
+  ]
+}
