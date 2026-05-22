@@ -3,7 +3,7 @@
 import { Clock, MapPin } from "lucide-react";
 
 import { useApi } from "@/hooks/useApi";
-import { getContact } from "@/lib/api";
+import { getContact } from "@/lib/api/contact";
 
 import { ContactGrid, getContactCardItems } from "./contact-grid";
 import { ContactMap } from "./contact-map";

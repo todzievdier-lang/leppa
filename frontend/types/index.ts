@@ -1,12 +1,20 @@
-export type Category = {
-	id: string;
-	slug: string;
-	name: string;
-	description: string;
-	image?: string | null;
-};
-
-export type CategoryLink = Pick<Category, "id" | "slug" | "name">;
+export type {
+	CatalogFilterGroup,
+	CatalogFilterOption,
+	CatalogFilters,
+	CatalogQuery,
+	CatalogResult,
+	CatalogSort,
+	Category,
+	CategoryKey,
+	CategoryLink,
+	CategorySeo,
+	PaginationMeta,
+	Product,
+	ProductAttribute,
+	ProductAttributeValue,
+	ProductImage,
+} from "./catalog";
 
 export type Messenger = {
 	label: string;

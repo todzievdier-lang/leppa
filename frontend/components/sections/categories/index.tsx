@@ -1,22 +1,11 @@
-"use client";
-
-import { useApi } from "@/hooks/useApi";
-
 import { getCategories } from "@/lib/api";
 
 import { CategoryCard } from "./category-card";
 import { CategoryState } from "./category-state";
 import { getCategoryGridClassName } from "./category-layout";
 
-import type { Category } from "@/types";
-
-export function CategoriesSection() {
-	const {
-		data: categories,
-		loading,
-		error,
-	} = useApi<Category[]>(getCategories);
-	const visibleCategories = categories ?? [];
+export async function CategoriesSection() {
+	const visibleCategories = await getCategories();
 	const categoryCount = visibleCategories.length;
 
 	return (
@@ -37,9 +26,7 @@ export function CategoriesSection() {
 					</p>
 				</div>
 
-				{loading ? (
-					<CategoryState variant="loading" />
-				) : categoryCount > 0 ? (
+				{categoryCount > 0 ? (
 					<div
 						className={getCategoryGridClassName(
 							categoryCount,
@@ -47,13 +34,11 @@ export function CategoriesSection() {
 						)}>
 						{visibleCategories.map((category) => (
 							<CategoryCard
-								key={category.id}
+								key={category.key}
 								category={category}
 							/>
 						))}
 					</div>
-				) : error ? (
-					<CategoryState variant="error" />
 				) : (
 					<CategoryState variant="empty" />
 				)}
