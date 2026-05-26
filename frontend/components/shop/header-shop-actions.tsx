@@ -5,6 +5,11 @@ import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { FilledImage } from "@/components/media/filled-image";
+import {
+	getSafeProductImageSrc,
+	productMediaFrameClassName,
+} from "@/components/media/product-media-frame";
 import { surfaceVariants } from "@/components/ui/surface";
 import { useShopState } from "@/lib/shop/store";
 import { cn } from "@/lib/utils";
@@ -117,12 +122,14 @@ export function HeaderShopActions() {
 											setOpenPanel(null);
 										}}
 										className="grid grid-cols-[48px_minmax(0,1fr)] gap-3 rounded-sm border border-hairline bg-frost p-2">
-										<span
-											role="img"
-											aria-label={product.name}
-											className="aspect-square rounded-sm bg-toolbar bg-contain bg-center bg-no-repeat"
-											style={{ backgroundImage: `url(${product.image})` }}
-										/>
+										<div className={productMediaFrameClassName("mini")}>
+											<FilledImage
+												src={getSafeProductImageSrc(product.image)}
+												alt={product.name}
+												sizes="48px"
+												className="absolute inset-0"
+											/>
+										</div>
 										<span className="min-w-0">
 											<span className="line-clamp-2 text-xs font-semibold text-ink">
 												{product.name}

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
 import { ProductActions } from "@/components/shop/product-actions";
 import { surfaceVariants } from "@/components/ui/surface";
+import { productMediaFrameClassName } from "@/components/media/product-media-frame";
 import {
 	getProductHref,
 	getProductImageAlt,
@@ -48,18 +49,11 @@ export function ProductCard({
 			/>
 
 			<div className="relative z-10">
-				<div
-					className={cn(
-						surfaceVariants({ variant: "media" }),
-						"relative aspect-[4/3] overflow-hidden",
-					)}>
-					<ProductCardMedia
-						href={href}
-						images={product.images}
-						alt={imageAlt}
-						className="absolute inset-0"
-					/>
-				</div>
+				<ProductCardMedia
+					href={href}
+					images={product.images}
+					alt={imageAlt}
+				/>
 			</div>
 
 			<div className="pointer-events-none relative z-10 flex flex-1 flex-col p-4">
@@ -127,10 +121,7 @@ export function ProductCardSkeleton() {
 				"flex h-full min-w-0 flex-col p-3",
 			)}>
 			<div
-				className={cn(
-					surfaceVariants({ variant: "media" }),
-					"aspect-[4/3] animate-pulse overflow-hidden",
-				)}
+				className={productMediaFrameClassName("card", "animate-pulse")}
 			/>
 			<div className="flex flex-1 flex-col p-4">
 				<div className="h-3 w-24 animate-pulse rounded-full bg-toolbar" />

@@ -4,6 +4,10 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { FilledImage } from "@/components/media/filled-image";
+import {
+	getSafeProductImageSrc,
+	productMediaFrameClassName,
+} from "@/components/media/product-media-frame";
 import { cn } from "@/lib/utils";
 
 import type { ProductImage } from "@/types/catalog";
@@ -22,7 +26,7 @@ function clamp(value: number, min: number, max: number) {
 function normalizeImages(images: ProductImage[], alt: string) {
 	const normalized = images
 		.map((image) => ({
-			url: image.url,
+			url: image.url.trim(),
 			alt: image.alt?.trim() ? image.alt : alt,
 		}))
 		.filter((image) => image.url.trim().length > 0);
@@ -74,7 +78,10 @@ export function ProductCardMedia({
 	return (
 		<div
 			ref={containerRef}
-			className={cn("group relative h-full w-full cursor-pointer select-none", className)}
+			className={productMediaFrameClassName(
+				"card",
+				cn("group cursor-pointer select-none", className),
+			)}
 			onPointerMove={(event) => {
 				if (gallery.length <= 1) return;
 				scheduleMove(event.clientX);
@@ -113,7 +120,7 @@ export function ProductCardMedia({
 				}
 			}}>
 			<FilledImage
-				src={gallery[activeIndex]?.url ?? "/no-image.png"}
+				src={getSafeProductImageSrc(gallery[activeIndex]?.url)}
 				alt={gallery[activeIndex]?.alt ?? alt}
 				sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
 				className="absolute inset-0"

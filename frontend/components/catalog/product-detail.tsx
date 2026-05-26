@@ -3,19 +3,17 @@ import { MessageCircle } from "lucide-react";
 
 import { StorefrontBreadcrumbs } from "@/components/catalog/breadcrumbs";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
+import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfoTabs } from "@/components/catalog/product-info-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductActions } from "@/components/shop/product-actions";
-import { surfaceVariants } from "@/components/ui/surface";
 import {
 	getCategoryHref,
 	getProductImageAlt,
-	getProductPrimaryImage,
 } from "@/lib/catalog/helpers";
 import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
-import { cn } from "@/lib/utils";
 
 import type { Category, Product } from "@/types/catalog";
 
@@ -26,11 +24,7 @@ export function ProductDetail({
 	category: Category;
 	product: Product;
 }) {
-	const mainImage = getProductPrimaryImage(product);
-	const mainImageAlt = getProductImageAlt(product);
-	const gallery = product.images.length > 0
-		? product.images.slice(0, 5)
-		: [{ url: "/no-image.png", alt: product.name, role: "placeholder" }];
+	const galleryFallbackAlt = getProductImageAlt(product);
 	const shopProduct = getShopProductSnapshot(product, category);
 	const intro = product.description
 		.split(/\n{2,}/)
@@ -50,37 +44,10 @@ export function ProductDetail({
 				/>
 
 				<div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:items-start">
-					<div className="min-w-0">
-						<div
-							className={cn(
-								surfaceVariants({ variant: "media" }),
-								"relative aspect-[4/3] overflow-hidden",
-							)}>
-							<div
-								role="img"
-								aria-label={mainImageAlt}
-								className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-								style={{ backgroundImage: `url(${mainImage})` }}
-							/>
-						</div>
-
-						{gallery.length > 1 ? (
-							<div className="mt-3 grid grid-cols-5 gap-3">
-								{gallery.map((image, index) => (
-									<div
-										key={`${image.url}-${index}`}
-										role="img"
-										aria-label={image.alt ?? product.name}
-										className={cn(
-											surfaceVariants({ variant: "muted" }),
-											"aspect-square bg-contain bg-center bg-no-repeat",
-										)}
-										style={{ backgroundImage: `url(${image.url})` }}
-									/>
-								))}
-							</div>
-						) : null}
-					</div>
+					<ProductGallery
+						images={product.images}
+						fallbackAlt={galleryFallbackAlt}
+					/>
 
 					<div className="min-w-0 lg:sticky lg:top-28">
 						<div className="flex flex-wrap items-center gap-2">
