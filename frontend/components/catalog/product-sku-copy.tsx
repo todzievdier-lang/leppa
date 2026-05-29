@@ -36,11 +36,11 @@ export function ProductSkuCopy({
 		};
 	}, [copied]);
 
-	async function handleCopy() {
-		if (!hasSku) {
-			return;
-		}
+	if (!hasSku) {
+		return null;
+	}
 
+	async function handleCopy() {
 		const didCopy = await copyTextToClipboard(normalizedSku);
 
 		if (didCopy) {
@@ -70,32 +70,29 @@ export function ProductSkuCopy({
 			<span
 				className={cn(
 					"min-w-0 truncate font-semibold text-ink",
-					!hasSku && "font-medium text-ink-muted",
 				)}>
-				{hasSku ? normalizedSku : "отсутствует"}
+				{normalizedSku}
 			</span>
-			{hasSku ? (
-				<button
-					type="button"
-					aria-label={`Скопировать артикул ${normalizedSku}`}
-					className={cn(
-						"pointer-events-auto inline-flex shrink-0 items-center justify-center rounded-full border border-transparent text-ink-muted transition-colors duration-200 hover:border-hairline hover:bg-frost hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-						size === "detail" ? "size-9" : "size-7",
-					)}
-					onClick={handleCopy}>
-					{copied ? (
-						<Check
-							aria-hidden="true"
-							className={size === "detail" ? "size-5" : "size-4"}
-						/>
-					) : (
-						<Copy
-							aria-hidden="true"
-							className={size === "detail" ? "size-5" : "size-4"}
-						/>
-					)}
-				</button>
-			) : null}
+			<button
+				type="button"
+				aria-label={`Скопировать артикул ${normalizedSku}`}
+				className={cn(
+					"pointer-events-auto inline-flex shrink-0 items-center justify-center rounded-full border border-transparent text-ink-muted transition-colors duration-200 hover:border-hairline hover:bg-frost hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+					size === "detail" ? "size-9" : "size-7",
+				)}
+				onClick={handleCopy}>
+				{copied ? (
+					<Check
+						aria-hidden="true"
+						className={size === "detail" ? "size-5" : "size-4"}
+					/>
+				) : (
+					<Copy
+						aria-hidden="true"
+						className={size === "detail" ? "size-5" : "size-4"}
+					/>
+				)}
+			</button>
 		</div>
 	);
 }
