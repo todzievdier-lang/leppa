@@ -83,19 +83,26 @@ function PanelProductRow({
 	);
 }
 
-export function HeaderShopActions() {
+export function HeaderShopActions({
+	isNavigationOpen = false,
+}: {
+	isNavigationOpen?: boolean;
+}) {
 	const {
 		cartCount,
 		clearCart,
+		clearFavorites,
 		favoritesCount,
 		removeFromCart,
 		removeFromFavorites,
 		state,
 	} = useShopState();
 	const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
+	const [canOpenFloatingPanel, setCanOpenFloatingPanel] = useState(false);
 	const closeTimeoutRef = useRef<number | null>(null);
-	const isCartOpen = openPanel === "cart";
-	const isFavoritesOpen = openPanel === "favorites";
+	const effectiveOpenPanel = isNavigationOpen ? null : openPanel;
+	const isCartOpen = effectiveOpenPanel === "cart";
+	const isFavoritesOpen = effectiveOpenPanel === "favorites";
 	const panelItemsCount = isCartOpen ? state.cart.length : state.favorites.length;
 	const favoritesButtonVariant = favoritesCount > 0
 		? "favorite"
@@ -109,6 +116,7 @@ export function HeaderShopActions() {
 		: "В избранном пока нет товаров";
 	const panelHref = isCartOpen ? "/cart" : "/favorites";
 	const panelActionText = isCartOpen ? "Перейти в корзину" : "Открыть избранное";
+	const handleClearPanel = isCartOpen ? clearCart : clearFavorites;
 
 	function clearCloseTimeout() {
 		if (closeTimeoutRef.current) {
@@ -118,11 +126,19 @@ export function HeaderShopActions() {
 	}
 
 	function openHoverPanel(panel: OpenPanel) {
+		if (!canOpenFloatingPanel || isNavigationOpen) {
+			return;
+		}
+
 		clearCloseTimeout();
 		setOpenPanel(panel);
 	}
 
 	function scheduleClosePanel() {
+		if (!canOpenFloatingPanel) {
+			return;
+		}
+
 		clearCloseTimeout();
 		closeTimeoutRef.current = window.setTimeout(() => {
 			setOpenPanel(null);
@@ -131,7 +147,33 @@ export function HeaderShopActions() {
 	}
 
 	useEffect(() => {
-		if (!openPanel) {
+		const hoverMediaQuery = window.matchMedia(
+			"(hover: hover) and (pointer: fine)",
+		);
+
+		function syncFloatingPanelAvailability() {
+			const canOpen = hoverMediaQuery.matches;
+
+			setCanOpenFloatingPanel(canOpen);
+
+			if (!canOpen) {
+				setOpenPanel(null);
+			}
+		}
+
+		syncFloatingPanelAvailability();
+		hoverMediaQuery.addEventListener("change", syncFloatingPanelAvailability);
+
+		return () => {
+			hoverMediaQuery.removeEventListener(
+				"change",
+				syncFloatingPanelAvailability,
+			);
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!effectiveOpenPanel) {
 			return;
 		}
 
@@ -146,7 +188,7 @@ export function HeaderShopActions() {
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [openPanel]);
+	}, [effectiveOpenPanel]);
 
 	useEffect(() => {
 		return () => {
@@ -160,7 +202,11 @@ export function HeaderShopActions() {
 	return (
 		<div
 			className="relative flex items-center justify-end gap-2 md:gap-3"
-			onMouseEnter={clearCloseTimeout}
+			onMouseEnter={() => {
+				if (canOpenFloatingPanel) {
+					clearCloseTimeout();
+				}
+			}}
 			onMouseLeave={scheduleClosePanel}>
 			<div className="relative">
 				<Button
@@ -207,35 +253,29 @@ export function HeaderShopActions() {
 				<CounterBadge count={cartCount} />
 			</div>
 
-			{openPanel ? (
+			{effectiveOpenPanel ? (
 				<div
 					className={cn(
 						surfaceVariants({ variant: "card" }),
 						"absolute right-0 top-12 w-[min(420px,calc(100vw-2rem))] p-4",
 					)}>
-					<div className="flex items-baseline justify-between gap-4">
+					<div className="flex items-center justify-between gap-4">
 						<p className="text-sm font-semibold text-ink">{panelTitle}</p>
-						<p className="text-xs text-ink-faint">
-							{isCartOpen ? cartCount : favoritesCount}
-						</p>
-					</div>
-
-					{isCartOpen && state.cart.length > 0 ? (
-						<div className="mt-3 flex justify-end">
+						{panelItemsCount > 0 ? (
 							<Button
 								type="button"
 								variant="secondary"
 								size="sm"
 								className="h-8 min-h-8 text-ink-muted hover:text-destructive"
-								onClick={clearCart}>
+								onClick={handleClearPanel}>
 								<Trash2
 									aria-hidden="true"
 									className="size-4"
 								/>
 								Очистить
 							</Button>
-						</div>
-					) : null}
+						) : null}
+					</div>
 
 					{panelItemsCount > 0 ? (
 						<ul className="mt-3 grid max-h-[min(420px,calc(100vh-9rem))] gap-2 overflow-y-auto pr-1">

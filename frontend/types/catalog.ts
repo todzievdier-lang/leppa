@@ -52,6 +52,7 @@ export type Product = {
 
 export type CatalogSort =
 	| "featured"
+	| "stock-desc"
 	| "name-asc"
 	| "name-desc"
 	| "price-asc"

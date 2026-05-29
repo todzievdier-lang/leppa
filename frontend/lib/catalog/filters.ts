@@ -119,6 +119,12 @@ export function sortProducts(
 	sort: CatalogSort = "featured",
 ): Product[] {
 	return [...products].sort((left, right) => {
+		if (sort === "stock-desc") {
+			const stockComparison = Number(right.inStock) - Number(left.inStock);
+
+			return stockComparison || left.id.localeCompare(right.id, "ru-RU");
+		}
+
 		if (sort === "name-asc") {
 			return left.name.localeCompare(right.name, "ru-RU");
 		}

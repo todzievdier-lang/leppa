@@ -28,6 +28,7 @@ export function ProductCartControls({
 	} = useShopState();
 	const isCard = layout === "card";
 	const quantity = hydrated ? getCartQuantity(product.id) : 0;
+	const unavailable = !product.inStock;
 
 	if (quantity > 0) {
 		return (
@@ -61,7 +62,8 @@ export function ProductCartControls({
 				<button
 					type="button"
 					aria-label={`Увеличить количество: ${product.name}`}
-					className="flex h-full items-center justify-center text-ink-muted transition-colors duration-200 hover:bg-toolbar hover:text-ink active:bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+					disabled={unavailable}
+					className="flex h-full items-center justify-center text-ink-muted transition-colors duration-200 hover:bg-toolbar hover:text-ink active:bg-canvas disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
 					onClick={() => {
 						incrementCartQuantity(product);
 					}}>
@@ -84,11 +86,12 @@ export function ProductCartControls({
 				isCard && "h-11 min-h-11 px-4 text-sm shadow-control",
 				className,
 			)}
+			disabled={unavailable}
 			onClick={() => {
 				addToCart(product);
 			}}>
 			<ShoppingBag aria-hidden="true" />
-			В корзину
+			{unavailable ? "Нет в наличии" : "В корзину"}
 		</Button>
 	);
 }

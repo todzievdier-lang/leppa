@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { HeartOff, Trash2 } from "lucide-react";
+import { ChevronLeft, HeartOff, Trash2 } from "lucide-react";
 
+import { EmptyShopState } from "@/components/shop/empty-shop-state";
 import { ProductCartControls } from "@/components/shop/product-actions";
 import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
 import { Button } from "@/components/ui/button";
@@ -95,28 +96,42 @@ function FavoriteProductCard({
 export function FavoritesPage() {
 	const { favoritesCount, hydrated, removeFromFavorites, state } =
 		useShopState();
+	const isEmpty = hydrated && state.favorites.length === 0;
 
 	return (
-		<section className="bg-canvas text-ink">
-			<div className="mx-auto w-full max-w-7xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-36 lg:px-10 lg:pb-24 lg:pt-40">
+		<section className="min-h-screen bg-canvas text-ink">
+			<div
+				className={cn(
+					"mx-auto w-full px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-36 lg:px-10 lg:pb-24 lg:pt-40",
+					isEmpty ? "flex min-h-screen max-w-5xl flex-col" : "max-w-7xl",
+				)}>
 				<Link
 					href="/catalog"
-					className="text-sm font-medium text-ink-muted transition-colors hover:text-ink">
+					className="inline-flex items-center gap-1 text-sm font-medium text-ink-muted transition-colors hover:text-ink">
+					<ChevronLeft
+						aria-hidden="true"
+						className="size-4"
+					/>
 					Вернуться к покупкам
 				</Link>
 
-				<div className="mt-8 flex flex-wrap items-end justify-between gap-4">
-					<div>
-						<h1 className="text-4xl font-semibold tracking-normal text-ink sm:text-5xl">
-							Избранное
-						</h1>
-						<p className="mt-3 text-sm text-ink-muted">
-							{favoritesCount} товаров в подборке
-						</p>
+				{isEmpty ? null : (
+					<div className="mt-8 flex flex-wrap items-end justify-between gap-4">
+						<div>
+							<h1 className="text-4xl font-semibold tracking-normal text-ink sm:text-5xl">
+								Избранное
+							</h1>
+							<p className="mt-3 text-sm text-ink-muted">
+								{favoritesCount} товаров в подборке
+							</p>
+						</div>
 					</div>
-				</div>
+				)}
 
-				<div className="mt-8">
+				<div
+					className={cn(
+						isEmpty ? "flex flex-1 items-center justify-center py-10" : "mt-8",
+					)}>
 					{!hydrated ? (
 						<FavoritesSkeleton />
 					) : state.favorites.length > 0 ? (
@@ -132,30 +147,16 @@ export function FavoritesPage() {
 							))}
 						</div>
 					) : (
-						<div
-							className={cn(
-								surfaceVariants({ variant: "empty" }),
-								"px-6 py-14",
-							)}>
-							<div className="mx-auto flex size-14 items-center justify-center rounded-full border border-hairline bg-canvas text-ink-muted shadow-control">
+						<EmptyShopState
+							icon={
 								<HeartOff
 									aria-hidden="true"
 									className="size-6"
 								/>
-							</div>
-							<h2 className="mt-5 text-xl font-semibold text-ink">
-								Избранное пустое
-							</h2>
-							<p className="mx-auto mt-2 max-w-md text-sm text-ink-muted">
-								Добавляйте товары сердцем в каталоге, и они появятся здесь.
-							</p>
-							<Button
-								asChild
-								variant="dark"
-								className="mt-6">
-								<Link href="/catalog">Перейти в каталог</Link>
-							</Button>
-						</div>
+							}
+							title="Избранное пустое"
+							description="Добавляйте товары сердцем в каталоге, и они появятся здесь."
+						/>
 					)}
 				</div>
 			</div>

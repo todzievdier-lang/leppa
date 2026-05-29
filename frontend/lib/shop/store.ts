@@ -22,20 +22,35 @@ function createToastId(): string {
 	return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-function isProductSnapshot(value: unknown): value is ShopProductSnapshot {
+function normalizeProductSnapshot(value: unknown): ShopProductSnapshot | null {
 	if (!value || typeof value !== "object") {
-		return false;
+		return null;
 	}
 
 	const product = value as Partial<ShopProductSnapshot>;
+	if (
+		typeof product.id !== "string" || product.id.length === 0
+		|| typeof product.name !== "string" || product.name.length === 0
+		|| typeof product.href !== "string" || product.href.length === 0
+		|| typeof product.image !== "string" || product.image.length === 0
+		|| typeof product.priceLabel !== "string"
+		|| product.priceLabel.length === 0
+	) {
+		return null;
+	}
 
-	return Boolean(
-		product.id
-			&& product.name
-			&& product.href
-			&& product.image
-			&& product.priceLabel,
-	);
+	return {
+		id: product.id,
+		name: product.name,
+		sku: product.sku ?? null,
+		href: product.href,
+		image: product.image,
+		priceLabel: product.priceLabel,
+		inStock:
+			typeof product.inStock === "boolean" ? product.inStock : true,
+		price: product.price,
+		currency: product.currency,
+	};
 }
 
 function normalizeCartLine(value: unknown): CartLine | null {
@@ -45,12 +60,14 @@ function normalizeCartLine(value: unknown): CartLine | null {
 
 	const line = value as Partial<CartLine>;
 
-	if (!isProductSnapshot(line.product)) {
+	const product = normalizeProductSnapshot(line.product);
+
+	if (!product) {
 		return null;
 	}
 
 	return {
-		product: line.product,
+		product,
 		quantity:
 			typeof line.quantity === "number" && line.quantity > 0
 				? line.quantity
@@ -76,7 +93,9 @@ function normalizeShopState(value: unknown): ShopState {
 				.filter((line): line is CartLine => Boolean(line))
 			: [],
 		favorites: Array.isArray(state.favorites)
-			? state.favorites.filter(isProductSnapshot)
+			? state.favorites
+				.map(normalizeProductSnapshot)
+				.filter((product): product is ShopProductSnapshot => Boolean(product))
 			: [],
 	};
 }
@@ -173,6 +192,15 @@ export function useShopState() {
 	);
 
 	const addToCart = useCallback((product: ShopProductSnapshot) => {
+		if (!product.inStock) {
+			emitShopToast({
+				title: "Товара нет в наличии",
+				description: product.name,
+			});
+
+			return "unavailable" as const;
+		}
+
 		const currentState = readShopState();
 		const alreadyInCart = currentState.cart.some(
 			(line) => line.product.id === product.id,
@@ -207,6 +235,15 @@ export function useShopState() {
 	}, []);
 
 	const incrementCartQuantity = useCallback((product: ShopProductSnapshot) => {
+		if (!product.inStock) {
+			emitShopToast({
+				title: "Товара нет в наличии",
+				description: product.name,
+			});
+
+			return;
+		}
+
 		const currentState = readShopState();
 		const existingLine = currentState.cart.find(
 			(line) => line.product.id === product.id,
@@ -324,6 +361,22 @@ export function useShopState() {
 		}
 	}, []);
 
+	const clearFavorites = useCallback(() => {
+		const currentState = readShopState();
+
+		if (currentState.favorites.length === 0) {
+			return;
+		}
+
+		writeShopState({
+			...currentState,
+			favorites: [],
+		});
+		emitShopToast({
+			title: "Избранное очищено",
+		});
+	}, []);
+
 	return {
 		state,
 		hydrated,
@@ -343,6 +396,7 @@ export function useShopState() {
 		),
 		addToCart,
 		clearCart,
+		clearFavorites,
 		incrementCartQuantity,
 		decrementCartQuantity,
 		removeFromCart,

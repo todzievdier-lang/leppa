@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { HeaderShopActions } from "@/components/shop/header-shop-actions";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
 	const navItems = [
@@ -113,7 +114,7 @@ const Header = () => {
 
 				{/* Actions */}
 				<div className="flex items-center justify-end gap-2 md:gap-3">
-					<HeaderShopActions />
+					<HeaderShopActions isNavigationOpen={isOpen} />
 
 					{/* Mobile menu */}
 					<div className="relative md:hidden">
@@ -137,10 +138,19 @@ const Header = () => {
 
 						<div
 							id="mobile-navigation-menu"
-							className={`fixed left-1/2 top-14 z-50 w-full max-w-5xl -translate-x-1/2 px-4 transition-all duration-300 ${
-								isOpen ? "visible opacity-100" : "invisible opacity-0"
-							}`}>
-							<div className="menu-content pointer-events-auto rounded-chrome-panel border border-hairline bg-overlay px-6 py-3 shadow-surface-lg transition-all duration-300">
+							className={cn(
+								"fixed left-1/2 top-14 z-50 w-full max-w-5xl -translate-x-1/2 px-4 transition-[opacity,transform,visibility] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+								isOpen
+									? "visible translate-y-0 opacity-100"
+									: "invisible -translate-y-2 opacity-0",
+							)}>
+							<div
+								className={cn(
+									"menu-content pointer-events-auto rounded-chrome-panel border border-hairline bg-overlay px-6 py-3 shadow-surface-lg transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+									isOpen
+										? "translate-y-0 scale-100 opacity-100"
+										: "-translate-y-1 scale-[0.985] opacity-0",
+								)}>
 								<nav className="flex flex-col space-y-2">
 									{navItems.map((item) => {
 										const isActive = pathname === item.href;

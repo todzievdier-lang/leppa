@@ -10,6 +10,7 @@ export const DEFAULT_CATALOG_SORT: CatalogSort = "featured";
 
 export const CATALOG_SORT_OPTIONS: { value: CatalogSort; label: string }[] = [
 	{ value: "featured", label: "По умолчанию" },
+	{ value: "stock-desc", label: "Сначала в наличии" },
 	{ value: "name-asc", label: "Название: А-Я" },
 	{ value: "name-desc", label: "Название: Я-А" },
 	{ value: "price-asc", label: "Сначала дешевле" },

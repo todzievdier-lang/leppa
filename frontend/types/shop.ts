@@ -5,6 +5,7 @@ export type ShopProductSnapshot = {
 	href: string;
 	image: string;
 	priceLabel: string;
+	inStock: boolean;
 	price?: number | null;
 	currency?: string | null;
 };

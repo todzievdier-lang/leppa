@@ -19,6 +19,31 @@ const nextConfig: NextConfig = {
 				port: "1337",
 				pathname: "/uploads/**",
 			},
+			{
+				protocol: "https",
+				hostname: "disk.yandex.ru",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "*.disk.yandex.ru",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "disk.yandex.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "*.disk.yandex.com",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "yadi.sk",
+				pathname: "/**",
+			},
 		],
 	},
 };
