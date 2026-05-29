@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
+import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
 import { ProductActions } from "@/components/shop/product-actions";
 import { surfaceVariants } from "@/components/ui/surface";
 import { productMediaFrameClassName } from "@/components/media/product-media-frame";
@@ -236,6 +237,10 @@ export function ProductCard({
 					<ProductAvailabilityBadge
 						product={product}
 						className="mt-3 min-h-7 w-fit px-2.5 py-1 text-[11px]"
+					/>
+					<ProductSkuCopy
+						sku={product.sku}
+						className="mt-3 max-w-full"
 					/>
 				</div>
 

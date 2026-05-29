@@ -5,6 +5,8 @@ export type ShopProductSnapshot = {
 	href: string;
 	image: string;
 	priceLabel: string;
+	price?: number | null;
+	currency?: string | null;
 };
 
 export type CartLine = {

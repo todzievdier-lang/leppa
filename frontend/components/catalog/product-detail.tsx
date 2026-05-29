@@ -3,9 +3,9 @@ import { MessageCircle } from "lucide-react";
 
 import { StorefrontBreadcrumbs } from "@/components/catalog/breadcrumbs";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
+import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfoTabs } from "@/components/catalog/product-info-tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductActions } from "@/components/shop/product-actions";
 import {
@@ -50,11 +50,12 @@ export function ProductDetail({
 					/>
 
 					<div className="min-w-0 lg:sticky lg:top-28">
-						<div className="flex flex-wrap items-center gap-2">
-							{product.sku ? (
-								<Badge>Арт. {product.sku}</Badge>
-							) : null}
+						<div className="flex flex-col items-start gap-3">
 							<ProductAvailabilityBadge product={product} />
+							<ProductSkuCopy
+								size="detail"
+								sku={product.sku}
+							/>
 						</div>
 
 						<p className="mt-5 text-sm font-semibold uppercase tracking-normal text-ink-faint">

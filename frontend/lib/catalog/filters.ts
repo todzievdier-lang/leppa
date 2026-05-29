@@ -23,6 +23,10 @@ function normalizeSearchText(value: unknown): string {
 	return String(value ?? "").trim().toLocaleLowerCase("ru-RU");
 }
 
+function normalizeCompactSearchText(value: unknown): string {
+	return normalizeSearchText(value).replace(/[^0-9a-zа-яё]+/giu, "");
+}
+
 function getSearchContent(product: Product): string {
 	return normalizeSearchText(
 		[
@@ -46,9 +50,20 @@ function matchesSearch(product: Product, search?: string): boolean {
 		return true;
 	}
 
+	const searchContent = getSearchContent(product);
+	const compactSearchContent = normalizeCompactSearchText(searchContent);
+
 	return query
 		.split(/\s+/)
-		.every((term) => getSearchContent(product).includes(term));
+		.every((term) => {
+			const compactTerm = normalizeCompactSearchText(term);
+
+			return (
+				searchContent.includes(term)
+				|| (compactTerm.length > 0
+					&& compactSearchContent.includes(compactTerm))
+			);
+		});
 }
 
 function getAttributeValue(attribute: ProductAttribute): string {

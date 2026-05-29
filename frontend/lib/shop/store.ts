@@ -246,6 +246,43 @@ export function useShopState() {
 		});
 	}, []);
 
+	const removeFromCart = useCallback((productId: string) => {
+		const currentState = readShopState();
+		const line = currentState.cart.find(
+			(item) => item.product.id === productId,
+		);
+
+		writeShopState({
+			...currentState,
+			cart: currentState.cart.filter(
+				(item) => item.product.id !== productId,
+			),
+		});
+
+		if (line) {
+			emitShopToast({
+				title: "Удалено из корзины",
+				description: line.product.name,
+			});
+		}
+	}, []);
+
+	const clearCart = useCallback(() => {
+		const currentState = readShopState();
+
+		if (currentState.cart.length === 0) {
+			return;
+		}
+
+		writeShopState({
+			...currentState,
+			cart: [],
+		});
+		emitShopToast({
+			title: "Корзина очищена",
+		});
+	}, []);
+
 	const toggleFavorite = useCallback((product: ShopProductSnapshot) => {
 		const currentState = readShopState();
 		const isFavorite = currentState.favorites.some(
@@ -266,6 +303,27 @@ export function useShopState() {
 		return isFavorite ? "removed" : "added";
 	}, []);
 
+	const removeFromFavorites = useCallback((productId: string) => {
+		const currentState = readShopState();
+		const product = currentState.favorites.find(
+			(item) => item.id === productId,
+		);
+
+		writeShopState({
+			...currentState,
+			favorites: currentState.favorites.filter(
+				(item) => item.id !== productId,
+			),
+		});
+
+		if (product) {
+			emitShopToast({
+				title: "Удалено из избранного",
+				description: product.name,
+			});
+		}
+	}, []);
+
 	return {
 		state,
 		hydrated,
@@ -284,8 +342,11 @@ export function useShopState() {
 			[favoriteIds],
 		),
 		addToCart,
+		clearCart,
 		incrementCartQuantity,
 		decrementCartQuantity,
+		removeFromCart,
+		removeFromFavorites,
 		toggleFavorite,
 	};
 }

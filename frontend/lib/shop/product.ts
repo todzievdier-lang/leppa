@@ -18,5 +18,7 @@ export function getShopProductSnapshot(
 		href: getProductHref(product, category),
 		image: getProductPrimaryImage(product),
 		priceLabel: formatProductPrice(product),
+		price: product.price,
+		currency: product.currency,
 	};
 }
