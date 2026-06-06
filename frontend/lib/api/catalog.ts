@@ -26,15 +26,40 @@ import type {
 
 type PlainRecord = Record<string, unknown>;
 
-const STRAPI_API_URL = (
-	process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_STRAPI_URL
-)?.replace(/\/+$/, "");
+const DEFAULT_STRAPI_API_URL = "https://humble-trust-72330340a8.strapiapp.com";
+const STRAPI_API_URL = getConfiguredStrapiApiUrl();
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN?.trim() || null;
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
+const STRAPI_REVALIDATE_SECONDS = getStrapiRevalidateSeconds();
 const DEBUG_CATEGORIES =
 	process.env.DEBUG_CATEGORIES === "true"
 	|| process.env.NEXT_PUBLIC_DEBUG_CATEGORIES === "true";
+
+function normalizeStrapiApiUrl(value: string | undefined): string | null {
+	const normalizedValue = value?.trim().replace(/\/+$/, "");
+
+	if (!normalizedValue || normalizedValue.includes("api.example.com")) {
+		return null;
+	}
+
+	return normalizedValue;
+}
+
+function getConfiguredStrapiApiUrl(): string {
+	return (
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
+		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL)
+		?? normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
+		?? DEFAULT_STRAPI_API_URL
+	);
+}
+
+function getStrapiRevalidateSeconds() {
+	const value = Number(process.env.STRAPI_REVALIDATE_SECONDS);
+
+	return Number.isFinite(value) && value > 0 ? value : 300;
+}
 
 function isRecord(value: unknown): value is PlainRecord {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -132,8 +157,8 @@ function logStrapiRequestError(
 async function fetchStrapiJson(url: URL, pathname: string): Promise<unknown | null> {
 	try {
 		const response = await fetch(url, {
-			cache: "no-store",
 			headers: getStrapiRequestHeaders(),
+			next: { revalidate: STRAPI_REVALIDATE_SECONDS },
 		});
 
 		if (!response.ok) {
@@ -424,6 +449,22 @@ function getPaginationPageCount(payload: unknown): number | null {
 	return getNumber(payload.meta.pagination.pageCount);
 }
 
+function addStrapiFields(url: URL, fields: string[]) {
+	fields.forEach((field, index) => {
+		url.searchParams.set(`fields[${index}]`, field);
+	});
+}
+
+function addStrapiPopulateFields(
+	url: URL,
+	relation: string,
+	fields: string[],
+) {
+	fields.forEach((field, index) => {
+		url.searchParams.set(`populate[${relation}][fields][${index}]`, field);
+	});
+}
+
 async function fetchStrapiCollection(
 	pathname: string,
 	configureUrl?: (url: URL) => void,
@@ -550,7 +591,14 @@ function mapStrapiProduct(entry: unknown): Product | null {
 
 async function fetchStrapiCategories(): Promise<Category[]> {
 	const entries = await fetchStrapiCollection("/api/categories", (url) => {
-		url.searchParams.set("populate[image]", "true");
+		addStrapiFields(url, ["name", "slug", "description"]);
+		addStrapiPopulateFields(url, "image", [
+			"url",
+			"alternativeText",
+			"caption",
+			"name",
+			"formats",
+		]);
 		url.searchParams.set("sort", "name:asc");
 	});
 	logCategoriesDebug("categories raw entries", entries);
@@ -565,9 +613,26 @@ async function fetchStrapiCategories(): Promise<Category[]> {
 
 async function fetchStrapiProducts(): Promise<Product[]> {
 	const entries = await fetchStrapiCollection("/api/products", (url) => {
-		url.searchParams.set("populate[images]", "true");
-		url.searchParams.set("populate[videos]", "true");
-		url.searchParams.set("populate[category]", "true");
+		addStrapiFields(url, [
+			"slug",
+			"sku",
+			"name",
+			"brand",
+			"model",
+			"price",
+			"description",
+			"attributes",
+			"inStock",
+		]);
+		addStrapiPopulateFields(url, "images", [
+			"url",
+			"alternativeText",
+			"caption",
+			"name",
+			"formats",
+		]);
+		addStrapiPopulateFields(url, "videos", ["url"]);
+		addStrapiPopulateFields(url, "category", ["slug"]);
 		url.searchParams.set("sort", "name:asc");
 	});
 
