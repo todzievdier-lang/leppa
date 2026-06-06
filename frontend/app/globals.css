@@ -234,6 +234,11 @@ textarea,
 select {
 	font: inherit;
 }
+
+input {
+	font-size: 16px !important;
+}
+
 .btn-motion {
 	transform: translate3d(0, 0, 0) scale(1);
 	transition:

@@ -51,7 +51,22 @@ type SubmitOrderResult = {
 	mode?: "email" | "email_failed" | "mock" | "saved";
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
+const DEFAULT_STRAPI_API_URL = "https://humble-trust-72330340a8.strapiapp.com";
+
+function normalizeApiUrl(value: string | undefined): string | null {
+	const normalizedValue = value?.trim().replace(/\/+$/, "");
+
+	if (!normalizedValue || normalizedValue.includes("api.example.com")) {
+		return null;
+	}
+
+	return normalizedValue;
+}
+
+const API_URL =
+	normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL)
+	?? normalizeApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
+	?? DEFAULT_STRAPI_API_URL;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -101,7 +116,7 @@ export async function submitCheckoutOrder(
 	payload: CheckoutOrderPayload,
 ): Promise<SubmitOrderResult> {
 	if (!API_URL) {
-		throw new Error("NEXT_PUBLIC_API_URL не настроен.");
+		throw new Error("URL API не настроен.");
 	}
 
 	const response = await fetch(`${API_URL}/api/orders/submit`, {
