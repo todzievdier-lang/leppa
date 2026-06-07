@@ -3,7 +3,7 @@
 import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useShopState } from "@/lib/shop/store";
+import { getShopProductKey, useShopState } from "@/lib/shop/store";
 import { cn } from "@/lib/utils";
 
 import type { ShopProductSnapshot } from "@/types/shop";
@@ -27,7 +27,8 @@ export function ProductCartControls({
 		incrementCartQuantity,
 	} = useShopState();
 	const isCard = layout === "card";
-	const quantity = hydrated ? getCartQuantity(product.id) : 0;
+	const productKey = getShopProductKey(product);
+	const quantity = hydrated ? getCartQuantity(productKey) : 0;
 	const unavailable = !product.inStock;
 
 	if (quantity > 0) {
@@ -45,7 +46,7 @@ export function ProductCartControls({
 					aria-label={`Уменьшить количество: ${product.name}`}
 					className="flex h-full items-center justify-center text-ink-muted transition-colors duration-200 hover:bg-toolbar hover:text-ink active:bg-canvas focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
 					onClick={() => {
-						decrementCartQuantity(product.id);
+						decrementCartQuantity(productKey);
 					}}>
 					<Minus
 						aria-hidden="true"

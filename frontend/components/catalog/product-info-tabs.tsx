@@ -27,25 +27,26 @@ const HIGHLIGHT_ATTRIBUTE_KEYS = [
 	"warranty",
 ];
 
-function getDescriptionParagraphs(description: string): string[] {
+function getDescriptionItems(description: string): string[] {
 	const technicalLinePattern = new RegExp(
 		`^(${TECHNICAL_DESCRIPTION_PREFIXES.join("|")})\\s*:`,
 		"i",
 	);
-	const paragraphs = description
-		.split(/\n{2,}/)
-		.map((block) =>
-			block
-				.split("\n")
-				.map((line) => line.trim())
-				.filter((line) => line && !technicalLinePattern.test(line))
-				.join(" "),
-		)
-		.map((block) => block.trim())
+	const lines = description
+		.split(/\n+/)
+		.map((line) => line.trim())
+		.filter((line) => line && !technicalLinePattern.test(line));
+	const joinedDescription = lines.join(" ").trim();
+	const sentenceItems = (joinedDescription.match(/[^.!?;]+(?:[.!?;]+|$)/g) ?? [])
+		.map((item) => item.trim())
 		.filter(Boolean);
 
-	return paragraphs.length > 0
-		? paragraphs
+	if (lines.length > 1) {
+		return lines;
+	}
+
+	return sentenceItems.length > 1
+		? sentenceItems
 		: [description.trim()].filter(Boolean);
 }
 
@@ -57,8 +58,8 @@ export function ProductInfoTabs({
 	description: string;
 }) {
 	const [activeTab, setActiveTab] = useState<ProductInfoTab>("description");
-	const descriptionParagraphs = useMemo(
-		() => getDescriptionParagraphs(description),
+	const descriptionItems = useMemo(
+		() => getDescriptionItems(description),
 		[description],
 	);
 	const highlights = attributes.filter((attribute) =>
@@ -121,11 +122,19 @@ export function ProductInfoTabs({
 					<div
 						role="tabpanel"
 						className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.36fr)]">
-						<div className="space-y-4 text-base text-ink-muted">
-							{descriptionParagraphs.map((paragraph) => (
-								<p key={paragraph}>{paragraph}</p>
+						<ul className="space-y-3 text-base text-ink-muted">
+							{descriptionItems.map((item, index) => (
+								<li
+									key={`${item}-${index}`}
+									className="grid grid-cols-[0.875rem_minmax(0,1fr)] gap-3">
+									<span
+										aria-hidden="true"
+										className="mt-2 size-2 rounded-full bg-ink"
+									/>
+									<span>{item}</span>
+								</li>
 							))}
-						</div>
+						</ul>
 
 						{highlights.length > 0 ? (
 							<dl className="grid content-start gap-3">

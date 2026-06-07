@@ -17,7 +17,7 @@ export type Category = {
 
 export type CategoryLink = Pick<Category, "key" | "slug" | "name">;
 
-export type ProductAttributeValue = string | number | boolean;
+export type ProductAttributeValue = string | number | boolean | string[];
 
 export type ProductAttribute = {
 	key: string;

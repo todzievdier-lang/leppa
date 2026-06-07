@@ -72,6 +72,13 @@ function FavoriteProductCard({
 					sku={product.sku}
 					className="mt-3"
 				/>
+				{product.selectedOptions?.length ? (
+					<p className="mt-2 text-xs font-medium text-ink-muted">
+						{product.selectedOptions
+							.map((option) => `${option.label}: ${option.value}`)
+							.join(", ")}
+					</p>
+				) : null}
 
 				<div className="mt-auto grid grid-cols-[minmax(0,1fr)_2.75rem] gap-2.5 border-t border-hairline pt-3.5">
 					<ProductCartControls

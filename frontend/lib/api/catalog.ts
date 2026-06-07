@@ -28,7 +28,7 @@ type PlainRecord = Record<string, unknown>;
 
 const DEFAULT_STRAPI_API_URL = "https://humble-trust-72330340a8.strapiapp.com";
 const STRAPI_API_URL = getConfiguredStrapiApiUrl();
-const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN?.trim() || null;
+const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
 const STRAPI_REVALIDATE_SECONDS = getStrapiRevalidateSeconds();
@@ -53,6 +53,24 @@ function getConfiguredStrapiApiUrl(): string {
 		?? normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
 		?? DEFAULT_STRAPI_API_URL
 	);
+}
+
+function isLocalStrapiApiUrl(value: string): boolean {
+	try {
+		const hostname = new URL(value).hostname;
+
+		return ["localhost", "127.0.0.1", "::1"].includes(hostname);
+	} catch {
+		return false;
+	}
+}
+
+function getConfiguredStrapiApiToken(): string | null {
+	if (isLocalStrapiApiUrl(STRAPI_API_URL)) {
+		return null;
+	}
+
+	return process.env.STRAPI_API_TOKEN?.trim() || null;
 }
 
 function getStrapiRevalidateSeconds() {
@@ -330,6 +348,10 @@ function isAttributeValue(value: unknown): value is ProductAttributeValue {
 		typeof value === "string"
 		|| typeof value === "number"
 		|| typeof value === "boolean"
+		|| (
+			Array.isArray(value)
+			&& value.every((item) => typeof item === "string")
+		)
 	);
 }
 

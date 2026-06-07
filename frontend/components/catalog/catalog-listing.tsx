@@ -257,6 +257,7 @@ export function CatalogListing({
 								key={product.id}
 								category={categoryByKey.get(product.categoryKey) ?? null}
 								product={product}
+								variantProducts={result.searchableProducts}
 							/>
 						))}
 					</div>

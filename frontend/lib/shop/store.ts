@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type {
 	CartLine,
+	ShopProductOption,
 	ShopProductSnapshot,
 	ShopState,
 	ShopToast,
@@ -17,6 +18,10 @@ const EMPTY_SHOP_STATE: ShopState = {
 	cart: [],
 	favorites: [],
 };
+
+export function getShopProductKey(product: Pick<ShopProductSnapshot, "id" | "lineId">) {
+	return product.lineId ?? product.id;
+}
 
 function createToastId(): string {
 	return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -39,8 +44,32 @@ function normalizeProductSnapshot(value: unknown): ShopProductSnapshot | null {
 		return null;
 	}
 
+	const selectedOptions = Array.isArray(product.selectedOptions)
+		? product.selectedOptions
+			.map((option): ShopProductOption | null => {
+				if (
+					!option
+					|| typeof option !== "object"
+					|| typeof option.label !== "string"
+					|| typeof option.value !== "string"
+				) {
+					return null;
+				}
+
+				return {
+					label: option.label,
+					value: option.value,
+				};
+			})
+			.filter((option): option is ShopProductOption => Boolean(option))
+		: [];
+
 	return {
 		id: product.id,
+		lineId:
+			typeof product.lineId === "string" && product.lineId.length > 0
+				? product.lineId
+				: undefined,
 		name: product.name,
 		sku: product.sku ?? null,
 		href: product.href,
@@ -50,6 +79,7 @@ function normalizeProductSnapshot(value: unknown): ShopProductSnapshot | null {
 			typeof product.inStock === "boolean" ? product.inStock : true,
 		price: product.price,
 		currency: product.currency,
+		selectedOptions: selectedOptions.length > 0 ? selectedOptions : undefined,
 	};
 }
 
@@ -176,13 +206,13 @@ export function useShopState() {
 	}, []);
 
 	const cartIds = useMemo(
-		() => new Set(state.cart.map((line) => line.product.id)),
+		() => new Set(state.cart.map((line) => getShopProductKey(line.product))),
 		[state.cart],
 	);
 	const cartQuantityById = useMemo(
 		() =>
 			new Map(
-				state.cart.map((line) => [line.product.id, line.quantity]),
+				state.cart.map((line) => [getShopProductKey(line.product), line.quantity]),
 			),
 		[state.cart],
 	);
@@ -202,8 +232,9 @@ export function useShopState() {
 		}
 
 		const currentState = readShopState();
+		const productKey = getShopProductKey(product);
 		const alreadyInCart = currentState.cart.some(
-			(line) => line.product.id === product.id,
+			(line) => getShopProductKey(line.product) === productKey,
 		);
 
 		if (alreadyInCart) {
@@ -245,15 +276,16 @@ export function useShopState() {
 		}
 
 		const currentState = readShopState();
+		const productKey = getShopProductKey(product);
 		const existingLine = currentState.cart.find(
-			(line) => line.product.id === product.id,
+			(line) => getShopProductKey(line.product) === productKey,
 		);
 
 		writeShopState({
 			...currentState,
 			cart: existingLine
 				? currentState.cart.map((line) =>
-						line.product.id === product.id
+						getShopProductKey(line.product) === productKey
 							? { ...line, quantity: line.quantity + 1 }
 							: line,
 					)
@@ -268,14 +300,14 @@ export function useShopState() {
 		});
 	}, []);
 
-	const decrementCartQuantity = useCallback((productId: string) => {
+	const decrementCartQuantity = useCallback((productKey: string) => {
 		const currentState = readShopState();
 
 		writeShopState({
 			...currentState,
 			cart: currentState.cart
 				.map((line) =>
-					line.product.id === productId
+					getShopProductKey(line.product) === productKey
 						? { ...line, quantity: line.quantity - 1 }
 						: line,
 				)
@@ -283,16 +315,16 @@ export function useShopState() {
 		});
 	}, []);
 
-	const removeFromCart = useCallback((productId: string) => {
+	const removeFromCart = useCallback((productKey: string) => {
 		const currentState = readShopState();
 		const line = currentState.cart.find(
-			(item) => item.product.id === productId,
+			(item) => getShopProductKey(item.product) === productKey,
 		);
 
 		writeShopState({
 			...currentState,
 			cart: currentState.cart.filter(
-				(item) => item.product.id !== productId,
+				(item) => getShopProductKey(item.product) !== productKey,
 			),
 		});
 

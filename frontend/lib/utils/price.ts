@@ -25,6 +25,10 @@ export function formatProductPrice(product: Product): string {
 }
 
 export function formatAttributeValue(attribute: ProductAttribute): string {
+	if (Array.isArray(attribute.value)) {
+		return attribute.value.join(", ");
+	}
+
 	const value = String(attribute.value);
 
 	if (!attribute.unit) {

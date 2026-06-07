@@ -1,210 +1,60 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
+import { ProductColorSelector } from "@/components/catalog/product-color-selector";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
 import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
+import { ProductSizeSelector } from "@/components/catalog/product-size-selector";
 import { ProductActions } from "@/components/shop/product-actions";
 import { surfaceVariants } from "@/components/ui/surface";
 import { productMediaFrameClassName } from "@/components/media/product-media-frame";
 import { getProductHref, getProductImageAlt } from "@/lib/catalog/helpers";
+import {
+	getProductColorOptions,
+	getSelectedColorOption,
+} from "@/lib/catalog/product-options";
+import { getProductSizeVariants } from "@/lib/catalog/product-variants";
 import { getShopProductSnapshot } from "@/lib/shop/product";
-import { formatAttributeValue, formatProductPrice } from "@/lib/utils/price";
+import { formatProductPrice } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
 import { ProductCardMedia } from "@/components/catalog/product-card-media";
 
 import type { Category, Product } from "@/types/catalog";
 
-type ProductCardTag = {
-	id: string;
-	label: string;
-};
-
-const PRODUCT_CARD_TAG_LIMIT = 4;
-const ATTRIBUTE_TAG_EXCLUDED_KEYS = new Set(["warranty", "countryoforigin"]);
-const FINISH_ATTRIBUTE_KEYS = new Set([
-	"color",
-	"colour",
-	"finish",
-	"material",
-	"surface",
-	"coating",
-]);
-const DIMENSION_ATTRIBUTE_KEYS = ["widthmm", "heightmm", "depthmm", "lengthmm"];
-const SPECIFICATION_ATTRIBUTE_KEYS = new Set([
-	"size",
-	"dimensions",
-	"diameter",
-	"diametermm",
-	"power",
-	"powerw",
-	"mounting",
-	"installation",
-	"shape",
-	"type",
-]);
-const UNIT_LABELS: Record<string, string> = {
-	mm: "мм",
-	W: "Вт",
-};
-
-function normalizeAttributeKey(key: string) {
-	return key.trim().toLocaleLowerCase("en-US");
-}
-
-function isDimensionAttribute(attribute: Product["attributes"][number]) {
-	const normalizedKey = normalizeAttributeKey(attribute.key);
-
-	return (
-		DIMENSION_ATTRIBUTE_KEYS.includes(normalizedKey) ||
-		["diameter", "diametermm"].includes(normalizedKey)
-	);
-}
-
-function getUnitLabel(unit?: string) {
-	return unit ? (UNIT_LABELS[unit] ?? unit) : null;
-}
-
-function createAttributeTag(
-	attribute: Product["attributes"][number],
-): ProductCardTag {
-	return {
-		id: `${attribute.key}-${String(attribute.value)}`,
-		label: formatAttributeValue(attribute),
-	};
-}
-
-function getDimensionTag(
-	attributes: Product["attributes"],
-): ProductCardTag | null {
-	const attributesByKey = new Map(
-		attributes.map((attribute) => [
-			normalizeAttributeKey(attribute.key),
-			attribute,
-		]),
-	);
-	const dimensions = DIMENSION_ATTRIBUTE_KEYS.map((key) =>
-		attributesByKey.get(key),
-	).filter((attribute): attribute is Product["attributes"][number] =>
-		Boolean(attribute),
-	);
-
-	if (dimensions.length >= 2) {
-		const sharedUnit = dimensions.every(
-			(attribute) => attribute.unit === dimensions[0]?.unit,
-		)
-			? getUnitLabel(dimensions[0]?.unit)
-			: null;
-		const dimensionLabel = sharedUnit
-			? `${dimensions.map((attribute) => String(attribute.value)).join(" x ")} ${sharedUnit}`
-			: dimensions.map(formatAttributeValue).join(" x ");
-
-		return {
-			id: dimensions.map((attribute) => attribute.key).join("-"),
-			label: dimensionLabel,
-		};
-	}
-
-	const diameter = attributes.find((attribute) =>
-		["diameter", "diametermm"].includes(normalizeAttributeKey(attribute.key)),
-	);
-
-	return diameter ? createAttributeTag(diameter) : null;
-}
-
-function addUniqueTag(
-	tags: ProductCardTag[],
-	seenTagIds: Set<string>,
-	tag: ProductCardTag | null,
-) {
-	if (!tag || seenTagIds.has(tag.id) || tags.length >= PRODUCT_CARD_TAG_LIMIT) {
-		return;
-	}
-
-	tags.push(tag);
-	seenTagIds.add(tag.id);
-}
-
-function getProductCardTags(
-	product: Product,
-	category?: Category | null,
-): ProductCardTag[] {
-	const tags: ProductCardTag[] = [];
-	const seenTagIds = new Set<string>();
-	const availableAttributes = product.attributes.filter(
-		(attribute) =>
-			!ATTRIBUTE_TAG_EXCLUDED_KEYS.has(normalizeAttributeKey(attribute.key)),
-	);
-	const dimensionTag = getDimensionTag(availableAttributes);
-	const hasDimensionTag = Boolean(dimensionTag);
-
-	if (category) {
-		addUniqueTag(tags, seenTagIds, {
-			id: `category-${category.key}`,
-			label: category.name,
-		});
-	}
-
-	availableAttributes
-		.filter((attribute) =>
-			FINISH_ATTRIBUTE_KEYS.has(normalizeAttributeKey(attribute.key)),
-		)
-		.slice(0, 2)
-		.forEach((attribute) => {
-			addUniqueTag(tags, seenTagIds, createAttributeTag(attribute));
-		});
-
-	addUniqueTag(tags, seenTagIds, dimensionTag);
-
-	availableAttributes
-		.filter(
-			(attribute) =>
-				SPECIFICATION_ATTRIBUTE_KEYS.has(
-					normalizeAttributeKey(attribute.key),
-				) && !(hasDimensionTag && isDimensionAttribute(attribute)),
-		)
-		.forEach((attribute) => {
-			addUniqueTag(tags, seenTagIds, createAttributeTag(attribute));
-		});
-
-	availableAttributes.forEach((attribute) => {
-		if (hasDimensionTag && isDimensionAttribute(attribute)) {
-			return;
-		}
-
-		addUniqueTag(tags, seenTagIds, createAttributeTag(attribute));
-	});
-
-	return tags;
-}
-
-function ProductCardTags({ tags }: { tags: ProductCardTag[] }) {
-	return (
-		<div
-			aria-label="Краткие характеристики товара"
-			className="mt-3 flex min-h-[4.25rem] max-h-[4.25rem] flex-wrap content-start gap-1.5 overflow-hidden">
-			{tags.map((tag) => (
-				<Badge
-					key={tag.id}
-					size="sm"
-					className="min-w-0 max-w-full border-hairline bg-canvas px-2.5 py-1 text-[11px] leading-tight text-ink-muted shadow-none">
-					<span className="truncate">{tag.label}</span>
-				</Badge>
-			))}
-		</div>
-	);
-}
-
 export function ProductCard({
 	category,
 	product,
+	variantProducts = [],
 }: {
 	category?: Category | null;
 	product: Product;
+	variantProducts?: Product[];
 }) {
-	const imageAlt = getProductImageAlt(product);
-	const href = getProductHref(product, category);
-	const cardTags = getProductCardTags(product, category);
-	const shopProduct = getShopProductSnapshot(product, category);
+	const sizeVariants = useMemo(
+		() => getProductSizeVariants(product, variantProducts, category),
+		[category, product, variantProducts],
+	);
+	const [selectedProductId, setSelectedProductId] = useState(product.id);
+	const selectedProduct =
+		sizeVariants.find((variant) => variant.product.id === selectedProductId)
+			?.product ?? product;
+	const colorOptions = getProductColorOptions(selectedProduct);
+	const [selectedColorValue, setSelectedColorValue] = useState(
+		colorOptions[0]?.value ?? null,
+	);
+	const selectedColor = getSelectedColorOption(
+		colorOptions,
+		selectedColorValue,
+	);
+	const imageAlt = getProductImageAlt(selectedProduct);
+	const href = getProductHref(selectedProduct, category);
+	const shopProduct = getShopProductSnapshot(
+		selectedProduct,
+		category,
+		selectedColor ? [{ label: "Цвет", value: selectedColor.label }] : [],
+	);
 
 	return (
 		<article
@@ -222,7 +72,7 @@ export function ProductCard({
 			<div className="relative z-10">
 				<ProductCardMedia
 					href={href}
-					images={product.images}
+					images={selectedProduct.images}
 					alt={imageAlt}
 				/>
 			</div>
@@ -230,22 +80,38 @@ export function ProductCard({
 			<div className="pointer-events-none relative z-10 flex flex-1 flex-col px-2 pb-2 pt-4 sm:px-3">
 				<div className="min-w-0">
 					<p className="min-w-0 whitespace-normal break-words mb-2 text-[1.375rem] font-bold leading-tight tracking-normal text-ink sm:text-2xl">
-						{formatProductPrice(product)}
+						{formatProductPrice(selectedProduct)}
 					</p>
 					<h2 className="line-clamp-2 min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
-						{product.name}
+						{selectedProduct.name}
 					</h2>
 					<ProductAvailabilityBadge
-						product={product}
+						product={selectedProduct}
 						className="mt-3 min-h-7 w-fit px-2.5 py-1 text-[11px]"
 					/>
 					<ProductSkuCopy
-						sku={product.sku}
+						sku={selectedProduct.sku}
 						className="mt-3 max-w-full"
 					/>
 				</div>
 
-				<ProductCardTags tags={cardTags} />
+				<div className="mt-5 grid gap-3 pb-4">
+					<ProductColorSelector
+						selectedValue={selectedColor?.value ?? null}
+						onSelect={setSelectedColorValue}
+						options={colorOptions}
+						variant="card"
+					/>
+
+					<ProductSizeSelector
+						currentProductId={selectedProduct.id}
+						onSelectProduct={(nextProduct) => {
+							setSelectedProductId(nextProduct.id);
+						}}
+						variant="card"
+						variants={sizeVariants}
+					/>
+				</div>
 
 				<div className="mt-auto border-t border-hairline pt-3.5">
 					<div className="space-y-3">
@@ -280,10 +146,10 @@ export function ProductCardSkeleton() {
 				</div>
 				<div className="mt-3 h-7 w-24 animate-pulse rounded-full bg-toolbar" />
 
-				<div className="mt-3 flex min-h-[4.25rem] flex-wrap content-start gap-1.5">
-					<div className="h-6 w-20 animate-pulse rounded-full bg-toolbar" />
-					<div className="h-6 w-24 animate-pulse rounded-full bg-toolbar" />
-					<div className="h-6 w-16 animate-pulse rounded-full bg-toolbar" />
+				<div className="mt-4 flex min-h-9 flex-wrap content-start gap-2">
+					<div className="size-9 animate-pulse rounded-full bg-toolbar" />
+					<div className="size-9 animate-pulse rounded-full bg-toolbar" />
+					<div className="h-9 w-24 animate-pulse rounded-full bg-toolbar" />
 				</div>
 
 				<div className="mt-auto border-t border-hairline pt-3.5">

@@ -35,6 +35,10 @@ export type CheckoutOrderPayload = {
 		quantity: number;
 		priceLabel: string;
 		lineTotalLabel: string;
+		options?: Array<{
+			label: string;
+			value: string;
+		}>;
 	}>;
 	comment: string;
 	callBack: boolean;
@@ -92,6 +96,7 @@ export function mapCartLinesToOrderItems(
 		quantity: line.quantity,
 		priceLabel: getLinePriceLabel(line),
 		lineTotalLabel: getLineTotalLabel(line),
+		options: line.product.selectedOptions,
 	}));
 }
 

@@ -1,12 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 
 import { StorefrontBreadcrumbs } from "@/components/catalog/breadcrumbs";
+import { ProductColorSelector } from "@/components/catalog/product-color-selector";
 import { ProductBackButton } from "@/components/catalog/product-back-button";
 import { ProductAvailabilityBadge } from "@/components/catalog/product-availability-badge";
 import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfoTabs } from "@/components/catalog/product-info-tabs";
+import { ProductSizeSelector } from "@/components/catalog/product-size-selector";
 import { ProductScrollToTop } from "@/components/catalog/product-scroll-to-top";
 import { Button } from "@/components/ui/button";
 import { ProductActions } from "@/components/shop/product-actions";
@@ -14,6 +19,11 @@ import {
 	getCategoryHref,
 	getProductImageAlt,
 } from "@/lib/catalog/helpers";
+import {
+	getProductColorOptions,
+	getSelectedColorOption,
+} from "@/lib/catalog/product-options";
+import { getProductSizeVariants } from "@/lib/catalog/product-variants";
 import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
 
@@ -22,13 +32,25 @@ import type { Category, Product } from "@/types/catalog";
 export function ProductDetail({
 	category,
 	product,
+	variantProducts = [],
 }: {
 	category: Category;
 	product: Product;
+	variantProducts?: Product[];
 }) {
 	const galleryFallbackAlt = getProductImageAlt(product);
-	const shopProduct = getShopProductSnapshot(product, category);
 	const categoryHref = getCategoryHref(category);
+	const sizeVariants = getProductSizeVariants(product, variantProducts, category);
+	const colorOptions = getProductColorOptions(product);
+	const [selectedColorValue, setSelectedColorValue] = useState(
+		colorOptions[0]?.value ?? null,
+	);
+	const selectedColor = getSelectedColorOption(colorOptions, selectedColorValue);
+	const shopProduct = getShopProductSnapshot(
+		product,
+		category,
+		selectedColor ? [{ label: "Цвет", value: selectedColor.label }] : [],
+	);
 	const intro = product.description
 		.split(/\n{2,}/)
 		.at(-1)
@@ -80,6 +102,19 @@ export function ProductDetail({
 								{intro}
 							</p>
 						) : null}
+
+						<ProductSizeSelector
+							className="mt-6"
+							currentProductId={product.id}
+							variants={sizeVariants}
+						/>
+
+						<ProductColorSelector
+							className="mt-6"
+							selectedValue={selectedColor?.value ?? null}
+							onSelect={setSelectedColorValue}
+							options={colorOptions}
+						/>
 
 						<div className="mt-6 border-b border-hairline py-5">
 							<p className="text-3xl font-semibold tracking-normal text-ink">

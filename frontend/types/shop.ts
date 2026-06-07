@@ -1,5 +1,11 @@
+export type ShopProductOption = {
+	label: string;
+	value: string;
+};
+
 export type ShopProductSnapshot = {
 	id: string;
+	lineId?: string;
 	name: string;
 	sku: string | null;
 	href: string;
@@ -8,6 +14,7 @@ export type ShopProductSnapshot = {
 	inStock: boolean;
 	price?: number | null;
 	currency?: string | null;
+	selectedOptions?: ShopProductOption[];
 };
 
 export type CartLine = {

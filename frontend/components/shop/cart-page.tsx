@@ -29,7 +29,7 @@ import {
 	submitCheckoutOrder,
 	type CheckoutCustomer,
 } from "@/lib/api/order";
-import { emitShopToast, useShopState } from "@/lib/shop/store";
+import { emitShopToast, getShopProductKey, useShopState } from "@/lib/shop/store";
 import { formatPrice } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
 
@@ -345,6 +345,13 @@ function CartLineItem({
 					sku={line.product.sku}
 					className="mt-2"
 				/>
+				{line.product.selectedOptions?.length ? (
+					<p className="mt-2 text-xs font-medium text-ink-muted">
+						{line.product.selectedOptions
+							.map((option) => `${option.label}: ${option.value}`)
+							.join(", ")}
+					</p>
+				) : null}
 				<p className="mt-2 text-xs text-ink-muted">
 					{formatCartPrice(unitPrice, line.product.currency ?? "RUB")} / шт.
 				</p>
@@ -434,10 +441,10 @@ function CartItemsPanel({
 				<ul>
 					{lines.map((line) => (
 						<CartLineItem
-							key={line.product.id}
+							key={getShopProductKey(line.product)}
 							line={line}
 							onRemove={() => {
-								onRemove(line.product.id);
+								onRemove(getShopProductKey(line.product));
 							}}
 						/>
 					))}

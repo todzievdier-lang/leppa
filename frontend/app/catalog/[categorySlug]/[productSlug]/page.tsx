@@ -63,7 +63,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 		notFound();
 	}
 
-	const product = await getProductBySlug(productSlug, category.key);
+	const products = await getProducts();
+	const product = products.find(
+		(candidate) =>
+			candidate.slug === productSlug
+			&& candidate.categoryKey === category.key,
+	);
 
 	if (!product) {
 		notFound();
@@ -73,6 +78,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 		<ProductDetail
 			category={category}
 			product={product}
+			variantProducts={products.filter(
+				(candidate) => candidate.categoryKey === category.key,
+			)}
 		/>
 	);
 }
