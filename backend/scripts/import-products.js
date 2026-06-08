@@ -15,6 +15,7 @@ const UPLOAD_FILE_UID = 'plugin::upload.file';
 const UPLOAD_FOLDER_UID = 'plugin::upload.folder';
 
 const appDir = path.resolve(__dirname, '..');
+const frontendPublicDir = path.resolve(appDir, '..', 'frontend', 'public');
 const defaultProductsFile = path.join(appDir, 'src/data/products.json');
 const defaultMediaMaxBytes = 25 * 1024 * 1024;
 const defaultMediaConcurrency = 2;
@@ -268,6 +269,14 @@ function getImageUrl(image) {
   return null;
 }
 
+function getImageLocalPath(image) {
+  if (image && typeof image === 'object' && typeof image.localPath === 'string') {
+    return image.localPath;
+  }
+
+  return null;
+}
+
 function normalizeImageEntries(images) {
   if (!Array.isArray(images)) {
     return [];
@@ -332,6 +341,32 @@ function filenameFromUrl(value) {
   }
 }
 
+function resolveLocalMediaPath(value) {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
+    return null;
+  }
+
+  if (path.isAbsolute(value) && fs.existsSync(value) && fs.statSync(value).isFile()) {
+    return value;
+  }
+
+  const normalizedPath = path.normalize(value).replace(/^(\.\.[\\/])+/, '');
+  const candidates = [path.join(appDir, 'public', normalizedPath), path.join(frontendPublicDir, normalizedPath)];
+
+  return candidates.find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile()) || null;
+}
+
+async function localPathToInputFile(filePath) {
+  const stats = await fs.promises.stat(filePath);
+
+  return {
+    filepath: filePath,
+    originalFilename: path.basename(filePath),
+    mimetype: mime.lookup(filePath) || 'application/octet-stream',
+    size: stats.size,
+  };
+}
+
 function buildMediaFileName(product, image, index, ext) {
   const imageLabel =
     typeof image === 'object' && image !== null ? image.role || image.label || image.alt : undefined;
@@ -355,13 +390,7 @@ function buildLegacyMediaFileName(product, image, index, ext) {
 function isYandexDiskUrl(value) {
   try {
     const hostname = new URL(value).hostname;
-    return (
-      hostname === 'disk.yandex.ru' ||
-      hostname.endsWith('.disk.yandex.ru') ||
-      hostname === 'disk.yandex.com' ||
-      hostname.endsWith('.disk.yandex.com') ||
-      hostname === 'yadi.sk'
-    );
+    return hostname === 'disk.yandex.ru' || hostname === 'disk.yandex.com' || hostname === 'yadi.sk';
   } catch {
     return false;
   }
@@ -563,8 +592,9 @@ async function uploadRemoteImage(strapi, product, image, index, options, stats, 
   let tmpDir;
 
   try {
-    const downloadUrl = await resolveDownloadUrl(strapi, sourceUrl);
-    const filename = filenameFromUrl(downloadUrl);
+    const localMediaPath = resolveLocalMediaPath(getImageLocalPath(image) || sourceUrl);
+    const downloadUrl = localMediaPath ? null : await resolveDownloadUrl(strapi, sourceUrl);
+    const filename = localMediaPath ? path.basename(localMediaPath) : filenameFromUrl(downloadUrl);
     let mediaName = buildMediaFileName(product, image, index, path.extname(filename));
     let legacyMediaName = buildLegacyMediaFileName(product, image, index, path.extname(filename));
 
@@ -576,21 +606,27 @@ async function uploadRemoteImage(strapi, product, image, index, options, stats, 
       }
     }
 
-    tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'strapi-product-media-'));
+    let file;
 
-    const { file } = await strapi
-      .plugin('upload')
-      .service('file')
-      .fetchUrlToInputFile(downloadUrl, tmpDir, options.mediaMaxBytes);
-    const finalExt = path.extname(filename) || path.extname(file.originalFilename || '') || extensionFromMime(file.mimetype);
-    mediaName = buildMediaFileName(product, image, index, finalExt);
-    legacyMediaName = buildLegacyMediaFileName(product, image, index, finalExt);
+    if (localMediaPath) {
+      file = await localPathToInputFile(localMediaPath);
+    } else {
+      tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'strapi-product-media-'));
 
-    if (!options.forceMedia) {
-      const reusableMedia = await findReusableMedia(strapi, mediaName, legacyMediaName, folder, stats);
+      ({ file } = await strapi
+        .plugin('upload')
+        .service('file')
+        .fetchUrlToInputFile(downloadUrl, tmpDir, options.mediaMaxBytes));
+      const finalExt = path.extname(filename) || path.extname(file.originalFilename || '') || extensionFromMime(file.mimetype);
+      mediaName = buildMediaFileName(product, image, index, finalExt);
+      legacyMediaName = buildLegacyMediaFileName(product, image, index, finalExt);
 
-      if (reusableMedia) {
-        return reusableMedia;
+      if (!options.forceMedia) {
+        const reusableMedia = await findReusableMedia(strapi, mediaName, legacyMediaName, folder, stats);
+
+        if (reusableMedia) {
+          return reusableMedia;
+        }
       }
     }
 
