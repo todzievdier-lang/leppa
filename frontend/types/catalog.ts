@@ -33,10 +33,20 @@ export type ProductImage = {
 	alt?: string;
 };
 
+export type ProductColor = {
+	id: string;
+	slug: string;
+	name: string;
+	hex: string;
+	sortOrder: number;
+};
+
 export type Product = {
 	id: string;
 	slug: string;
 	sku: string | null;
+	baseSku: string | null;
+	color: ProductColor | null;
 	name: string;
 	brand: string | null;
 	model: string | null;

@@ -24,7 +24,7 @@ export function ProductBackButton({
 	return (
 		<Button
 			type="button"
-			variant="secondary"
+			variant="dark"
 			size="sm"
 			aria-label="Вернуться на предыдущую страницу"
 			onClick={handleBack}>

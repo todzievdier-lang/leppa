@@ -9,6 +9,7 @@
     "deploy": "strapi deploy",
     "dev": "strapi develop",
     "develop": "strapi develop",
+    "import:catalog-seed": "node scripts/import-catalog-seed.js",
     "import:products": "node scripts/import-products.js",
     "start": "strapi start",
     "strapi": "strapi",
@@ -35,6 +36,16 @@
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"
+  },
+  "overrides": {
+    "@strapi/admin": "5.46.1",
+    "@strapi/database": "5.46.1",
+    "@strapi/data-transfer": "5.46.1",
+    "@strapi/logger": "5.46.1",
+    "@strapi/permissions": "5.46.1",
+    "@strapi/types": "5.46.1",
+    "@strapi/typescript-utils": "5.46.1",
+    "@strapi/utils": "5.46.1"
   },
   "strapi": {
     "uuid": "e07ca363-075d-4c94-aaf9-635c0a645a93",

@@ -10,6 +10,7 @@ const { compileStrapi, createStrapi } = require('@strapi/strapi');
 
 const PRODUCT_UID = 'api::product.product';
 const CATEGORY_UID = 'api::category.category';
+const COLOR_UID = 'api::color.color';
 const UPLOAD_FILE_UID = 'plugin::upload.file';
 const UPLOAD_FOLDER_UID = 'plugin::upload.folder';
 
@@ -205,11 +206,11 @@ function setIfPresent(data, product, fieldName) {
   }
 }
 
-function buildProductData(strapi, product, category, mediaFiles, options, warned) {
+function buildProductData(strapi, product, category, color, mediaFiles, options, warned) {
   const productFields = new Set(getAttributeNames(strapi, PRODUCT_UID));
   const data = {};
 
-  for (const fieldName of ['slug', 'sku', 'name', 'brand', 'model', 'price', 'attributes', 'inStock']) {
+  for (const fieldName of ['slug', 'sku', 'baseSku', 'name', 'brand', 'model', 'price', 'attributes', 'inStock']) {
     if (productFields.has(fieldName)) {
       setIfPresent(data, product, fieldName);
     }
@@ -221,6 +222,10 @@ function buildProductData(strapi, product, category, mediaFiles, options, warned
 
   if (category && productFields.has('category')) {
     data.category = { documentId: category.documentId };
+  }
+
+  if (color && productFields.has('color')) {
+    data.color = { documentId: color.documentId };
   }
 
   if (options.importMedia) {
@@ -695,6 +700,52 @@ async function findCategory(strapi, matchField, categoryKey, status) {
   return null;
 }
 
+function getProductColorKey(product) {
+  if (!product || typeof product !== 'object') {
+    return null;
+  }
+
+  if (typeof product.colorKey === 'string' && product.colorKey.trim()) {
+    return product.colorKey.trim();
+  }
+
+  if (typeof product.colorSlug === 'string' && product.colorSlug.trim()) {
+    return product.colorSlug.trim();
+  }
+
+  if (product.color && typeof product.color === 'object' && typeof product.color.slug === 'string') {
+    return product.color.slug.trim();
+  }
+
+  return null;
+}
+
+async function findColor(strapi, colorKey, status) {
+  if (!colorKey || !hasAttribute(strapi, PRODUCT_UID, 'color')) {
+    return null;
+  }
+
+  const colorContentType = strapi.contentType(COLOR_UID);
+
+  if (!colorContentType) {
+    return null;
+  }
+
+  const searchStatuses = hasDraftAndPublish(colorContentType)
+    ? [status, status === 'draft' ? 'published' : 'draft']
+    : [undefined];
+
+  for (const searchStatus of searchStatuses) {
+    const color = await findFirstByField(strapi, COLOR_UID, 'slug', colorKey, searchStatus);
+
+    if (color) {
+      return color;
+    }
+  }
+
+  return null;
+}
+
 async function findExistingProduct(strapi, slug, status) {
   const productContentType = strapi.contentType(PRODUCT_UID);
   const searchStatuses = hasDraftAndPublish(productContentType)
@@ -769,7 +820,8 @@ async function importProducts(strapi, payload, options) {
     }
 
     const mediaFiles = await uploadProductImages(strapi, category, product, options, stats, folderCache);
-    const data = buildProductData(strapi, product, category, mediaFiles, options, warned);
+    const color = await findColor(strapi, getProductColorKey(product), options.status);
+    const data = buildProductData(strapi, product, category, color, mediaFiles, options, warned);
     const existing = await findExistingProduct(strapi, product.slug, options.status);
 
     if (options.dryRun) {

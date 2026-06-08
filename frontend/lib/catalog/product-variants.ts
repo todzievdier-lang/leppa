@@ -12,6 +12,16 @@ export type ProductSizeVariant = {
 	inStock: boolean;
 };
 
+export type ProductColorVariant = {
+	product: Product;
+	href: string;
+	label: string;
+	hex: string;
+	isLight: boolean;
+	isActive: boolean;
+	inStock: boolean;
+};
+
 type SizeValue = {
 	key: string;
 	valueLabel: string;
@@ -42,6 +52,14 @@ const DIMENSION_ATTRIBUTE_KEYS = [
 const SIZE_ATTRIBUTE_KEYS = new Set([
 	...EXPLICIT_SIZE_ATTRIBUTE_KEYS,
 	...DIMENSION_ATTRIBUTE_KEYS,
+]);
+
+const COLOR_ATTRIBUTE_KEYS = new Set([
+	"color",
+	"coloroptions",
+	"colors",
+	"availablecolors",
+	"availablecolours",
 ]);
 
 const UNIT_LABELS: Record<string, string> = {
@@ -77,6 +95,25 @@ function isSizeAttribute(attribute: ProductAttribute) {
 	return SIZE_ATTRIBUTE_KEYS.has(normalizeAttributeKey(attribute.key));
 }
 
+function isColorAttribute(attribute: ProductAttribute) {
+	return COLOR_ATTRIBUTE_KEYS.has(normalizeAttributeKey(attribute.key));
+}
+
+function isLightHex(hex: string) {
+	const normalizedHex = hex.replace("#", "");
+
+	if (!/^[0-9a-f]{6}$/i.test(normalizedHex)) {
+		return false;
+	}
+
+	const red = Number.parseInt(normalizedHex.slice(0, 2), 16);
+	const green = Number.parseInt(normalizedHex.slice(2, 4), 16);
+	const blue = Number.parseInt(normalizedHex.slice(4, 6), 16);
+	const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+
+	return luminance >= 0.82;
+}
+
 function getProductSeriesKey(product: Product) {
 	const model = normalizeText(product.model);
 
@@ -90,9 +127,9 @@ function getProductSeriesKey(product: Product) {
 	).trim()}`;
 }
 
-function getVariantGroupKey(product: Product) {
-	const stableAttributes = product.attributes
-		.filter((attribute) => !isSizeAttribute(attribute))
+function getStableAttributesKey(product: Product) {
+	return product.attributes
+		.filter((attribute) => !isSizeAttribute(attribute) && !isColorAttribute(attribute))
 		.map((attribute) => [
 			normalizeAttributeKey(attribute.key),
 			normalizeAttributeValue(attribute.value),
@@ -100,12 +137,43 @@ function getVariantGroupKey(product: Product) {
 		].join(":"))
 		.sort()
 		.join("|");
+}
+
+function getColorVariantGroupKey(product: Product) {
+	const baseSku = normalizeText(product.baseSku);
+
+	if (baseSku) {
+		return `${product.categoryKey}::baseSku:${baseSku}`;
+	}
 
 	return [
 		product.categoryKey,
 		normalizeText(product.brand),
 		getProductSeriesKey(product),
-		stableAttributes,
+		getStableAttributesKey(product),
+	].join("::");
+}
+
+function getVariantGroupKey(product: Product) {
+	const colorIdentity = product.color?.id
+		? `color:${product.color.id}`
+		: "";
+
+	if (product.baseSku) {
+		return [
+			product.categoryKey,
+			`baseSku:${normalizeText(product.baseSku)}`,
+			colorIdentity,
+			getStableAttributesKey(product),
+		].join("::");
+	}
+
+	return [
+		product.categoryKey,
+		normalizeText(product.brand),
+		getProductSeriesKey(product),
+		colorIdentity,
+		getStableAttributesKey(product),
 	].join("::");
 }
 
@@ -127,6 +195,31 @@ function formatNumber(value: number) {
 	return new Intl.NumberFormat("ru-RU", {
 		maximumFractionDigits: 1,
 	}).format(value);
+}
+
+function parseLocalizedNumber(value: string): number | null {
+	const normalizedValue = Number(value.replace(",", "."));
+
+	return Number.isFinite(normalizedValue) ? normalizedValue : null;
+}
+
+function getLeadingSizeLabel(label: string) {
+	const match = label.match(/\d+(?:[,.]\d+)?/u);
+
+	if (!match) {
+		return label;
+	}
+
+	const value = parseLocalizedNumber(match[0]);
+	const shouldDisplayCentimeters =
+		value !== null
+		&& /\bmm\b|мм/iu.test(label)
+		&& Math.abs(value) >= 100
+		&& value % 10 === 0;
+
+	return value !== null
+		? formatNumber(shouldDisplayCentimeters ? value / 10 : value)
+		: match[0];
 }
 
 function getUnitLabel(unit?: string) {
@@ -272,7 +365,9 @@ function getDimensionLabel(product: Product, keys: string[]) {
 }
 
 function getProductSizeLabel(product: Product, dimensionKeys: string[]) {
-	return getExplicitSizeLabel(product) ?? getDimensionLabel(product, dimensionKeys);
+	const label = getExplicitSizeLabel(product) ?? getDimensionLabel(product, dimensionKeys);
+
+	return label ? getLeadingSizeLabel(label) : null;
 }
 
 function compareVariants(
@@ -313,6 +408,52 @@ function uniqueProducts(products: Product[]) {
 	});
 
 	return [...productsById.values()];
+}
+
+function compareColorVariants(
+	left: ProductColorVariant,
+	right: ProductColorVariant,
+) {
+	if (left.product.color?.sortOrder !== right.product.color?.sortOrder) {
+		return (left.product.color?.sortOrder ?? 0) - (right.product.color?.sortOrder ?? 0);
+	}
+
+	return left.label.localeCompare(right.label, "ru");
+}
+
+export function getProductColorVariants(
+	product: Product,
+	products: Product[],
+	category?: Pick<Category, "slug"> | null,
+): ProductColorVariant[] {
+	const availableProducts = uniqueProducts([product, ...products]);
+	const groupKey = getColorVariantGroupKey(product);
+	const groupProducts = availableProducts.filter(
+		(candidate) =>
+			candidate.categoryKey === product.categoryKey
+			&& getColorVariantGroupKey(candidate) === groupKey
+			&& candidate.color !== null,
+	);
+
+	if (groupProducts.length <= 1) {
+		return [];
+	}
+
+	return groupProducts
+		.map((variantProduct) => {
+			const hex = variantProduct.color?.hex ?? "#d7d7d2";
+
+			return {
+				product: variantProduct,
+				href: getProductHref(variantProduct, category),
+				label: variantProduct.color?.name ?? variantProduct.name,
+				hex,
+				isLight: isLightHex(hex),
+				isActive: variantProduct.id === product.id,
+				inStock: variantProduct.inStock,
+			};
+		})
+		.sort(compareColorVariants);
 }
 
 export function getProductSizeVariants(

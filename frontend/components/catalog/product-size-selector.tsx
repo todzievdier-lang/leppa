@@ -276,7 +276,7 @@ export function ProductSizeSelector({
 						);
 					}
 
-					if (isActive) {
+					if (isActive && !isCard) {
 						return (
 							<span
 								key={item.product.id}
@@ -293,8 +293,9 @@ export function ProductSizeSelector({
 							key={item.product.id}
 							href={item.href}
 							scroll={false}
+							aria-current={isActive ? "true" : undefined}
 							title={title}
-							className={itemClassName(false, item.inStock)}>
+							className={itemClassName(isActive, item.inStock)}>
 							{item.label}
 						</Link>
 					);

@@ -30,9 +30,9 @@ export function getProductHref(
 	product: Product,
 	category?: Pick<Category, "slug"> | null,
 ): string {
-	return category
-		? `/catalog/${category.slug}/${product.slug}`
-		: "/catalog";
+	const categorySlug = category?.slug ?? product.categoryKey;
+
+	return `/catalog/${categorySlug}/${product.slug}`;
 }
 
 export function getProductCategory(product: Product): Category | null {

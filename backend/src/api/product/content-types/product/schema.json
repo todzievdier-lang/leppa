@@ -19,6 +19,14 @@
     "sku": {
       "type": "string"
     },
+    "baseSku": {
+      "type": "string"
+    },
+    "color": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::color.color"
+    },
     "name": {
       "type": "string",
       "required": true

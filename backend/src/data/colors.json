@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "colors": [
+    {
+      "slug": "black",
+      "name": "Черный",
+      "hex": "#111111",
+      "sortOrder": 10
+    },
+    {
+      "slug": "white",
+      "name": "Белый",
+      "hex": "#f7f5ef",
+      "sortOrder": 20
+    },
+    {
+      "slug": "gray",
+      "name": "Серый",
+      "hex": "#8c8c86",
+      "sortOrder": 30
+    },
+    {
+      "slug": "chrome",
+      "name": "Хром",
+      "hex": "#c7c9c9",
+      "sortOrder": 40
+    },
+    {
+      "slug": "gold",
+      "name": "Золото",
+      "hex": "#caa756",
+      "sortOrder": 50
+    }
+  ]
+}

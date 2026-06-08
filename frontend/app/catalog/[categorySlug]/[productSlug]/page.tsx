@@ -78,9 +78,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 		<ProductDetail
 			category={category}
 			product={product}
-			variantProducts={products.filter(
-				(candidate) => candidate.categoryKey === category.key,
-			)}
+			variantProducts={products}
 		/>
 	);
 }

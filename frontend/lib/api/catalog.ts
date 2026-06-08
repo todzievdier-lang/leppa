@@ -5,6 +5,8 @@ import {
 	paginateProducts,
 	sortProducts,
 } from "@/lib/catalog/filters";
+import localCategoriesData from "@/data/local-categories.json";
+import localProductsData from "@/data/local-products.json";
 import {
 	DEFAULT_CATALOG_PAGE,
 	DEFAULT_CATALOG_PER_PAGE,
@@ -21,6 +23,7 @@ import type {
 	Product,
 	ProductAttribute,
 	ProductAttributeValue,
+	ProductColor,
 	ProductImage,
 } from "@/types/catalog";
 
@@ -32,9 +35,12 @@ const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
 const STRAPI_REVALIDATE_SECONDS = getStrapiRevalidateSeconds();
+const WATER_HEATER_CATEGORY_KEY = "vodonagrevateli";
 const DEBUG_CATEGORIES =
 	process.env.DEBUG_CATEGORIES === "true"
 	|| process.env.NEXT_PUBLIC_DEBUG_CATEGORIES === "true";
+const LOCAL_PRODUCTS = localProductsData.products as Product[];
+const LOCAL_CATEGORIES = localCategoriesData.categories as Category[];
 
 function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
@@ -572,6 +578,33 @@ function mapStrapiCategory(entry: unknown): Category | null {
 	};
 }
 
+function mapStrapiColor(entry: unknown): ProductColor | null {
+	const fields = getStrapiEntryFields(entry);
+
+	if (!fields) {
+		return null;
+	}
+
+	const name = getString(fields.name);
+	const slug = getString(fields.slug);
+	const hex = getString(fields.hex);
+
+	if (!name || !slug || !hex) {
+		return null;
+	}
+
+	return {
+		id:
+			getString(fields.documentId) ??
+			getString(fields.id) ??
+			slug,
+		slug,
+		name,
+		hex,
+		sortOrder: getNumber(fields.sortOrder) ?? 0,
+	};
+}
+
 function mapStrapiProduct(entry: unknown): Product | null {
 	const fields = getStrapiEntryFields(entry);
 
@@ -590,6 +623,8 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		return null;
 	}
 
+	const colorFields = unwrapStrapiRelation(fields.color);
+
 	return {
 		id:
 			getString(fields.documentId) ??
@@ -597,6 +632,8 @@ function mapStrapiProduct(entry: unknown): Product | null {
 			String(getNumber(fields.id) ?? slug),
 		slug,
 		sku: getString(fields.sku),
+		baseSku: getString(fields.baseSku),
+		color: mapStrapiColor(colorFields),
 		name,
 		brand: getString(fields.brand),
 		model: getString(fields.model),
@@ -609,6 +646,187 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		videos: mapProductVideos(fields.videos),
 		attributes: mapProductAttributes(fields.attributes),
 	};
+}
+
+function getProductAttributeValue(
+	product: Product,
+	key: string,
+): ProductAttributeValue | null {
+	return product.attributes.find((attribute) => attribute.key === key)?.value ?? null;
+}
+
+function getProductAttributeString(product: Product, key: string): string | null {
+	const value = getProductAttributeValue(product, key);
+
+	return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function normalizeWaterHeaterProduct(product: Product): Product {
+	if (product.categoryKey !== WATER_HEATER_CATEGORY_KEY) {
+		return product;
+	}
+
+	const color = getProductAttributeString(product, "color") ?? "белый / черный";
+	const countryOfOrigin =
+		getProductAttributeString(product, "countryOfOrigin") ?? "Китай";
+	const warranty =
+		getProductAttributeString(product, "warranty") ?? "Гарантийный срок 2 года";
+
+	return {
+		...product,
+		attributes: [
+			{
+				key: "widthCm",
+				label: "Ширина",
+				value: 22.6,
+				unit: "cm",
+			},
+			{
+				key: "heightCm",
+				label: "Высота",
+				value: 37,
+				unit: "cm",
+			},
+			{
+				key: "depthCm",
+				label: "Глубина",
+				value: 8.8,
+				unit: "cm",
+			},
+			{
+				key: "heaterType",
+				label: "Тип водонагревателя",
+				value: "проточный",
+			},
+			{
+				key: "heatingType",
+				label: "Вид нагрева",
+				value: "электрический",
+			},
+			{
+				key: "mountingType",
+				label: "Монтаж",
+				value: "настенный",
+			},
+			{
+				key: "powerKw",
+				label: "Мощность",
+				value: 8.8,
+				unit: "kW",
+			},
+			{
+				key: "voltageV",
+				label: "Напряжение",
+				value: 220,
+				unit: "V",
+			},
+			{
+				key: "familySize",
+				label: "Рассчитан на семью",
+				value: "2-3 человека",
+			},
+			{
+				key: "connection",
+				label: "Подводка",
+				value: "нижняя",
+			},
+			{
+				key: "control",
+				label: "Управление",
+				value: "сенсорное",
+			},
+			{
+				key: "heatingElementType",
+				label: "Вид нагревательного элемента",
+				value: "спиральный теплообменник / теплообменник",
+			},
+			{
+				key: "heatingElementMaterial",
+				label: "Материал нагревательного элемента",
+				value: "нержавеющая сталь",
+			},
+			{
+				key: "waterPoints",
+				label: "Точки водоразбора",
+				value: "для нескольких точек отбора",
+			},
+			{
+				key: "waterSupplyMethod",
+				label: "Способ подачи воды",
+				value: "напорный (закрытого типа)",
+			},
+			{
+				key: "color",
+				label: "Цвет",
+				value: color,
+			},
+			{
+				key: "orientation",
+				label: "Ориентация",
+				value: "вертикальный",
+			},
+			{
+				key: "display",
+				label: "Дисплей",
+				value: "есть",
+			},
+			{
+				key: "temperatureAdjustment",
+				label: "Регулировка температуры",
+				value: "есть",
+			},
+			{
+				key: "temperatureLimit",
+				label: "Ограничение температуры нагрева",
+				value: "есть",
+			},
+			{
+				key: "overheatProtection",
+				label: "Защита от перегрева",
+				value: "есть",
+			},
+			{
+				key: "energySaving",
+				label: "Дополнительные особенности",
+				value: "экономия электроэнергии",
+			},
+			{
+				key: "smartControl",
+				label: "Умное управление",
+				value: "есть",
+			},
+			{
+				key: "countryOfOrigin",
+				label: "Страна происхождения",
+				value: countryOfOrigin,
+			},
+			{
+				key: "warranty",
+				label: "Гарантия",
+				value: warranty,
+			},
+		],
+	};
+}
+
+function mergeLocalProducts(products: Product[]): Product[] {
+	const existingProductKeys = new Set(
+		products.map((product) => `${product.categoryKey}:${product.slug}`),
+	);
+	const missingLocalProducts = LOCAL_PRODUCTS.filter(
+		(product) => !existingProductKeys.has(`${product.categoryKey}:${product.slug}`),
+	);
+
+	return [...products, ...missingLocalProducts].map(normalizeWaterHeaterProduct);
+}
+
+function mergeLocalCategories(categories: Category[]): Category[] {
+	const existingCategoryKeys = new Set(categories.map((category) => category.key));
+	const missingLocalCategories = LOCAL_CATEGORIES.filter(
+		(category) => !existingCategoryKeys.has(category.key),
+	);
+
+	return [...categories, ...missingLocalCategories];
 }
 
 async function fetchStrapiCategories(): Promise<Category[]> {
@@ -625,9 +843,11 @@ async function fetchStrapiCategories(): Promise<Category[]> {
 	});
 	logCategoriesDebug("categories raw entries", entries);
 
-	const categories = entries
-		.map(mapStrapiCategory)
-		.filter((category): category is Category => category !== null);
+	const categories = mergeLocalCategories(
+		entries
+			.map(mapStrapiCategory)
+			.filter((category): category is Category => category !== null),
+	);
 	logCategoriesDebug("categories normalized data", categories);
 
 	return categories;
@@ -638,6 +858,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		addStrapiFields(url, [
 			"slug",
 			"sku",
+			"baseSku",
 			"name",
 			"brand",
 			"model",
@@ -655,6 +876,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		]);
 		addStrapiPopulateFields(url, "videos", ["url"]);
 		addStrapiPopulateFields(url, "category", ["slug"]);
+		addStrapiPopulateFields(url, "color", ["name", "slug", "hex", "sortOrder"]);
 		url.searchParams.set("sort", "name:asc");
 	});
 
@@ -704,7 +926,9 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	return fetchStrapiProducts();
+	const products = await fetchStrapiProducts();
+
+	return mergeLocalProducts(products);
 }
 
 export async function getProductBySlug(

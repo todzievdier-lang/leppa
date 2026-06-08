@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "slug": "flush-buttons",
+      "name": "Кнопки смыва",
+      "description": "Двухрежимные кнопки смыва WenSton для скрытых инсталляций."
+    },
+    {
+      "slug": "installations",
+      "name": "Инсталляции",
+      "description": "Инсталляции WenSton для подвесных унитазов со скрытым бачком."
+    }
+  ]
+}

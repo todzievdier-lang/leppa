@@ -2,7 +2,10 @@ import type { Product, ProductAttribute } from "@/types/catalog";
 
 const UNIT_LABELS: Record<string, string> = {
 	mm: "мм",
+	cm: "см",
 	W: "Вт",
+	kW: "кВт",
+	V: "В",
 };
 
 export function formatPrice(

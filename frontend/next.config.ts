@@ -46,6 +46,16 @@ const nextConfig: NextConfig = {
 			},
 			{
 				protocol: "https",
+				hostname: "downloader.disk.yandex.ru",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "*.storage.yandex.net",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
 				hostname: "humble-trust-72330340a8.media.strapiapp.com",
 				pathname: "/**",
 			},

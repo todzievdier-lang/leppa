@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 
@@ -11,6 +10,7 @@ import { ProductAvailabilityBadge } from "@/components/catalog/product-availabil
 import { ProductSkuCopy } from "@/components/catalog/product-sku-copy";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductInfoTabs } from "@/components/catalog/product-info-tabs";
+import { ProductKitSuggestions } from "@/components/catalog/product-kit-suggestions";
 import { ProductSizeSelector } from "@/components/catalog/product-size-selector";
 import { ProductScrollToTop } from "@/components/catalog/product-scroll-to-top";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,9 @@ import {
 	getProductImageAlt,
 } from "@/lib/catalog/helpers";
 import {
-	getProductColorOptions,
-	getSelectedColorOption,
-} from "@/lib/catalog/product-options";
-import { getProductSizeVariants } from "@/lib/catalog/product-variants";
+	getProductColorVariants,
+	getProductSizeVariants,
+} from "@/lib/catalog/product-variants";
 import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
 
@@ -41,15 +40,14 @@ export function ProductDetail({
 	const galleryFallbackAlt = getProductImageAlt(product);
 	const categoryHref = getCategoryHref(category);
 	const sizeVariants = getProductSizeVariants(product, variantProducts, category);
-	const colorOptions = getProductColorOptions(product);
-	const [selectedColorValue, setSelectedColorValue] = useState(
-		colorOptions[0]?.value ?? null,
-	);
-	const selectedColor = getSelectedColorOption(colorOptions, selectedColorValue);
+	const colorVariants = getProductColorVariants(product, variantProducts, category);
+	const activeColor = colorVariants.find((variant) => variant.isActive)?.label
+		?? product.color?.name
+		?? null;
 	const shopProduct = getShopProductSnapshot(
 		product,
 		category,
-		selectedColor ? [{ label: "Цвет", value: selectedColor.label }] : [],
+		activeColor ? [{ label: "Цвет", value: activeColor }] : [],
 	);
 	const intro = product.description
 		.split(/\n{2,}/)
@@ -111,9 +109,8 @@ export function ProductDetail({
 
 						<ProductColorSelector
 							className="mt-6"
-							selectedValue={selectedColor?.value ?? null}
-							onSelect={setSelectedColorValue}
-							options={colorOptions}
+							currentProductId={product.id}
+							variants={colorVariants}
 						/>
 
 						<div className="mt-6 border-b border-hairline py-5">
@@ -125,6 +122,13 @@ export function ProductDetail({
 						<div className="mt-5">
 							<ProductActions product={shopProduct} />
 						</div>
+
+						<ProductKitSuggestions
+							category={category}
+							className="mt-5"
+							product={product}
+							products={variantProducts}
+						/>
 
 						<div className="mt-3">
 							<Button

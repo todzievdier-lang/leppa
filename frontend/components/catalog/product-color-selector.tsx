@@ -1,27 +1,27 @@
 "use client";
 
+import Link from "next/link";
+
 import { cn } from "@/lib/utils";
 
-import type { ProductColorOption } from "@/lib/catalog/product-options";
+import type { ProductColorVariant } from "@/lib/catalog/product-variants";
 
 type ProductColorSelectorVariant = "card" | "detail";
 
 type ProductColorSelectorProps = {
-	options: ProductColorOption[];
-	selectedValue: string | null;
+	variants: ProductColorVariant[];
+	currentProductId: string;
 	className?: string;
 	variant?: ProductColorSelectorVariant;
-	onSelect: (value: string) => void;
 };
 
 export function ProductColorSelector({
-	options,
-	selectedValue,
+	variants,
+	currentProductId,
 	className,
 	variant = "detail",
-	onSelect,
 }: ProductColorSelectorProps) {
-	if (options.length <= 1) {
+	if (variants.length <= 1) {
 		return null;
 	}
 
@@ -38,38 +38,61 @@ export function ProductColorSelector({
 			<div
 				aria-label="Цвета товара"
 				className={cn("flex flex-wrap", isCard ? "gap-2" : "gap-2.5")}>
-				{options.map((option) => {
-					const isActive = option.value === selectedValue;
+				{variants.map((item) => {
+					const isActive = item.product.id === currentProductId;
+					const title = [
+						item.label,
+						item.inStock ? null : "нет в наличии",
+					]
+						.filter(Boolean)
+						.join(", ");
+					const swatch = (
+						<span
+							aria-hidden="true"
+							className={cn(
+								"rounded-full border border-black/10",
+								isCard ? "size-6" : "size-7",
+								item.isLight && "shadow-inner",
+							)}
+							style={{ backgroundColor: item.hex }}
+						/>
+					);
+
+					if (isActive && !isCard) {
+						return (
+							<span
+								key={item.product.id}
+								aria-current="true"
+								title={title}
+								className={cn(
+									"inline-flex shrink-0 items-center justify-center rounded-full border bg-canvas",
+									isCard ? "size-9" : "size-11",
+									"border-ink shadow-control",
+									!item.inStock && "opacity-60",
+								)}>
+								{swatch}
+							</span>
+						);
+					}
 
 					return (
-						<button
-							key={option.value}
-							type="button"
-							aria-label={`Выбрать цвет: ${option.label}`}
-							aria-pressed={isActive}
-							title={option.label}
+						<Link
+							key={item.product.id}
+							href={item.href}
+							scroll={false}
+							aria-current={isActive ? "true" : undefined}
+							aria-label={`Выбрать цвет: ${item.label}`}
+							title={title}
 							className={cn(
 								"inline-flex shrink-0 items-center justify-center rounded-full border bg-canvas transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 								isCard ? "size-9" : "size-11",
 								isActive
 									? "border-ink shadow-control"
 									: "border-hairline hover:border-hairline-strong hover:shadow-control",
-							)}
-							onClick={(event) => {
-								event.preventDefault();
-								event.stopPropagation();
-								onSelect(option.value);
-							}}>
-							<span
-								aria-hidden="true"
-								className={cn(
-									"rounded-full border border-black/10",
-									isCard ? "size-6" : "size-7",
-									option.value.includes("бел") && "shadow-inner",
-								)}
-								style={{ backgroundColor: option.swatch }}
-							/>
-						</button>
+								!item.inStock && "opacity-60",
+							)}>
+							{swatch}
+						</Link>
 					);
 				})}
 			</div>

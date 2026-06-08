@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 
 import { ProductColorSelector } from "@/components/catalog/product-color-selector";
@@ -12,10 +12,9 @@ import { surfaceVariants } from "@/components/ui/surface";
 import { productMediaFrameClassName } from "@/components/media/product-media-frame";
 import { getProductHref, getProductImageAlt } from "@/lib/catalog/helpers";
 import {
-	getProductColorOptions,
-	getSelectedColorOption,
-} from "@/lib/catalog/product-options";
-import { getProductSizeVariants } from "@/lib/catalog/product-variants";
+	getProductColorVariants,
+	getProductSizeVariants,
+} from "@/lib/catalog/product-variants";
 import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
@@ -36,24 +35,16 @@ export function ProductCard({
 		() => getProductSizeVariants(product, variantProducts, category),
 		[category, product, variantProducts],
 	);
-	const [selectedProductId, setSelectedProductId] = useState(product.id);
-	const selectedProduct =
-		sizeVariants.find((variant) => variant.product.id === selectedProductId)
-			?.product ?? product;
-	const colorOptions = getProductColorOptions(selectedProduct);
-	const [selectedColorValue, setSelectedColorValue] = useState(
-		colorOptions[0]?.value ?? null,
+	const colorVariants = useMemo(
+		() => getProductColorVariants(product, variantProducts, category),
+		[category, product, variantProducts],
 	);
-	const selectedColor = getSelectedColorOption(
-		colorOptions,
-		selectedColorValue,
-	);
-	const imageAlt = getProductImageAlt(selectedProduct);
-	const href = getProductHref(selectedProduct, category);
+	const imageAlt = getProductImageAlt(product);
+	const href = getProductHref(product, category);
 	const shopProduct = getShopProductSnapshot(
-		selectedProduct,
+		product,
 		category,
-		selectedColor ? [{ label: "Цвет", value: selectedColor.label }] : [],
+		product.color?.name ? [{ label: "Цвет", value: product.color.name }] : [],
 	);
 
 	return (
@@ -72,7 +63,7 @@ export function ProductCard({
 			<div className="relative z-10">
 				<ProductCardMedia
 					href={href}
-					images={selectedProduct.images}
+					images={product.images}
 					alt={imageAlt}
 				/>
 			</div>
@@ -80,34 +71,30 @@ export function ProductCard({
 			<div className="pointer-events-none relative z-10 flex flex-1 flex-col px-2 pb-2 pt-4 sm:px-3">
 				<div className="min-w-0">
 					<p className="min-w-0 whitespace-normal break-words mb-2 text-[1.375rem] font-bold leading-tight tracking-normal text-ink sm:text-2xl">
-						{formatProductPrice(selectedProduct)}
+						{formatProductPrice(product)}
 					</p>
 					<h2 className="line-clamp-2 min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
-						{selectedProduct.name}
+						{product.name}
 					</h2>
 					<ProductAvailabilityBadge
-						product={selectedProduct}
+						product={product}
 						className="mt-3 min-h-7 w-fit px-2.5 py-1 text-[11px]"
 					/>
 					<ProductSkuCopy
-						sku={selectedProduct.sku}
+						sku={product.sku}
 						className="mt-3 max-w-full"
 					/>
 				</div>
 
 				<div className="mt-5 grid gap-3 pb-4">
 					<ProductColorSelector
-						selectedValue={selectedColor?.value ?? null}
-						onSelect={setSelectedColorValue}
-						options={colorOptions}
+						currentProductId={product.id}
+						variants={colorVariants}
 						variant="card"
 					/>
 
 					<ProductSizeSelector
-						currentProductId={selectedProduct.id}
-						onSelectProduct={(nextProduct) => {
-							setSelectedProductId(nextProduct.id);
-						}}
+						currentProductId={product.id}
 						variant="card"
 						variants={sizeVariants}
 					/>
