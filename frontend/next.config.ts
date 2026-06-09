@@ -42,6 +42,12 @@ const configuredStrapiCloudImagePattern =
 			}
 		: null;
 
+const strapiCloudMediaImagePattern = {
+	protocol: "https" as const,
+	hostname: "*.media.strapiapp.com",
+	pathname: "/**",
+};
+
 const nextConfig: NextConfig = {
 	images: {
 		// Next.js 16 blocks localhost/private IPs unless explicitly allowed.
@@ -59,6 +65,7 @@ const nextConfig: NextConfig = {
 				port: "1337",
 				pathname: "/uploads/**",
 			},
+			strapiCloudMediaImagePattern,
 			...(configuredStrapiImagePattern ? [configuredStrapiImagePattern] : []),
 			...(configuredStrapiCloudImagePattern
 				? [configuredStrapiCloudImagePattern]
