@@ -265,6 +265,77 @@ export function useShopState() {
 		return "added" as const;
 	}, []);
 
+	const addManyToCart = useCallback((products: ShopProductSnapshot[]) => {
+		const availableProducts = products.filter((product) => product.inStock);
+		const unavailableCount = products.length - availableProducts.length;
+
+		if (availableProducts.length === 0) {
+			emitShopToast({
+				title: "Комплект недоступен",
+				description: "Товары из комплекта сейчас не в наличии.",
+			});
+
+			return {
+				added: 0,
+				existing: 0,
+				unavailable: unavailableCount,
+			};
+		}
+
+		const currentState = readShopState();
+		const currentCartKeys = new Set(
+			currentState.cart.map((line) => getShopProductKey(line.product)),
+		);
+		const nextProductKeys = new Set<string>();
+		const newLines = availableProducts
+			.filter((product) => {
+				const productKey = getShopProductKey(product);
+
+				if (currentCartKeys.has(productKey) || nextProductKeys.has(productKey)) {
+					return false;
+				}
+
+				nextProductKeys.add(productKey);
+				return true;
+			})
+			.map((product, index) => ({
+				product,
+				quantity: 1,
+				addedAt: Date.now() - index,
+			}));
+
+		if (newLines.length === 0) {
+			emitShopToast({
+				title: "Комплект уже в корзине",
+				description: `${availableProducts.length} позиций уже добавлены.`,
+			});
+
+			return {
+				added: 0,
+				existing: availableProducts.length,
+				unavailable: unavailableCount,
+			};
+		}
+
+		writeShopState({
+			...currentState,
+			cart: [...newLines, ...currentState.cart],
+		});
+		emitShopToast({
+			title:
+				newLines.length === availableProducts.length && unavailableCount === 0
+					? "Комплект добавлен в корзину"
+					: "Добавлены товары из комплекта",
+			description: `${newLines.length} из ${products.length} позиций.`,
+		});
+
+		return {
+			added: newLines.length,
+			existing: availableProducts.length - newLines.length,
+			unavailable: unavailableCount,
+		};
+	}, []);
+
 	const incrementCartQuantity = useCallback((product: ShopProductSnapshot) => {
 		if (!product.inStock) {
 			emitShopToast({
@@ -427,6 +498,7 @@ export function useShopState() {
 			[favoriteIds],
 		),
 		addToCart,
+		addManyToCart,
 		clearCart,
 		clearFavorites,
 		incrementCartQuantity,

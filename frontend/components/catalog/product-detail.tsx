@@ -123,12 +123,6 @@ export function ProductDetail({
 							<ProductActions product={shopProduct} />
 						</div>
 
-						<ProductKitSuggestions
-							className="mt-5"
-							product={product}
-							products={variantProducts}
-						/>
-
 						<div className="mt-3">
 							<Button
 								asChild
@@ -168,6 +162,12 @@ export function ProductDetail({
 						</dl> */}
 					</div>
 				</div>
+
+				<ProductKitSuggestions
+					category={category}
+					product={product}
+					products={variantProducts}
+				/>
 
 				<ProductInfoTabs
 					attributes={product.attributes}
