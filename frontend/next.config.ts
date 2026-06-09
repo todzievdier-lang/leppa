@@ -2,6 +2,46 @@ import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
+function normalizeUrl(value: string | undefined): URL | null {
+	const normalizedValue = value?.trim().replace(/\/+$/, "");
+
+	if (!normalizedValue || normalizedValue.includes("api.example.com")) {
+		return null;
+	}
+
+	try {
+		return new URL(normalizedValue);
+	} catch {
+		return null;
+	}
+}
+
+const configuredStrapiUrl =
+	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
+	?? normalizeUrl(process.env.NEXT_PUBLIC_API_URL)
+	?? normalizeUrl(process.env.STRAPI_API_URL);
+
+const configuredStrapiImagePattern = configuredStrapiUrl
+	? {
+			protocol: configuredStrapiUrl.protocol.replace(":", "") as "http" | "https",
+			hostname: configuredStrapiUrl.hostname,
+			port: configuredStrapiUrl.port,
+			pathname: "/uploads/**",
+		}
+	: null;
+
+const configuredStrapiCloudImagePattern =
+	configuredStrapiUrl?.hostname.endsWith(".strapiapp.com")
+		? {
+				protocol: "https" as const,
+				hostname: configuredStrapiUrl.hostname.replace(
+					".strapiapp.com",
+					".media.strapiapp.com",
+				),
+				pathname: "/**",
+			}
+		: null;
+
 const nextConfig: NextConfig = {
 	images: {
 		// Next.js 16 blocks localhost/private IPs unless explicitly allowed.
@@ -19,46 +59,10 @@ const nextConfig: NextConfig = {
 				port: "1337",
 				pathname: "/uploads/**",
 			},
-			{
-				protocol: "https",
-				hostname: "disk.yandex.ru",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.disk.yandex.ru",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "disk.yandex.com",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.disk.yandex.com",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "yadi.sk",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "downloader.disk.yandex.ru",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.storage.yandex.net",
-				pathname: "/**",
-			},
-			{
-				protocol: "https",
-				hostname: "humble-trust-72330340a8.media.strapiapp.com",
-				pathname: "/**",
-			},
+			...(configuredStrapiImagePattern ? [configuredStrapiImagePattern] : []),
+			...(configuredStrapiCloudImagePattern
+				? [configuredStrapiCloudImagePattern]
+				: []),
 		],
 	},
 };

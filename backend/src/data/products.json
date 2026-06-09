@@ -12,21 +12,7 @@
       "price": null,
       "inStock": true,
       "description": "Инсталляция WenSton для подвесного унитаза со скрытым бачком, рамой, шумоизоляцией и комплектом крепежа.\n\nПодходит для комплекта с подвесным унитазом и кнопкой смыва WenSton.",
-      "images": [
-        {
-          "url": "/products/kit/installation-details.png",
-          "role": "main",
-          "alt": "Инсталляция WenSton для подвесного унитаза"
-        },
-        {
-          "url": "/products/kit/installation-main.png",
-          "alt": "Комплект подвесного унитаза с инсталляцией"
-        },
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "alt": "Инсталляция WenSton с кнопкой смыва"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -76,13 +62,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-black.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton NOW, черный"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -123,13 +103,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton NOW, белый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -170,13 +144,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton NOW, серый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -217,13 +185,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-black.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton SLIM, черный"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -264,13 +226,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton SLIM, белый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -311,13 +267,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton SLIM, серый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -358,13 +308,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-black.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton LINE, черный"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -405,13 +349,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton LINE, белый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",
@@ -452,13 +390,7 @@
       "price": null,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
-      "images": [
-        {
-          "url": "/products/kit/flush-button-light.png",
-          "role": "main",
-          "alt": "Кнопка смыва WenSton LINE, серый"
-        }
-      ],
+      "images": [],
       "attributes": [
         {
           "key": "productType",

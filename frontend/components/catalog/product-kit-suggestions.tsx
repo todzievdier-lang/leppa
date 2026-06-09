@@ -11,7 +11,7 @@ import {
 import { formatProductPrice } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
 
-import type { Category, Product, ProductAttributeValue } from "@/types/catalog";
+import type { Product, ProductAttributeValue } from "@/types/catalog";
 
 type KitPart = "toilet" | "installation" | "flush-button";
 
@@ -121,12 +121,10 @@ function getSuggestedProducts(product: Product, products: Product[]) {
 }
 
 export function ProductKitSuggestions({
-	category,
 	className,
 	product,
 	products,
 }: {
-	category: Category;
 	className?: string;
 	product: Product;
 	products: Product[];

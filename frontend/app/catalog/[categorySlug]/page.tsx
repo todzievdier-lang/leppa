@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { CatalogListing } from "@/components/catalog/catalog-listing";
-import { getCatalog, getCategories, getCategoryBySlug } from "@/lib/api";
+import { getCatalog, getCategoryBySlug } from "@/lib/api";
 import {
 	parseCatalogSearchParams,
 	type CatalogSearchParams,
@@ -13,14 +13,6 @@ type CategoryPageProps = {
 	params: Promise<{ categorySlug: string }>;
 	searchParams: Promise<CatalogSearchParams>;
 };
-
-export async function generateStaticParams() {
-	const categories = await getCategories();
-
-	return categories.map((category) => ({
-		categorySlug: category.slug,
-	}));
-}
 
 export async function generateMetadata({
 	params,

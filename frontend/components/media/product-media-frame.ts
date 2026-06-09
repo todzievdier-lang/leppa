@@ -3,12 +3,6 @@ import { cn } from "@/lib/utils";
 
 export const PRODUCT_IMAGE_FALLBACK = "/no-image.png";
 
-const YANDEX_DISK_SHARE_HOSTNAMES = new Set([
-	"disk.yandex.ru",
-	"disk.yandex.com",
-	"yadi.sk",
-]);
-
 export type ProductMediaFrameVariant =
 	| "card"
 	| "gallery"
@@ -41,21 +35,6 @@ export function getSafeProductImageSrc(src?: string | null) {
 
 	if (!normalizedSrc) {
 		return PRODUCT_IMAGE_FALLBACK;
-	}
-
-	try {
-		const { hostname } = new URL(normalizedSrc);
-		const normalizedHostname = hostname.toLocaleLowerCase("en-US");
-
-		if (
-			YANDEX_DISK_SHARE_HOSTNAMES.has(normalizedHostname)
-			|| normalizedHostname.endsWith(".disk.yandex.ru")
-			|| normalizedHostname.endsWith(".disk.yandex.com")
-		) {
-			return PRODUCT_IMAGE_FALLBACK;
-		}
-	} catch {
-		// Relative app assets like /no-image.png are valid image sources.
 	}
 
 	return normalizedSrc;

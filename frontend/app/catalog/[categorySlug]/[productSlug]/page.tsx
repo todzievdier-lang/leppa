@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 
 import { ProductDetail } from "@/components/catalog/product-detail";
 import {
-	getCategories,
 	getCategoryBySlug,
 	getProductBySlug,
 	getProducts,
@@ -16,23 +15,6 @@ type ProductPageProps = {
 		productSlug: string;
 	}>;
 };
-
-export async function generateStaticParams() {
-	const [categories, products] = await Promise.all([
-		getCategories(),
-		getProducts(),
-	]);
-
-	return products.flatMap((product) => {
-		const category = categories.find(
-			(category) => category.key === product.categoryKey,
-		);
-
-		return category
-			? [{ categorySlug: category.slug, productSlug: product.slug }]
-			: [];
-	});
-}
 
 export async function generateMetadata({
 	params,

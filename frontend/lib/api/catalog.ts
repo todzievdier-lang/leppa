@@ -5,8 +5,6 @@ import {
 	paginateProducts,
 	sortProducts,
 } from "@/lib/catalog/filters";
-import localCategoriesData from "@/data/local-categories.json";
-import localProductsData from "@/data/local-products.json";
 import {
 	DEFAULT_CATALOG_PAGE,
 	DEFAULT_CATALOG_PER_PAGE,
@@ -29,18 +27,13 @@ import type {
 
 type PlainRecord = Record<string, unknown>;
 
-const DEFAULT_STRAPI_API_URL = "https://humble-trust-72330340a8.strapiapp.com";
 const STRAPI_API_URL = getConfiguredStrapiApiUrl();
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
-const STRAPI_REVALIDATE_SECONDS = getStrapiRevalidateSeconds();
-const WATER_HEATER_CATEGORY_KEY = "vodonagrevateli";
 const DEBUG_CATEGORIES =
 	process.env.DEBUG_CATEGORIES === "true"
 	|| process.env.NEXT_PUBLIC_DEBUG_CATEGORIES === "true";
-const LOCAL_PRODUCTS = localProductsData.products as Product[];
-const LOCAL_CATEGORIES = localCategoriesData.categories as Category[];
 
 function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
@@ -52,16 +45,19 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	return normalizedValue;
 }
 
-function getConfiguredStrapiApiUrl(): string {
+function getConfiguredStrapiApiUrl(): string | null {
 	return (
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL)
 		?? normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
-		?? DEFAULT_STRAPI_API_URL
 	);
 }
 
-function isLocalStrapiApiUrl(value: string): boolean {
+function isLocalStrapiApiUrl(value: string | null): boolean {
+	if (!value) {
+		return false;
+	}
+
 	try {
 		const hostname = new URL(value).hostname;
 
@@ -77,12 +73,6 @@ function getConfiguredStrapiApiToken(): string | null {
 	}
 
 	return process.env.STRAPI_API_TOKEN?.trim() || null;
-}
-
-function getStrapiRevalidateSeconds() {
-	const value = Number(process.env.STRAPI_REVALIDATE_SECONDS);
-
-	return Number.isFinite(value) && value > 0 ? value : 300;
 }
 
 function isRecord(value: unknown): value is PlainRecord {
@@ -182,7 +172,7 @@ async function fetchStrapiJson(url: URL, pathname: string): Promise<unknown | nu
 	try {
 		const response = await fetch(url, {
 			headers: getStrapiRequestHeaders(),
-			next: { revalidate: STRAPI_REVALIDATE_SECONDS },
+			cache: "no-store",
 		});
 
 		if (!response.ok) {
@@ -648,187 +638,6 @@ function mapStrapiProduct(entry: unknown): Product | null {
 	};
 }
 
-function getProductAttributeValue(
-	product: Product,
-	key: string,
-): ProductAttributeValue | null {
-	return product.attributes.find((attribute) => attribute.key === key)?.value ?? null;
-}
-
-function getProductAttributeString(product: Product, key: string): string | null {
-	const value = getProductAttributeValue(product, key);
-
-	return typeof value === "string" && value.trim() ? value.trim() : null;
-}
-
-function normalizeWaterHeaterProduct(product: Product): Product {
-	if (product.categoryKey !== WATER_HEATER_CATEGORY_KEY) {
-		return product;
-	}
-
-	const color = getProductAttributeString(product, "color") ?? "белый / черный";
-	const countryOfOrigin =
-		getProductAttributeString(product, "countryOfOrigin") ?? "Китай";
-	const warranty =
-		getProductAttributeString(product, "warranty") ?? "Гарантийный срок 2 года";
-
-	return {
-		...product,
-		attributes: [
-			{
-				key: "widthCm",
-				label: "Ширина",
-				value: 22.6,
-				unit: "cm",
-			},
-			{
-				key: "heightCm",
-				label: "Высота",
-				value: 37,
-				unit: "cm",
-			},
-			{
-				key: "depthCm",
-				label: "Глубина",
-				value: 8.8,
-				unit: "cm",
-			},
-			{
-				key: "heaterType",
-				label: "Тип водонагревателя",
-				value: "проточный",
-			},
-			{
-				key: "heatingType",
-				label: "Вид нагрева",
-				value: "электрический",
-			},
-			{
-				key: "mountingType",
-				label: "Монтаж",
-				value: "настенный",
-			},
-			{
-				key: "powerKw",
-				label: "Мощность",
-				value: 8.8,
-				unit: "kW",
-			},
-			{
-				key: "voltageV",
-				label: "Напряжение",
-				value: 220,
-				unit: "V",
-			},
-			{
-				key: "familySize",
-				label: "Рассчитан на семью",
-				value: "2-3 человека",
-			},
-			{
-				key: "connection",
-				label: "Подводка",
-				value: "нижняя",
-			},
-			{
-				key: "control",
-				label: "Управление",
-				value: "сенсорное",
-			},
-			{
-				key: "heatingElementType",
-				label: "Вид нагревательного элемента",
-				value: "спиральный теплообменник / теплообменник",
-			},
-			{
-				key: "heatingElementMaterial",
-				label: "Материал нагревательного элемента",
-				value: "нержавеющая сталь",
-			},
-			{
-				key: "waterPoints",
-				label: "Точки водоразбора",
-				value: "для нескольких точек отбора",
-			},
-			{
-				key: "waterSupplyMethod",
-				label: "Способ подачи воды",
-				value: "напорный (закрытого типа)",
-			},
-			{
-				key: "color",
-				label: "Цвет",
-				value: color,
-			},
-			{
-				key: "orientation",
-				label: "Ориентация",
-				value: "вертикальный",
-			},
-			{
-				key: "display",
-				label: "Дисплей",
-				value: "есть",
-			},
-			{
-				key: "temperatureAdjustment",
-				label: "Регулировка температуры",
-				value: "есть",
-			},
-			{
-				key: "temperatureLimit",
-				label: "Ограничение температуры нагрева",
-				value: "есть",
-			},
-			{
-				key: "overheatProtection",
-				label: "Защита от перегрева",
-				value: "есть",
-			},
-			{
-				key: "energySaving",
-				label: "Дополнительные особенности",
-				value: "экономия электроэнергии",
-			},
-			{
-				key: "smartControl",
-				label: "Умное управление",
-				value: "есть",
-			},
-			{
-				key: "countryOfOrigin",
-				label: "Страна происхождения",
-				value: countryOfOrigin,
-			},
-			{
-				key: "warranty",
-				label: "Гарантия",
-				value: warranty,
-			},
-		],
-	};
-}
-
-function mergeLocalProducts(products: Product[]): Product[] {
-	const existingProductKeys = new Set(
-		products.map((product) => `${product.categoryKey}:${product.slug}`),
-	);
-	const missingLocalProducts = LOCAL_PRODUCTS.filter(
-		(product) => !existingProductKeys.has(`${product.categoryKey}:${product.slug}`),
-	);
-
-	return [...products, ...missingLocalProducts].map(normalizeWaterHeaterProduct);
-}
-
-function mergeLocalCategories(categories: Category[]): Category[] {
-	const existingCategoryKeys = new Set(categories.map((category) => category.key));
-	const missingLocalCategories = LOCAL_CATEGORIES.filter(
-		(category) => !existingCategoryKeys.has(category.key),
-	);
-
-	return [...categories, ...missingLocalCategories];
-}
-
 async function fetchStrapiCategories(): Promise<Category[]> {
 	const entries = await fetchStrapiCollection("/api/categories", (url) => {
 		addStrapiFields(url, ["name", "slug", "description"]);
@@ -843,11 +652,9 @@ async function fetchStrapiCategories(): Promise<Category[]> {
 	});
 	logCategoriesDebug("categories raw entries", entries);
 
-	const categories = mergeLocalCategories(
-		entries
-			.map(mapStrapiCategory)
-			.filter((category): category is Category => category !== null),
-	);
+	const categories = entries
+		.map(mapStrapiCategory)
+		.filter((category): category is Category => category !== null);
 	logCategoriesDebug("categories normalized data", categories);
 
 	return categories;
@@ -926,9 +733,7 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	const products = await fetchStrapiProducts();
-
-	return mergeLocalProducts(products);
+	return fetchStrapiProducts();
 }
 
 export async function getProductBySlug(

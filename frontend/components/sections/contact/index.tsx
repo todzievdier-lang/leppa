@@ -1,8 +1,5 @@
-"use client";
-
 import { Clock, MapPin } from "lucide-react";
 
-import { useApi } from "@/hooks/useApi";
 import { getContact } from "@/lib/api/contact";
 
 import { ContactGrid, getContactCardItems } from "./contact-grid";
@@ -52,17 +49,10 @@ function hasContactContent(contact: Contact, cardCount: number) {
 	);
 }
 
-export function ContactSection() {
-	const {
-		data: contact,
-		loading,
-		error,
-	} = useApi<Contact>(getContact);
-
-	const contactItems = contact ? getContactCardItems(contact) : [];
-	const hasContent = contact
-		? hasContactContent(contact, contactItems.length)
-		: false;
+export async function ContactSection() {
+	const contact = await getContact();
+	const contactItems = getContactCardItems(contact);
+	const hasContent = hasContactContent(contact, contactItems.length);
 
 	return (
 		<section
@@ -83,9 +73,7 @@ export function ContactSection() {
 					</p>
 				</div>
 
-				{loading ? (
-					<ContactState variant="loading" />
-				) : contact && hasContent ? (
+				{hasContent ? (
 					<>
 						<ContactGrid
 							items={contactItems}
@@ -132,10 +120,8 @@ export function ContactSection() {
 							</section>
 						) : null}
 					</>
-				) : error ? (
-					<ContactState variant="error" />
 				) : (
-					<ContactState variant="empty" />
+					<ContactState />
 				)}
 			</div>
 		</section>

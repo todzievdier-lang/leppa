@@ -124,7 +124,6 @@ export function ProductDetail({
 						</div>
 
 						<ProductKitSuggestions
-							category={category}
 							className="mt-5"
 							product={product}
 							products={variantProducts}

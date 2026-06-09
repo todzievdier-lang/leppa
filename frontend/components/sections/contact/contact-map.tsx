@@ -25,16 +25,3 @@ export function ContactMap({
 		</div>
 	);
 }
-
-export function ContactMapSkeleton({ className }: { className?: string }) {
-	return (
-		<div
-			aria-hidden="true"
-			className={cn(
-				"rounded-md border border-hairline bg-canvas p-3 shadow-control",
-				className,
-			)}>
-			<div className="aspect-[4/3] animate-pulse rounded-sm bg-toolbar sm:aspect-[16/9]" />
-		</div>
-	);
-}

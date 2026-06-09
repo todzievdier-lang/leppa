@@ -8,6 +8,8 @@ import { ShopToasts } from "@/components/shop/shop-toasts";
 
 import { cn } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Leppa & WenSton",
 	description: "Премиальная витрина для современных товаров для ванной комнаты",
@@ -27,6 +29,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang='ru'
+			data-scroll-behavior='smooth'
 			className={cn("h-full min-h-dvh scroll-smooth", "font-sans")}>
 			<body
 				className={cn(

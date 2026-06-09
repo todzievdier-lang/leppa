@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-const DEFAULT_STRAPI_API_URL = "https://humble-trust-72330340a8.strapiapp.com";
 const ORDER_REQUEST_TIMEOUT_MS = 15000;
 
 function normalizeApiUrl(value: string | undefined): string | null {
@@ -13,12 +12,11 @@ function normalizeApiUrl(value: string | undefined): string | null {
 	return normalizedValue;
 }
 
-function getStrapiApiUrl(): string {
+function getStrapiApiUrl(): string | null {
 	return (
 		normalizeApiUrl(process.env.STRAPI_API_URL)
 		?? normalizeApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 		?? normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL)
-		?? DEFAULT_STRAPI_API_URL
 	);
 }
 
@@ -67,6 +65,18 @@ export async function POST(request: Request) {
 	}
 
 	const apiUrl = getStrapiApiUrl();
+
+	if (!apiUrl) {
+		return NextResponse.json(
+			{
+				error: {
+					message: "Сервер заказов не настроен.",
+				},
+			},
+			{ status: 500 },
+		);
+	}
+
 	const headers = new Headers({
 		"Content-Type": "application/json",
 	});

@@ -1,9 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import contacts from "@/data/contacts.json";
 import { Button } from "@/components/ui/button";
-import { useApi } from "@/hooks/useApi";
 import { getFooterCategories } from "@/lib/api";
 import {
 	getEmailHref,
@@ -15,15 +12,8 @@ import type { CategoryLink, Contact } from "@/types";
 
 const footerContact: Contact = contacts;
 
-export function Footer() {
-	const {
-		data: categories,
-		loading,
-		error,
-	} = useApi<CategoryLink[]>(getFooterCategories);
-
-	const footerCategories = categories ?? [];
-
+export async function Footer() {
+	const footerCategories: CategoryLink[] = await getFooterCategories();
 	const phoneHref = getPhoneHref(footerContact.phone);
 	const emailHref = getEmailHref(footerContact.email);
 
@@ -47,11 +37,7 @@ export function Footer() {
 					<h2 className="text-sm font-semibold text-ink">Каталог</h2>
 
 					<nav className="mt-4 grid gap-2 text-sm text-ink-muted">
-						{loading ? (
-							<p>Загружаем категории...</p>
-						) : error ? (
-							<p>Не удалось загрузить категории.</p>
-						) : (
+						{footerCategories.length > 0 ? (
 							footerCategories.map((category) => (
 								<Link
 									key={category.key}
@@ -60,6 +46,8 @@ export function Footer() {
 									{category.name}
 								</Link>
 							))
+						) : (
+							<p>Категории недоступны.</p>
 						)}
 					</nav>
 				</div>
