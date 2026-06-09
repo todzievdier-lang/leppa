@@ -20,6 +20,12 @@
       "sortOrder": 30
     },
     {
+      "slug": "brown",
+      "name": "Коричневый",
+      "hex": "#7a4a2a",
+      "sortOrder": 35
+    },
+    {
       "slug": "chrome",
       "name": "Хром",
       "hex": "#c7c9c9",
