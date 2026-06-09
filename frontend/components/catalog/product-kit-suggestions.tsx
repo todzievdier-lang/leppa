@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { Check, Plus, ShoppingBag } from "lucide-react";
 
 import { FilledImage } from "@/components/media/filled-image";
 import { Button } from "@/components/ui/button";
+import { surfaceVariants } from "@/components/ui/surface";
 import {
 	getProductHref,
 	getProductPrimaryImage,
@@ -18,12 +19,12 @@ import { formatPrice, formatProductPrice } from "@/lib/utils/price";
 import type { Category, Product, ProductAttributeValue } from "@/types/catalog";
 import type { ShopProductSnapshot } from "@/types/shop";
 
-type KitPart = "toilet" | "installation" | "flush-button" | "sound-panel";
+type KitPart = "toilet" | "installation" | "flush-button" | "sound-panel" | "mirror";
 
 type ProductBundle = {
 	id: string;
 	items: Product[];
-	name: string;
+	discountPercent: number;
 	originalTotal: number | null;
 	discountAmount: number | null;
 	bundleTotal: number | null;
@@ -31,13 +32,9 @@ type ProductBundle = {
 };
 
 const BUNDLE_DISCOUNT_RATE = 0.06;
-const MAX_BUNDLES = 2;
-const KIT_PART_ORDER: KitPart[] = [
-	"installation",
-	"toilet",
-	"flush-button",
-	"sound-panel",
-];
+const BUNDLE_OFFER_LABEL = "Выгодное предложение";
+const MAX_BUNDLE_PRODUCTS = 5;
+const MAX_BUNDLES = 1;
 
 function normalizeText(value: string | null | undefined) {
 	return (value ?? "").trim().toLocaleLowerCase("ru-RU");
@@ -70,6 +67,15 @@ function getKitPart(product: Product): KitPart | null {
 		|| name.includes("шумоизоляц")
 	) {
 		return "sound-panel";
+	}
+
+	if (
+		product.categoryKey === "zerkala"
+		|| productType.includes("зеркал")
+		|| kitRole.includes("зеркал")
+		|| name.includes("зеркал")
+	) {
+		return "mirror";
 	}
 
 	if (
@@ -108,11 +114,11 @@ function getPartLabel(part: KitPart | null) {
 		return "Панель";
 	}
 
-	return "Унитаз";
-}
+	if (part === "mirror") {
+		return "Зеркало";
+	}
 
-function getProductGroupKey(product: Product) {
-	return product.baseSku ?? product.model ?? product.sku ?? product.slug;
+	return "Унитаз";
 }
 
 function uniqueProducts(products: Product[]) {
@@ -128,87 +134,11 @@ function uniqueProducts(products: Product[]) {
 	});
 }
 
-function uniqueProductGroups(products: Product[], currentProduct: Product) {
-	const currentColorSlug = currentProduct.color?.slug ?? null;
-	const bestProductsByGroup = new Map<string, Product>();
-
-	products.forEach((product) => {
-		const productGroupKey = getProductGroupKey(product);
-		const existingProduct = bestProductsByGroup.get(productGroupKey);
-
-		if (!existingProduct) {
-			bestProductsByGroup.set(productGroupKey, product);
-			return;
-		}
-
-		const existingMatchesColor =
-			currentColorSlug !== null && existingProduct.color?.slug === currentColorSlug;
-		const productMatchesColor =
-			currentColorSlug !== null && product.color?.slug === currentColorSlug;
-
-		if (
-			(product.inStock && !existingProduct.inStock)
-			|| (productMatchesColor && !existingMatchesColor)
-		) {
-			bestProductsByGroup.set(productGroupKey, product);
-		}
-	});
-
-	return [...bestProductsByGroup.values()];
-}
-
-function sortProductsByFit(products: Product[], currentProduct: Product) {
-	const currentColorSlug = currentProduct.color?.slug ?? null;
-
-	return [...products].sort((leftProduct, rightProduct) => {
-		const leftStockScore = leftProduct.inStock ? 0 : 1;
-		const rightStockScore = rightProduct.inStock ? 0 : 1;
-
-		if (leftStockScore !== rightStockScore) {
-			return leftStockScore - rightStockScore;
-		}
-
-		const leftColorScore =
-			currentColorSlug !== null && leftProduct.color?.slug === currentColorSlug
-				? 0
-				: 1;
-		const rightColorScore =
-			currentColorSlug !== null && rightProduct.color?.slug === currentColorSlug
-				? 0
-				: 1;
-
-		if (leftColorScore !== rightColorScore) {
-			return leftColorScore - rightColorScore;
-		}
-
-		const leftPriceScore = typeof leftProduct.price === "number" ? 0 : 1;
-		const rightPriceScore = typeof rightProduct.price === "number" ? 0 : 1;
-
-		if (leftPriceScore !== rightPriceScore) {
-			return leftPriceScore - rightPriceScore;
-		}
-
-		return leftProduct.name.localeCompare(rightProduct.name, "ru-RU");
-	});
-}
-
-function getComplementParts(currentPart: KitPart) {
-	if (currentPart === "installation") {
-		return ["toilet", "flush-button", "sound-panel"] satisfies KitPart[];
-	}
-
-	if (currentPart === "toilet") {
-		return ["installation", "flush-button", "sound-panel"] satisfies KitPart[];
-	}
-
-	if (currentPart === "flush-button") {
-		return ["installation", "toilet", "sound-panel"] satisfies KitPart[];
-	}
-
-	return ["installation", "toilet", "flush-button"] satisfies KitPart[];
-}
-
-function getBundlePriceTotals(items: Product[], currency: string) {
+function getBundlePriceTotals(
+	items: Product[],
+	currency: string,
+	discountPercent: number,
+) {
 	if (items.some((item) => typeof item.price !== "number")) {
 		return {
 			originalTotal: null,
@@ -222,7 +152,7 @@ function getBundlePriceTotals(items: Product[], currency: string) {
 		(total, item) => total + (item.price ?? 0),
 		0,
 	);
-	const discountAmount = Math.round(originalTotal * BUNDLE_DISCOUNT_RATE);
+	const discountAmount = Math.round(originalTotal * (discountPercent / 100));
 
 	return {
 		originalTotal,
@@ -232,87 +162,63 @@ function getBundlePriceTotals(items: Product[], currency: string) {
 	};
 }
 
-function buildBundles(product: Product, products: Product[]) {
-	const currentPart = getKitPart(product);
+function getProductsBySlug(products: Product[]) {
+	return new Map(products.map((product) => [product.slug, product]));
+}
 
-	if (!currentPart) {
+function getConfiguredBundleProducts(
+	product: Product,
+	productSlugs: string[],
+	productsBySlug: Map<string, Product>,
+) {
+	const items = uniqueProducts([
+		product,
+		...productSlugs
+			.filter((slug) => slug !== product.slug)
+			.map((slug) => productsBySlug.get(slug) ?? null)
+			.filter((item): item is Product => item !== null),
+	]);
+
+	return items.slice(0, MAX_BUNDLE_PRODUCTS);
+}
+
+function buildConfiguredBundles(product: Product, products: Product[]) {
+	if (product.bundles.length === 0) {
 		return [];
 	}
 
-	const productsByPart = new Map<KitPart, Product[]>();
-
-	products
-		.filter((candidate) => candidate.id !== product.id)
-		.forEach((candidate) => {
-			const candidatePart = getKitPart(candidate);
-
-			if (!candidatePart) {
-				return;
-			}
-
-			const partProducts = productsByPart.get(candidatePart) ?? [];
-
-			partProducts.push(candidate);
-			productsByPart.set(candidatePart, partProducts);
-		});
-
-	const complementParts = getComplementParts(currentPart).filter((part) =>
-		(productsByPart.get(part)?.length ?? 0) > 0,
-	);
-
-	if (complementParts.length === 0) {
-		return [];
-	}
-
-	const candidatesByPart = new Map<KitPart, Product[]>();
-
-	complementParts.forEach((part) => {
-		const candidates = sortProductsByFit(
-			uniqueProductGroups(productsByPart.get(part) ?? [], product),
-			product,
-		);
-
-		if (candidates.length > 0) {
-			candidatesByPart.set(part, candidates.slice(0, MAX_BUNDLES));
-		}
-	});
-
-	const bundleCount = Math.min(
-		MAX_BUNDLES,
-		Math.max(
-			1,
-			...complementParts.map((part) => candidatesByPart.get(part)?.length ?? 0),
-		),
-	);
+	const productsBySlug = getProductsBySlug(products);
 	const currency = product.currency ?? "RUB";
 
-	return Array.from({ length: bundleCount }, (_, bundleIndex) => {
-		const items = uniqueProducts([
-			product,
-			...complementParts
-				.map((part) => {
-					const partCandidates = candidatesByPart.get(part) ?? [];
-
-					return partCandidates[bundleIndex] ?? partCandidates[0] ?? null;
-				})
-				.filter((item): item is Product => item !== null),
-		]).sort((leftProduct, rightProduct) => {
-			const leftPart = getKitPart(leftProduct);
-			const rightPart = getKitPart(rightProduct);
-
-			return (
-				KIT_PART_ORDER.indexOf(leftPart ?? currentPart)
-				- KIT_PART_ORDER.indexOf(rightPart ?? currentPart)
+	return product.bundles
+		.slice(0, MAX_BUNDLES)
+		.map((bundle, bundleIndex): ProductBundle | null => {
+			const items = getConfiguredBundleProducts(
+				product,
+				bundle.productSlugs,
+				productsBySlug,
 			);
-		});
 
-		return {
-			id: items.map((item) => item.id).join("-"),
-			items,
-			name: `Комплект ${bundleIndex + 1}`,
-			...getBundlePriceTotals(items, currency),
-		};
-	}).filter((bundle) => bundle.items.length > 1);
+			if (items.length < 2) {
+				return null;
+			}
+
+			const discountPercent = bundle.discountPercent ?? Math.round(
+				BUNDLE_DISCOUNT_RATE * 100,
+			);
+
+			return {
+				id: `${product.id}-configured-${bundleIndex}`,
+				items,
+				discountPercent,
+				...getBundlePriceTotals(items, currency, discountPercent),
+			};
+		})
+		.filter((bundle): bundle is ProductBundle => bundle !== null);
+}
+
+function buildBundles(product: Product, products: Product[]) {
+	return buildConfiguredBundles(product, products);
 }
 
 function getDiscountedPrices(items: Product[], bundleTotal: number | null) {
@@ -356,7 +262,7 @@ function getBundleCartProducts(
 			[
 				{
 					label: "Комплект",
-					value: bundle.name,
+					value: BUNDLE_OFFER_LABEL,
 				},
 			],
 		);
@@ -368,6 +274,7 @@ function getBundleCartProducts(
 
 		return {
 			...snapshot,
+			originalPrice: item.price,
 			price: discountedPrice,
 			priceLabel: formatPrice(discountedPrice, snapshot.currency ?? "RUB"),
 		};
@@ -375,18 +282,29 @@ function getBundleCartProducts(
 }
 
 function ProductBundleItem({
+	discountAmount,
+	discountedPrice,
 	isCurrent,
 	product,
 }: {
+	discountAmount: number | null;
+	discountedPrice: number | null;
 	isCurrent: boolean;
 	product: Product;
 }) {
 	const part = getKitPart(product);
 	const href = getProductHref(product);
+	const hasDiscount = discountedPrice !== null
+		&& typeof product.price === "number"
+		&& discountedPrice < product.price;
 
 	return (
-		<article className="relative grid min-w-0 gap-3 rounded-[8px] border border-hairline bg-canvas p-3 sm:grid-cols-[6rem_minmax(0,1fr)] lg:flex-1 lg:grid-cols-1">
-			<span className="absolute right-3 top-3 z-10 inline-flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-control">
+		<article
+			className={cn(
+				surfaceVariants({ variant: "card" }),
+				"relative grid w-full min-w-0 gap-3 p-3 sm:w-60",
+			)}>
+			<span className="absolute right-3 top-3 z-10 inline-flex size-6 items-center justify-center rounded-full bg-ink text-on-dark shadow-control">
 				<Check
 					aria-hidden="true"
 					className="size-3.5"
@@ -401,9 +319,9 @@ function ProductBundleItem({
 				<FilledImage
 					src={getProductPrimaryImage(product)}
 					alt={product.name}
-					sizes="(max-width: 640px) 6rem, (max-width: 1024px) 8rem, 12rem"
-					className="aspect-square rounded-[6px]"
-					imageClassName="object-contain p-2"
+					sizes="(max-width: 640px) calc(100vw - 4rem), 15rem"
+					className="h-40 w-full rounded-sm bg-frost lg:h-44"
+					imageClassName="object-cover"
 				/>
 			</Link>
 
@@ -413,7 +331,7 @@ function ProductBundleItem({
 						{getPartLabel(part)}
 					</p>
 					{isCurrent ? (
-						<span className="rounded-full border border-hairline bg-frost px-2 py-0.5 text-[11px] font-semibold text-ink-muted">
+						<span className="rounded-full border border-hairline bg-frost px-2 py-0.5 text-[11px] font-semibold text-ink-muted shadow-control">
 							Текущий товар
 						</span>
 					) : null}
@@ -424,9 +342,27 @@ function ProductBundleItem({
 					className="mt-2 line-clamp-2 text-sm font-semibold leading-snug text-ink transition-colors hover:text-ink-muted">
 					{product.name}
 				</Link>
-				<p className="mt-2 text-sm font-semibold text-ink">
-					{formatProductPrice(product)}
-				</p>
+				<div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+					{hasDiscount ? (
+						<>
+							<p className="text-lg font-semibold leading-tight text-ink">
+								{formatPrice(discountedPrice, product.currency ?? "RUB")}
+							</p>
+							<p className="text-sm font-semibold leading-tight text-ink-muted line-through decoration-ink-muted/50">
+								{formatProductPrice(product)}
+							</p>
+							{discountAmount !== null && discountAmount > 0 ? (
+								<span className="rounded-full border border-destructive/15 bg-canvas px-2 py-0.5 text-[11px] font-semibold text-destructive shadow-control">
+									-{formatPrice(discountAmount, product.currency ?? "RUB")}
+								</span>
+							) : null}
+						</>
+					) : (
+						<p className="text-lg font-semibold leading-tight text-ink">
+							{formatProductPrice(product)}
+						</p>
+					)}
+				</div>
 			</div>
 		</article>
 	);
@@ -434,7 +370,7 @@ function ProductBundleItem({
 
 function BundleJoiner() {
 	return (
-		<div className="flex items-center justify-center text-ink-faint lg:self-center">
+		<div className="flex shrink-0 items-center justify-center text-ink-faint sm:self-center">
 			<span className="inline-flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas shadow-control">
 				<Plus
 					aria-hidden="true"
@@ -461,13 +397,12 @@ export function ProductKitSuggestions({
 		() => buildBundles(product, products),
 		[product, products],
 	);
-	const [activeBundleIndex, setActiveBundleIndex] = useState(0);
 
 	if (bundles.length === 0) {
 		return null;
 	}
 
-	const activeBundle = bundles[Math.min(activeBundleIndex, bundles.length - 1)];
+	const activeBundle = bundles[0];
 	const originalTotalLabel = activeBundle.originalTotal === null
 		? "Цена по запросу"
 		: formatPrice(activeBundle.originalTotal, activeBundle.currency);
@@ -475,66 +410,54 @@ export function ProductKitSuggestions({
 		? "Цена по запросу"
 		: formatPrice(activeBundle.bundleTotal, activeBundle.currency);
 	const discountLabel = activeBundle.discountAmount === null
-		? `Скидка ${Math.round(BUNDLE_DISCOUNT_RATE * 100)}%`
+		? `Скидка ${activeBundle.discountPercent}%`
 		: `Выгода ${formatPrice(activeBundle.discountAmount, activeBundle.currency)}`;
 	const availableCount = activeBundle.items.filter((item) => item.inStock).length;
 	const canAddBundle = availableCount > 0;
+	const discountedPrices = getDiscountedPrices(
+		activeBundle.items,
+		activeBundle.bundleTotal,
+	);
 
 	return (
 		<section
 			aria-labelledby="product-kit-title"
-			className={cn("mt-12 rounded-[8px] bg-frost px-4 py-5 sm:px-6 lg:p-7", className)}>
-			<div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+			className={cn(
+				"mt-12 p-4 sm:p-5 lg:p-6",
+				surfaceVariants({ variant: "muted" }),
+				className,
+			)}>
+			<div className="flex flex-col gap-1">
 				<div className="min-w-0">
 					<p className="text-xs font-semibold uppercase tracking-normal text-ink-faint">
 						Подобрать вместе
 					</p>
 					<h2
 						id="product-kit-title"
-						className="mt-1 text-2xl font-semibold tracking-normal text-ink sm:text-3xl">
-						Выгодные комплекты
+						className="mt-1 text-xl font-semibold tracking-normal text-ink sm:text-2xl">
+						{BUNDLE_OFFER_LABEL}
 					</h2>
 				</div>
-
-				{bundles.length > 1 ? (
-					<div
-						className="flex w-full gap-2 overflow-x-auto [scrollbar-width:none] md:w-auto [&::-webkit-scrollbar]:hidden"
-						role="tablist"
-						aria-label="Комплекты товаров">
-						{bundles.map((bundle, index) => {
-							const isActive = activeBundle.id === bundle.id;
-
-							return (
-								<button
-									key={bundle.id}
-									type="button"
-									role="tab"
-									aria-selected={isActive}
-									className={cn(
-										"shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-200",
-										isActive
-											? "border-ink bg-ink text-on-dark"
-											: "border-hairline bg-canvas text-ink-muted hover:border-hairline-strong hover:text-ink",
-									)}
-									onClick={() => {
-										setActiveBundleIndex(index);
-									}}>
-									{bundle.name}
-								</button>
-							);
-						})}
-					</div>
-				) : null}
 			</div>
 
-			<div className="mt-5 grid gap-5 rounded-[8px] bg-canvas p-3 shadow-control lg:grid-cols-[minmax(0,1fr)_minmax(15rem,18rem)] lg:items-stretch lg:p-5">
-				<div className="flex min-w-0 flex-col gap-3 lg:flex-row">
+			<div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,18rem)] lg:items-stretch">
+				<div className="flex min-w-0 max-w-[52rem] flex-wrap items-stretch gap-x-3 gap-y-4">
 					{activeBundle.items.map((item, index) => (
 						<div
 							key={item.id}
-							className="contents">
+							className={cn(
+								"flex w-full min-w-0 flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-stretch",
+								index > 0 && "sm:min-w-[17.75rem]",
+							)}>
 							{index > 0 ? <BundleJoiner /> : null}
 							<ProductBundleItem
+								discountAmount={
+									discountedPrices?.[index] !== undefined
+									&& typeof item.price === "number"
+										? item.price - discountedPrices[index]
+										: null
+								}
+								discountedPrice={discountedPrices?.[index] ?? null}
 								isCurrent={item.id === product.id}
 								product={item}
 							/>
@@ -558,11 +481,11 @@ export function ProductKitSuggestions({
 
 						<div>
 							<p className="text-sm font-semibold text-ink">Комплектом:</p>
-							<div className="mt-1 flex flex-wrap items-center gap-2">
-								<p className="text-3xl font-semibold tracking-normal text-ink">
+							<div className="mt-1 grid gap-2">
+								<p className="text-2xl font-semibold tracking-normal text-ink sm:text-3xl">
 									{bundleTotalLabel}
 								</p>
-								<span className="rounded-full border border-destructive/15 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+								<span className="w-fit rounded-full border border-destructive/15 bg-canvas px-3 py-1 text-xs font-semibold text-destructive shadow-control">
 									{discountLabel}
 								</span>
 							</div>

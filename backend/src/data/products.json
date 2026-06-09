@@ -9,7 +9,7 @@
       "brand": "WenSton",
       "model": "STW",
       "categoryKey": "installations",
-      "price": null,
+      "price": 12490,
       "inStock": true,
       "description": "Инсталляция WenSton для подвесного унитаза со скрытым бачком, рамой, шумоизоляцией и комплектом крепежа.\n\nПодходит для комплекта с подвесным унитазом и кнопкой смыва WenSton.",
       "images": [],
@@ -49,6 +49,16 @@
           "label": "Бренд",
           "value": "WenSton"
         }
+      ],
+      "bundles": [
+        {
+          "discountPercent": 6,
+          "productSlugs": [
+            "wenston-installyatsiya-dlya-podvesnogo-unitaza-stw",
+            "leppa-podvesnoy-unitaz-leppa-448",
+            "wenston-knopka-smyva-line-belaya"
+          ]
+        }
       ]
     },
     {
@@ -59,7 +69,7 @@
       "brand": "WenSton",
       "model": "NOW",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2690,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
       "images": [],
@@ -100,7 +110,7 @@
       "brand": "WenSton",
       "model": "NOW",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2490,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
       "images": [],
@@ -141,7 +151,7 @@
       "brand": "WenSton",
       "model": "NOW",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2490,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton NOW для скрытой инсталляции.",
       "images": [],
@@ -182,7 +192,7 @@
       "brand": "WenSton",
       "model": "SLIM",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 3190,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
       "images": [],
@@ -223,7 +233,7 @@
       "brand": "WenSton",
       "model": "SLIM",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2990,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
       "images": [],
@@ -264,7 +274,7 @@
       "brand": "WenSton",
       "model": "SLIM",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2990,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton SLIM для скрытой инсталляции.",
       "images": [],
@@ -305,7 +315,7 @@
       "brand": "WenSton",
       "model": "LINE",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2990,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
       "images": [],
@@ -346,7 +356,7 @@
       "brand": "WenSton",
       "model": "LINE",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2490,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
       "images": [],
@@ -387,7 +397,7 @@
       "brand": "WenSton",
       "model": "LINE",
       "categoryKey": "flush-buttons",
-      "price": null,
+      "price": 2490,
       "inStock": true,
       "description": "Двухрежимная кнопка смыва WenSton LINE для скрытой инсталляции.",
       "images": [],

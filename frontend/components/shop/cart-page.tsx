@@ -220,6 +220,20 @@ function getProductUnitPrice(product: ShopProductSnapshot): number | null {
 	return digits ? Number(digits) : null;
 }
 
+function getProductOriginalUnitPrice(product: ShopProductSnapshot): number | null {
+	const unitPrice = getProductUnitPrice(product);
+
+	if (
+		typeof product.originalPrice === "number"
+		&& Number.isFinite(product.originalPrice)
+		&& (unitPrice == null || product.originalPrice > unitPrice)
+	) {
+		return product.originalPrice;
+	}
+
+	return null;
+}
+
 function formatCartPrice(value: number | null, currency = "RUB") {
 	return value == null ? "Цена по запросу" : formatPrice(value, currency);
 }
@@ -228,6 +242,12 @@ function getLineTotal(line: CartLine): number | null {
 	const unitPrice = getProductUnitPrice(line.product);
 
 	return unitPrice == null ? null : unitPrice * line.quantity;
+}
+
+function getLineOriginalTotal(line: CartLine): number | null {
+	const originalUnitPrice = getProductOriginalUnitPrice(line.product);
+
+	return originalUnitPrice == null ? null : originalUnitPrice * line.quantity;
 }
 
 function CartPageSkeleton() {
@@ -244,13 +264,56 @@ function SummaryRow({
 	value,
 }: {
 	label: string;
-	value: string;
+	value: ReactNode;
 }) {
 	return (
 		<div className="flex items-baseline gap-2 text-sm">
 			<span className="shrink-0 text-ink-muted">{label}</span>
 			<span className="min-w-6 flex-1 border-b border-dashed border-hairline-strong" />
 			<span className="shrink-0 font-semibold text-ink">{value}</span>
+		</div>
+	);
+}
+
+function DiscountPrice({
+	align = "left",
+	currency = "RUB",
+	originalPrice,
+	price,
+	size = "md",
+}: {
+	align?: "left" | "right";
+	currency?: string;
+	originalPrice: number | null;
+	price: number | null;
+	size?: "md" | "lg";
+}) {
+	const hasDiscount = originalPrice !== null
+		&& price !== null
+		&& originalPrice > price;
+
+	return (
+		<div
+			className={cn(
+				"grid gap-1",
+				align === "right" && "justify-items-end text-right",
+			)}>
+			{hasDiscount ? (
+				<p
+					className={cn(
+						"font-semibold leading-tight text-ink-muted line-through decoration-ink-muted/50",
+						size === "lg" ? "text-lg sm:text-xl" : "text-sm",
+					)}>
+					{formatCartPrice(originalPrice, currency)}
+				</p>
+			) : null}
+			<p
+				className={cn(
+					"font-semibold leading-tight text-ink",
+					size === "lg" ? "text-3xl sm:text-4xl" : "text-lg sm:text-xl",
+				)}>
+				{formatCartPrice(price, currency)}
+			</p>
 		</div>
 	);
 }
@@ -319,7 +382,14 @@ function CartLineItem({
 	onRemove: () => void;
 }) {
 	const unitPrice = getProductUnitPrice(line.product);
+	const originalUnitPrice = getProductOriginalUnitPrice(line.product);
 	const lineTotal = getLineTotal(line);
+	const originalLineTotal = getLineOriginalTotal(line);
+	const currency = line.product.currency ?? "RUB";
+	const lineSavings =
+		originalLineTotal !== null && lineTotal !== null && originalLineTotal > lineTotal
+			? originalLineTotal - lineTotal
+			: null;
 
 	return (
 		<li className="grid gap-4 border-b border-hairline py-5 last:border-b-0 sm:grid-cols-[84px_minmax(0,1fr)] lg:grid-cols-[84px_minmax(0,1fr)_11rem_minmax(9.5rem,12rem)] lg:items-center">
@@ -352,9 +422,21 @@ function CartLineItem({
 							.join(", ")}
 					</p>
 				) : null}
-				<p className="mt-2 text-xs text-ink-muted">
-					{formatCartPrice(unitPrice, line.product.currency ?? "RUB")} / шт.
-				</p>
+				<div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+					{originalUnitPrice !== null ? (
+						<p className="text-xs font-semibold text-ink-muted line-through decoration-ink-muted/50">
+							{formatCartPrice(originalUnitPrice, currency)}
+						</p>
+					) : null}
+					<p className="text-xs font-semibold text-ink">
+						{formatCartPrice(unitPrice, currency)} / шт.
+					</p>
+					{lineSavings !== null ? (
+						<span className="rounded-full border border-destructive/15 bg-canvas px-2 py-0.5 text-[11px] font-semibold text-destructive shadow-control">
+							Скидка {formatCartPrice(lineSavings, currency)}
+						</span>
+					) : null}
+				</div>
 			</div>
 
 			<ProductCartControls
@@ -364,9 +446,12 @@ function CartLineItem({
 			/>
 
 			<div className="flex min-w-0 flex-wrap items-center justify-between gap-3 sm:col-start-2 lg:col-start-auto lg:grid lg:justify-items-end">
-				<p className="min-w-0 text-lg font-semibold leading-tight text-ink sm:text-xl lg:text-right">
-					{formatCartPrice(lineTotal, line.product.currency ?? "RUB")}
-				</p>
+				<DiscountPrice
+					align="right"
+					currency={currency}
+					originalPrice={originalLineTotal}
+					price={lineTotal}
+				/>
 				<div className="flex items-center gap-2">
 					<ProductFavoriteButton
 						compact
@@ -393,7 +478,10 @@ function CartItemsPanel({
 	onClear,
 	onRemove,
 	onShare,
+	originalSubtotal,
 	positionsCount,
+	savings,
+	subtotal,
 	subtotalLabel,
 }: {
 	cartCount: number;
@@ -401,9 +489,17 @@ function CartItemsPanel({
 	onClear: () => void;
 	onRemove: (productId: string) => void;
 	onShare: () => void;
+	originalSubtotal: number | null;
 	positionsCount: number;
+	savings: number | null;
+	subtotal: number | null;
 	subtotalLabel: string;
 }) {
+	const hasDiscount = originalSubtotal !== null
+		&& subtotal !== null
+		&& savings !== null
+		&& originalSubtotal > subtotal;
+
 	return (
 		<div>
 			<div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -456,6 +552,26 @@ function CartItemsPanel({
 					</p>
 
 					<div className="mt-2 grid gap-2">
+						{hasDiscount ? (
+							<>
+								<SummaryRow
+									label="По отдельности"
+									value={(
+										<span className="text-ink-muted line-through decoration-ink-muted/50">
+											{formatCartPrice(originalSubtotal, "RUB")}
+										</span>
+									)}
+								/>
+								<SummaryRow
+									label="Скидка комплектом"
+									value={(
+										<span className="text-destructive">
+											-{formatCartPrice(savings, "RUB")}
+										</span>
+									)}
+								/>
+							</>
+						) : null}
 						<SummaryRow
 							label="Товаров на сумму"
 							value={subtotalLabel}
@@ -472,9 +588,12 @@ function CartItemsPanel({
 
 					<div className="mt-6 flex items-baseline justify-between gap-4">
 						<p className="text-base font-medium text-ink">Итого</p>
-						<p className="text-3xl font-semibold text-ink sm:text-4xl">
-							{subtotalLabel}
-						</p>
+						<DiscountPrice
+							align="right"
+							originalPrice={hasDiscount ? originalSubtotal : null}
+							price={subtotal}
+							size="lg"
+						/>
 					</div>
 				</div>
 			</div>
@@ -487,12 +606,18 @@ function CheckoutPanel({
 	lines,
 	onOrderSuccess,
 	hasRequestedPrice,
+	originalSubtotal,
+	savings,
+	subtotal,
 	subtotalLabel,
 }: {
 	cartCount: number;
 	lines: CartLine[];
 	onOrderSuccess: () => void;
 	hasRequestedPrice: boolean;
+	originalSubtotal: number | null;
+	savings: number | null;
+	subtotal: number | null;
 	subtotalLabel: string;
 }) {
 	const [buyerType, setBuyerType] = useState<BuyerType>("person");
@@ -524,6 +649,10 @@ function CheckoutPanel({
 		.slice(0, 4)
 		.map((field) => FIELD_LABELS[field])
 		.join(", ");
+	const hasDiscount = originalSubtotal !== null
+		&& subtotal !== null
+		&& savings !== null
+		&& originalSubtotal > subtotal;
 
 	function updateField(field: CheckoutField, value: string) {
 		setFormValues((currentValues) => ({
@@ -952,6 +1081,26 @@ function CheckoutPanel({
 			</label>
 
 			<div className="mt-7 grid gap-3">
+				{hasDiscount ? (
+					<>
+						<SummaryRow
+							label="По отдельности"
+							value={(
+								<span className="text-ink-muted line-through decoration-ink-muted/50">
+									{formatCartPrice(originalSubtotal, "RUB")}
+								</span>
+							)}
+						/>
+						<SummaryRow
+							label="Скидка комплектом"
+							value={(
+								<span className="text-destructive">
+									-{formatCartPrice(savings, "RUB")}
+								</span>
+							)}
+						/>
+					</>
+				) : null}
 				<SummaryRow
 					label="Стоимость товаров"
 					value={subtotalLabel}
@@ -966,9 +1115,12 @@ function CheckoutPanel({
 				<p className="text-base font-medium text-ink">
 					Итого без учета доставки:
 				</p>
-				<p className="text-3xl font-semibold text-ink sm:text-4xl">
-					{subtotalLabel}
-				</p>
+				<DiscountPrice
+					align="right"
+					originalPrice={hasDiscount ? originalSubtotal : null}
+					price={subtotal}
+					size="lg"
+				/>
 			</div>
 
 			{hasRequestedPrice ? (
@@ -1038,7 +1190,16 @@ export function CartPage() {
 			return lineTotal == null ? total : total + lineTotal;
 		}, 0);
 	}, [state.cart]);
+	const originalSubtotal = useMemo(() => {
+		return state.cart.reduce((total, line) => {
+			const lineTotal = getLineTotal(line);
+			const originalLineTotal = getLineOriginalTotal(line);
+
+			return total + (originalLineTotal ?? lineTotal ?? 0);
+		}, 0);
+	}, [state.cart]);
 	const hasRequestedPrice = state.cart.some((line) => getLineTotal(line) == null);
+	const savings = originalSubtotal > subtotal ? originalSubtotal - subtotal : null;
 	const subtotalLabel =
 		subtotal > 0 ? formatPrice(subtotal, "RUB") : "Цена по запросу";
 	const isEmpty = hydrated && state.cart.length === 0;
@@ -1102,7 +1263,10 @@ export function CartPage() {
 								onClear={clearCart}
 								onRemove={removeFromCart}
 								onShare={handleShare}
+								originalSubtotal={originalSubtotal}
 								positionsCount={state.cart.length}
+								savings={savings}
+								subtotal={subtotal}
 								subtotalLabel={subtotalLabel}
 							/>
 							<CheckoutPanel
@@ -1110,6 +1274,9 @@ export function CartPage() {
 								lines={state.cart}
 								onOrderSuccess={clearCart}
 								hasRequestedPrice={hasRequestedPrice}
+								originalSubtotal={originalSubtotal}
+								savings={savings}
+								subtotal={subtotal}
 								subtotalLabel={subtotalLabel}
 							/>
 						</div>

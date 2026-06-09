@@ -67,6 +67,9 @@
     "attributes": {
       "type": "json"
     },
+    "bundles": {
+      "type": "json"
+    },
     "inStock": {
       "type": "boolean"
     },

@@ -13,6 +13,7 @@ export type ShopProductSnapshot = {
 	priceLabel: string;
 	inStock: boolean;
 	price?: number | null;
+	originalPrice?: number | null;
 	currency?: string | null;
 	selectedOptions?: ShopProductOption[];
 };

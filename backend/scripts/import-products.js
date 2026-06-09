@@ -211,7 +211,7 @@ function buildProductData(strapi, product, category, color, mediaFiles, options,
   const productFields = new Set(getAttributeNames(strapi, PRODUCT_UID));
   const data = {};
 
-  for (const fieldName of ['slug', 'sku', 'baseSku', 'name', 'brand', 'model', 'price', 'attributes', 'inStock']) {
+  for (const fieldName of ['slug', 'sku', 'baseSku', 'name', 'brand', 'model', 'price', 'attributes', 'bundles', 'inStock']) {
     if (productFields.has(fieldName)) {
       setIfPresent(data, product, fieldName);
     }

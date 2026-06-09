@@ -33,6 +33,11 @@ export type ProductImage = {
 	alt?: string;
 };
 
+export type ProductBundleConfig = {
+	discountPercent: number;
+	productSlugs: string[];
+};
+
 export type ProductColor = {
 	id: string;
 	slug: string;
@@ -58,6 +63,7 @@ export type Product = {
 	images: ProductImage[];
 	videos: string[];
 	attributes: ProductAttribute[];
+	bundles: ProductBundleConfig[];
 };
 
 export type CatalogSort =

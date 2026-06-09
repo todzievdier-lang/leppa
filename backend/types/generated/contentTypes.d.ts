@@ -582,6 +582,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     attributes: Schema.Attribute.JSON;
     baseSku: Schema.Attribute.String;
     brand: Schema.Attribute.String;
+    bundles: Schema.Attribute.JSON;
     category: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
     color: Schema.Attribute.Relation<'manyToOne', 'api::color.color'>;
     createdAt: Schema.Attribute.DateTime;

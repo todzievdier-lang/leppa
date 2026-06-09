@@ -21,6 +21,7 @@ import type {
 	Product,
 	ProductAttribute,
 	ProductAttributeValue,
+	ProductBundleConfig,
 	ProductColor,
 	ProductImage,
 } from "@/types/catalog";
@@ -31,6 +32,7 @@ const STRAPI_API_URL = getConfiguredStrapiApiUrl();
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
+const MAX_BUNDLE_PRODUCTS = 5;
 const DEBUG_CATEGORIES =
 	process.env.DEBUG_CATEGORIES === "true"
 	|| process.env.NEXT_PUBLIC_DEBUG_CATEGORIES === "true";
@@ -422,6 +424,63 @@ function mapProductAttributes(value: unknown): ProductAttribute[] {
 	return attributes;
 }
 
+function normalizeBundleProductSlugs(value: unknown): string[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	return value
+		.map((item) => {
+			if (typeof item === "string") {
+				return getString(item);
+			}
+
+			if (isRecord(item)) {
+				return (
+					getString(item.slug)
+					?? getString(item.productSlug)
+					?? getString(item.product_slug)
+				);
+			}
+
+			return null;
+		})
+		.filter((slug): slug is string => slug !== null);
+}
+
+function mapProductBundles(value: unknown): ProductBundleConfig[] {
+	const bundleRecords = parseJsonArray(value).filter((entry): entry is PlainRecord =>
+		isRecord(entry),
+	);
+
+	return bundleRecords
+		.map((bundle): ProductBundleConfig | null => {
+			const productSlugs = normalizeBundleProductSlugs(
+				bundle.productSlugs
+					?? bundle.product_slugs
+					?? bundle.items
+					?? bundle.products,
+			).slice(0, MAX_BUNDLE_PRODUCTS);
+
+			if (productSlugs.length < 2) {
+				return null;
+			}
+
+			const discountPercent = getNumber(
+				bundle.discountPercent ?? bundle.discount_percent ?? bundle.discount,
+			);
+
+			return {
+				discountPercent:
+					discountPercent !== null && discountPercent > 0
+						? discountPercent
+						: 6,
+				productSlugs,
+			};
+		})
+		.filter((bundle): bundle is ProductBundleConfig => bundle !== null);
+}
+
 function mapProductImages(value: unknown, productName: string): ProductImage[] {
 	const images: ProductImage[] = [];
 
@@ -635,6 +694,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		images: mapProductImages(fields.images, name),
 		videos: mapProductVideos(fields.videos),
 		attributes: mapProductAttributes(fields.attributes),
+		bundles: mapProductBundles(fields.bundles),
 	};
 }
 
@@ -670,6 +730,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"brand",
 			"model",
 			"price",
+			"bundles",
 			"description",
 			"attributes",
 			"inStock",

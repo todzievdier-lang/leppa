@@ -78,6 +78,10 @@ function normalizeProductSnapshot(value: unknown): ShopProductSnapshot | null {
 		inStock:
 			typeof product.inStock === "boolean" ? product.inStock : true,
 		price: product.price,
+		originalPrice:
+			typeof product.originalPrice === "number" && Number.isFinite(product.originalPrice)
+				? product.originalPrice
+				: undefined,
 		currency: product.currency,
 		selectedOptions: selectedOptions.length > 0 ? selectedOptions : undefined,
 	};
