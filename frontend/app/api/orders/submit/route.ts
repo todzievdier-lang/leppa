@@ -15,6 +15,7 @@ function normalizeApiUrl(value: string | undefined): string | null {
 function getStrapiApiUrl(): string | null {
 	return (
 		normalizeApiUrl(process.env.STRAPI_API_URL)
+		?? normalizeApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
 		?? normalizeApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 		?? normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL)
 	);

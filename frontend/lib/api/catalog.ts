@@ -49,7 +49,8 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 
 function getConfiguredStrapiApiUrl(): string | null {
 	return (
-		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
+		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL)
 		?? normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
 	);
@@ -552,6 +553,9 @@ async function fetchStrapiCollection(
 		logCategoriesDebug(`${pathname} skipped`, {
 			reason: "Strapi API URL is not configured",
 			hasNextPublicApiUrl: Boolean(process.env.NEXT_PUBLIC_API_URL),
+			hasNextPublicStrapiGlobalUrl: Boolean(
+				process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL,
+			),
 			hasNextPublicStrapiUrl: Boolean(process.env.NEXT_PUBLIC_STRAPI_URL),
 		});
 

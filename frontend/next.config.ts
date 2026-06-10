@@ -17,7 +17,8 @@ function normalizeUrl(value: string | undefined): URL | null {
 }
 
 const configuredStrapiUrl =
-	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
+	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
+	?? normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 	?? normalizeUrl(process.env.NEXT_PUBLIC_API_URL)
 	?? normalizeUrl(process.env.STRAPI_API_URL);
 
