@@ -18,10 +18,17 @@ export type ShopProductSnapshot = {
 	selectedOptions?: ShopProductOption[];
 };
 
+export type CartBundle = {
+	id: string;
+	title: string;
+	discountPercent?: number;
+};
+
 export type CartLine = {
 	product: ShopProductSnapshot;
 	quantity: number;
 	addedAt: number;
+	bundle?: CartBundle;
 };
 
 export type ShopState = {

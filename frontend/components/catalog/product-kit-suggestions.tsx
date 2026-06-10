@@ -413,7 +413,7 @@ export function ProductKitSuggestions({
 		? `Скидка ${activeBundle.discountPercent}%`
 		: `Выгода ${formatPrice(activeBundle.discountAmount, activeBundle.currency)}`;
 	const availableCount = activeBundle.items.filter((item) => item.inStock).length;
-	const canAddBundle = availableCount > 0;
+	const canAddBundle = availableCount === activeBundle.items.length;
 	const discountedPrices = getDiscountedPrices(
 		activeBundle.items,
 		activeBundle.bundleTotal,
@@ -500,6 +500,10 @@ export function ProductKitSuggestions({
 						onClick={() => {
 							addManyToCart(
 								getBundleCartProducts(activeBundle, product, category),
+								{
+									bundleTitle: BUNDLE_OFFER_LABEL,
+									discountPercent: activeBundle.discountPercent,
+								},
 							);
 						}}>
 						<ShoppingBag aria-hidden="true" />

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type {
+	CartBundle,
 	CartLine,
 	ShopProductOption,
 	ShopProductSnapshot,
@@ -18,6 +19,12 @@ const EMPTY_SHOP_STATE: ShopState = {
 	cart: [],
 	favorites: [],
 };
+const DEFAULT_BUNDLE_TITLE = "Комплект";
+
+type AddManyToCartOptions = {
+	bundleTitle?: string;
+	discountPercent?: number | null;
+};
 
 export function getShopProductKey(product: Pick<ShopProductSnapshot, "id" | "lineId">) {
 	return product.lineId ?? product.id;
@@ -25,6 +32,74 @@ export function getShopProductKey(product: Pick<ShopProductSnapshot, "id" | "lin
 
 function createToastId(): string {
 	return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function createCartBundleId(): string {
+	return `bundle-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function normalizeCartBundle(value: unknown): CartBundle | undefined {
+	if (!value || typeof value !== "object") {
+		return undefined;
+	}
+
+	const bundle = value as Partial<CartBundle>;
+
+	if (typeof bundle.id !== "string" || bundle.id.length === 0) {
+		return undefined;
+	}
+
+	return {
+		id: bundle.id,
+		title:
+			typeof bundle.title === "string" && bundle.title.length > 0
+				? bundle.title
+				: DEFAULT_BUNDLE_TITLE,
+		discountPercent:
+			typeof bundle.discountPercent === "number"
+			&& Number.isFinite(bundle.discountPercent)
+			&& bundle.discountPercent > 0
+				? bundle.discountPercent
+				: undefined,
+	};
+}
+
+function createCartBundle(options: AddManyToCartOptions = {}): CartBundle {
+	return {
+		id: createCartBundleId(),
+		title: options.bundleTitle ?? DEFAULT_BUNDLE_TITLE,
+		discountPercent:
+			typeof options.discountPercent === "number"
+			&& Number.isFinite(options.discountPercent)
+			&& options.discountPercent > 0
+				? options.discountPercent
+				: undefined,
+	};
+}
+
+function getLineBundleId(line: CartLine): string | null {
+	return line.bundle?.id ?? null;
+}
+
+function getBundleQuantity(lines: CartLine[]): number {
+	return Math.max(1, ...lines.map((line) => line.quantity));
+}
+
+function confirmBundleRemoval(
+	bundle: CartBundle,
+	bundleLines: CartLine[],
+): boolean {
+	if (typeof window === "undefined") {
+		return true;
+	}
+
+	return window.confirm(
+		[
+			`Товар входит в комплект «${bundle.title}».`,
+			`Если удалить одну позицию, из корзины удалится весь комплект: ${bundleLines.length} позиций.`,
+			"Удалить комплект?",
+		].join("\n\n"),
+	);
 }
 
 function normalizeProductSnapshot(value: unknown): ShopProductSnapshot | null {
@@ -110,6 +185,7 @@ function normalizeCartLine(value: unknown): CartLine | null {
 			typeof line.addedAt === "number" && line.addedAt > 0
 				? line.addedAt
 				: Date.now(),
+		bundle: normalizeCartBundle(line.bundle),
 	};
 }
 
@@ -269,11 +345,14 @@ export function useShopState() {
 		return "added" as const;
 	}, []);
 
-	const addManyToCart = useCallback((products: ShopProductSnapshot[]) => {
+	const addManyToCart = useCallback((
+		products: ShopProductSnapshot[],
+		options: AddManyToCartOptions = {},
+	) => {
 		const availableProducts = products.filter((product) => product.inStock);
 		const unavailableCount = products.length - availableProducts.length;
 
-		if (availableProducts.length === 0) {
+		if (products.length === 0 || unavailableCount > 0) {
 			emitShopToast({
 				title: "Комплект недоступен",
 				description: "Товары из комплекта сейчас не в наличии.",
@@ -290,36 +369,39 @@ export function useShopState() {
 		const currentCartKeys = new Set(
 			currentState.cart.map((line) => getShopProductKey(line.product)),
 		);
-		const nextProductKeys = new Set<string>();
-		const newLines = availableProducts
-			.filter((product) => {
-				const productKey = getShopProductKey(product);
+		const uniqueProducts = availableProducts.filter((product, index, list) => {
+			const productKey = getShopProductKey(product);
 
-				if (currentCartKeys.has(productKey) || nextProductKeys.has(productKey)) {
-					return false;
-				}
+			return list.findIndex((item) => getShopProductKey(item) === productKey) === index;
+		});
+		const existingCount = uniqueProducts.filter((product) =>
+			currentCartKeys.has(getShopProductKey(product)),
+		).length;
 
-				nextProductKeys.add(productKey);
-				return true;
-			})
-			.map((product, index) => ({
-				product,
-				quantity: 1,
-				addedAt: Date.now() - index,
-			}));
-
-		if (newLines.length === 0) {
+		if (uniqueProducts.length === 0 || existingCount > 0) {
 			emitShopToast({
 				title: "Комплект уже в корзине",
-				description: `${availableProducts.length} позиций уже добавлены.`,
+				description:
+					existingCount === uniqueProducts.length
+						? `${uniqueProducts.length} позиций уже добавлены.`
+						: "Сначала удалите текущий комплект из корзины.",
 			});
 
 			return {
 				added: 0,
-				existing: availableProducts.length,
+				existing: existingCount,
 				unavailable: unavailableCount,
 			};
 		}
+
+		const bundle = createCartBundle(options);
+		const newLines = uniqueProducts
+			.map((product, index) => ({
+				product,
+				quantity: 1,
+				addedAt: Date.now() - index,
+				bundle,
+			}));
 
 		writeShopState({
 			...currentState,
@@ -335,7 +417,7 @@ export function useShopState() {
 
 		return {
 			added: newLines.length,
-			existing: availableProducts.length - newLines.length,
+			existing: 0,
 			unavailable: unavailableCount,
 		};
 	}, []);
@@ -355,6 +437,26 @@ export function useShopState() {
 		const existingLine = currentState.cart.find(
 			(line) => getShopProductKey(line.product) === productKey,
 		);
+		const bundle = existingLine?.bundle;
+		const bundleId = bundle?.id ?? null;
+
+		if (bundleId) {
+			const bundleLines = currentState.cart.filter(
+				(line) => getLineBundleId(line) === bundleId,
+			);
+			const nextQuantity = getBundleQuantity(bundleLines) + 1;
+
+			writeShopState({
+				...currentState,
+				cart: currentState.cart.map((line) =>
+					getLineBundleId(line) === bundleId
+						? { ...line, quantity: nextQuantity }
+						: line,
+				),
+			});
+
+			return;
+		}
 
 		writeShopState({
 			...currentState,
@@ -377,6 +479,38 @@ export function useShopState() {
 
 	const decrementCartQuantity = useCallback((productKey: string) => {
 		const currentState = readShopState();
+		const existingLine = currentState.cart.find(
+			(line) => getShopProductKey(line.product) === productKey,
+		);
+		const bundle = existingLine?.bundle;
+
+		if (bundle) {
+			const bundleId = bundle.id;
+			const bundleLines = currentState.cart.filter(
+				(line) => getLineBundleId(line) === bundleId,
+			);
+			const nextQuantity = Math.min(...bundleLines.map((line) => line.quantity)) - 1;
+
+			if (nextQuantity <= 0 && !confirmBundleRemoval(bundle, bundleLines)) {
+				return;
+			}
+
+			writeShopState({
+				...currentState,
+				cart:
+					nextQuantity > 0
+						? currentState.cart.map((line) =>
+								getLineBundleId(line) === bundleId
+									? { ...line, quantity: nextQuantity }
+									: line,
+							)
+						: currentState.cart.filter(
+								(line) => getLineBundleId(line) !== bundleId,
+							),
+			});
+
+			return;
+		}
 
 		writeShopState({
 			...currentState,
@@ -396,19 +530,36 @@ export function useShopState() {
 			(item) => getShopProductKey(item.product) === productKey,
 		);
 
+		if (!line) {
+			return;
+		}
+
+		const bundleId = getLineBundleId(line);
+		const removedLines = bundleId
+			? currentState.cart.filter((item) => getLineBundleId(item) === bundleId)
+			: [line];
+
+		if (line.bundle && !confirmBundleRemoval(line.bundle, removedLines)) {
+			return;
+		}
+
 		writeShopState({
 			...currentState,
-			cart: currentState.cart.filter(
-				(item) => getShopProductKey(item.product) !== productKey,
-			),
+			cart: bundleId
+				? currentState.cart.filter(
+						(item) => getLineBundleId(item) !== bundleId,
+					)
+				: currentState.cart.filter(
+						(item) => getShopProductKey(item.product) !== productKey,
+					),
 		});
 
-		if (line) {
-			emitShopToast({
-				title: "Удалено из корзины",
-				description: line.product.name,
-			});
-		}
+		emitShopToast({
+			title: bundleId ? "Комплект удален из корзины" : "Удалено из корзины",
+			description: bundleId
+				? `${removedLines.length} позиций удалены вместе.`
+				: line.product.name,
+		});
 	}, []);
 
 	const clearCart = useCallback(() => {

@@ -11,7 +11,7 @@ import {
 	productMediaFrameClassName,
 } from "@/components/media/product-media-frame";
 import { surfaceVariants } from "@/components/ui/surface";
-import { useShopState } from "@/lib/shop/store";
+import { getShopProductKey, useShopState } from "@/lib/shop/store";
 import { cn } from "@/lib/utils";
 
 import type { ShopProductSnapshot } from "@/types/shop";
@@ -282,14 +282,14 @@ export function HeaderShopActions({
 							{isCartOpen
 								? state.cart.map((line) => (
 										<PanelProductRow
-											key={line.product.id}
+											key={getShopProductKey(line.product)}
 											product={line.product}
 											quantity={line.quantity}
 											onClose={() => {
 												setOpenPanel(null);
 											}}
 											onRemove={() => {
-												removeFromCart(line.product.id);
+												removeFromCart(getShopProductKey(line.product));
 											}}
 										/>
 									))
