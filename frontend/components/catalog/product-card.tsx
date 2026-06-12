@@ -134,8 +134,8 @@ export function ProductCardSkeleton() {
 				<div className="mt-3 h-7 w-24 animate-pulse rounded-full bg-toolbar" />
 
 				<div className="mt-4 flex min-h-9 flex-wrap content-start gap-2">
-					<div className="size-9 animate-pulse rounded-full bg-toolbar" />
-					<div className="size-9 animate-pulse rounded-full bg-toolbar" />
+					<div className="size-9 animate-pulse rounded-[12px] bg-toolbar" />
+					<div className="size-9 animate-pulse rounded-[12px] bg-toolbar" />
 					<div className="h-9 w-24 animate-pulse rounded-full bg-toolbar" />
 				</div>
 
