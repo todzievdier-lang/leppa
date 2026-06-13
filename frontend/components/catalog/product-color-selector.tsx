@@ -46,16 +46,12 @@ export function ProductColorSelector({
 					]
 						.filter(Boolean)
 						.join(", ");
-					const swatch = (
-						<span
-							aria-hidden="true"
-							className={cn(
-								"rounded-[12px] border border-black/10",
-								isCard ? "size-7" : "size-8",
-								item.isLight && "shadow-inner",
-							)}
-							style={{ backgroundColor: item.hex }}
-						/>
+					const colorSwatchClassName = cn(
+						"inline-flex shrink-0 rounded-[12px] border border-black/10 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
+						isCard ? "size-9" : "size-11",
+						item.isLight && "shadow-inner",
+						isActive ? "border-ink/70" : "hover:border-black/25",
+						!item.inStock && "opacity-60",
 					);
 
 					if (isActive && !isCard) {
@@ -64,14 +60,9 @@ export function ProductColorSelector({
 								key={item.product.id}
 								aria-current="true"
 								title={title}
-								className={cn(
-									"inline-flex shrink-0 items-center justify-center rounded-[12px] border bg-canvas",
-									isCard ? "size-9" : "size-11",
-									"border-ink shadow-control",
-									!item.inStock && "opacity-60",
-								)}>
-								{swatch}
-							</span>
+								className={colorSwatchClassName}
+								style={{ backgroundColor: item.hex }}
+							/>
 						);
 					}
 
@@ -83,16 +74,9 @@ export function ProductColorSelector({
 							aria-current={isActive ? "true" : undefined}
 							aria-label={`Выбрать цвет: ${item.label}`}
 							title={title}
-							className={cn(
-								"inline-flex shrink-0 items-center justify-center rounded-[12px] border bg-canvas transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-								isCard ? "size-9" : "size-11",
-								isActive
-									? "border-ink shadow-control"
-									: "border-hairline hover:border-hairline-strong hover:shadow-control",
-								!item.inStock && "opacity-60",
-							)}>
-							{swatch}
-						</Link>
+							className={colorSwatchClassName}
+							style={{ backgroundColor: item.hex }}
+						/>
 					);
 				})}
 			</div>
