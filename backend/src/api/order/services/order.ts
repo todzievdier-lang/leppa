@@ -29,6 +29,17 @@ type DeliveryPayload = {
 	city?: string;
 };
 
+type OrderItemOptionPayload = {
+	label?: string;
+	value?: string;
+};
+
+type OrderItemBundlePayload = {
+	id?: string;
+	title?: string;
+	discountPercent?: number | null;
+};
+
 type OrderItemPayload = {
 	id?: string;
 	name?: string;
@@ -37,6 +48,39 @@ type OrderItemPayload = {
 	quantity?: number;
 	priceLabel?: string;
 	lineTotalLabel?: string;
+	options?: OrderItemOptionPayload[];
+	bundle?: OrderItemBundlePayload | null;
+};
+
+type NormalizedOrderItemOption = {
+	label: string;
+	value: string;
+};
+
+type NormalizedOrderItemBundle = {
+	id: string;
+	title: string;
+	discountPercent: number | null;
+};
+
+type NormalizedOrderItem = {
+	id: string;
+	name: string;
+	sku: string | null;
+	href: string;
+	quantity: number;
+	priceLabel: string;
+	lineTotalLabel: string;
+	options: NormalizedOrderItemOption[];
+	bundle: NormalizedOrderItemBundle | null;
+};
+
+type OrderItemGroup = {
+	key: string;
+	title: string;
+	discountPercent: number | null;
+	items: NormalizedOrderItem[];
+	isBundle: boolean;
 };
 
 type NormalizedOrder = {
@@ -44,7 +88,7 @@ type NormalizedOrder = {
 	buyerType: BuyerType;
 	customer: Required<CustomerPayload>;
 	delivery: Required<DeliveryPayload>;
-	items: Required<OrderItemPayload>[];
+	items: NormalizedOrderItem[];
 	comment: string;
 	callBack: boolean;
 	cartCount: number;
@@ -64,6 +108,9 @@ type MailSettings = {
 	host: string;
 	port: number;
 	secure: boolean;
+	connectionTimeout: number;
+	greetingTimeout: number;
+	socketTimeout: number;
 	user: string;
 	pass: string;
 	from: string;
@@ -106,6 +153,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DEFAULT_COUNTRY = "Российская Федерация";
 const ORDER_UID = "api::order.order";
 const TRUTHY_ENV_VALUES = ["1", "true", "yes", "on"];
+const DEFAULT_SMTP_CONNECTION_TIMEOUT_MS = 30000;
+const DEFAULT_SMTP_GREETING_TIMEOUT_MS = 30000;
+const DEFAULT_SMTP_SOCKET_TIMEOUT_MS = 45000;
 
 function getString(value: unknown, maxLength = 500): string {
 	if (typeof value !== "string") {
@@ -162,6 +212,12 @@ function getEnvBoolean(value: string | undefined, fallback = false): boolean {
 	return TRUTHY_ENV_VALUES.includes(value.toLowerCase());
 }
 
+function getEnvNumber(value: string | undefined, fallback: number): number {
+	const number = Number(value);
+
+	return Number.isFinite(number) && number > 0 ? number : fallback;
+}
+
 function getMailSettings(): MailSettings {
 	const host = getString(process.env.SMTP_HOST, 200);
 	const user = getString(process.env.SMTP_USER, 200);
@@ -169,7 +225,7 @@ function getMailSettings(): MailSettings {
 	const from = getString(process.env.MAIL_FROM, 300);
 	const to = parseMailList(getString(process.env.MAIL_TO, 1000));
 	const bcc = parseMailList(getString(process.env.MAIL_BCC, 1000));
-	const port = Number(process.env.SMTP_PORT || 587);
+	const port = getEnvNumber(process.env.SMTP_PORT, 587);
 	const hasAnyMailConfig = Boolean(host || user || pass || from || to.length || bcc.length);
 	const explicitlyEnabled = getEnvBoolean(process.env.MAIL_ENABLED, false);
 	const enabled = process.env.MAIL_ENABLED === "false"
@@ -179,8 +235,20 @@ function getMailSettings(): MailSettings {
 	return {
 		enabled,
 		host,
-		port: Number.isFinite(port) ? port : 587,
+		port,
 		secure: getEnvBoolean(process.env.SMTP_SECURE, port === 465),
+		connectionTimeout: getEnvNumber(
+			process.env.SMTP_CONNECTION_TIMEOUT_MS,
+			DEFAULT_SMTP_CONNECTION_TIMEOUT_MS,
+		),
+		greetingTimeout: getEnvNumber(
+			process.env.SMTP_GREETING_TIMEOUT_MS,
+			DEFAULT_SMTP_GREETING_TIMEOUT_MS,
+		),
+		socketTimeout: getEnvNumber(
+			process.env.SMTP_SOCKET_TIMEOUT_MS,
+			DEFAULT_SMTP_SOCKET_TIMEOUT_MS,
+		),
 		user,
 		pass,
 		from,
@@ -351,7 +419,46 @@ function validateOrder(order: NormalizedOrder) {
 	}
 }
 
-function normalizeItem(item: OrderItemPayload): Required<OrderItemPayload> {
+function normalizeItemOptions(options: unknown): NormalizedOrderItemOption[] {
+	if (!Array.isArray(options)) {
+		return [];
+	}
+
+	return options
+		.filter(isRecord)
+		.map((option): NormalizedOrderItemOption | null => {
+			const label = getString(option.label, 80);
+			const value = getString(option.value, 160);
+
+			return label && value ? { label, value } : null;
+		})
+		.filter((option): option is NormalizedOrderItemOption => option !== null);
+}
+
+function normalizeItemBundle(bundle: unknown): NormalizedOrderItemBundle | null {
+	if (!isRecord(bundle)) {
+		return null;
+	}
+
+	const id = getString(bundle.id, 120);
+	const title = getString(bundle.title, 160);
+	const discountPercent = Number(bundle.discountPercent);
+
+	if (!id || !title) {
+		return null;
+	}
+
+	return {
+		id,
+		title,
+		discountPercent:
+			Number.isFinite(discountPercent) && discountPercent > 0
+				? discountPercent
+				: null,
+	};
+}
+
+function normalizeItem(item: OrderItemPayload): NormalizedOrderItem {
 	const quantity = Number(item.quantity);
 
 	return {
@@ -362,6 +469,8 @@ function normalizeItem(item: OrderItemPayload): Required<OrderItemPayload> {
 		quantity: Number.isInteger(quantity) ? quantity : 0,
 		priceLabel: getString(item.priceLabel, 120),
 		lineTotalLabel: getString(item.lineTotalLabel, 120),
+		options: normalizeItemOptions(item.options),
+		bundle: normalizeItemBundle(item.bundle),
 	};
 }
 
@@ -429,6 +538,99 @@ function formatLines(lines: Array<[string, string]>): string {
 		.filter(([, value]) => value.length > 0)
 		.map(([label, value]) => `${label}: ${value}`)
 		.join("\n");
+}
+
+function getVisibleItemOptions(item: NormalizedOrderItem): NormalizedOrderItemOption[] {
+	return item.options.filter((option) => {
+		return !(item.bundle && option.label.toLowerCase() === "комплект");
+	});
+}
+
+function getBundleMetaLabel(group: OrderItemGroup): string {
+	const parts = [`${group.items.length} поз.`];
+
+	if (group.discountPercent) {
+		parts.push(`скидка ${group.discountPercent}%`);
+	}
+
+	return parts.join(", ");
+}
+
+function getOrderItemGroups(items: NormalizedOrderItem[]): OrderItemGroup[] {
+	const groups: OrderItemGroup[] = [];
+	const groupIndex = new Map<string, OrderItemGroup>();
+	const standaloneItems: NormalizedOrderItem[] = [];
+
+	items.forEach((item) => {
+		if (!item.bundle) {
+			standaloneItems.push(item);
+			return;
+		}
+
+		const key = item.bundle.id;
+		const existingGroup = groupIndex.get(key);
+
+		if (existingGroup) {
+			existingGroup.items.push(item);
+			return;
+		}
+
+		const group: OrderItemGroup = {
+			key,
+			title: item.bundle.title,
+			discountPercent: item.bundle.discountPercent,
+			items: [item],
+			isBundle: true,
+		};
+
+		groupIndex.set(key, group);
+		groups.push(group);
+	});
+
+	if (standaloneItems.length > 0) {
+		groups.push({
+			key: "standalone",
+			title: "Отдельные товары",
+			discountPercent: null,
+			items: standaloneItems,
+			isBundle: false,
+		});
+	}
+
+	return groups;
+}
+
+function buildTextOrderItem(item: NormalizedOrderItem, index: number): string {
+	const options = getVisibleItemOptions(item);
+
+	return [
+		`${index + 1}. ${item.name}`,
+		item.sku ? `Артикул: ${item.sku}` : "",
+		options.length > 0
+			? `Опции: ${options.map((option) => `${option.label}: ${option.value}`).join(", ")}`
+			: "",
+		`Количество: ${item.quantity}`,
+		item.priceLabel ? `Цена: ${item.priceLabel}` : "",
+		item.lineTotalLabel ? `Сумма: ${item.lineTotalLabel}` : "",
+		item.href ? `Ссылка: ${item.href}` : "",
+	]
+		.filter(Boolean)
+		.join("\n");
+}
+
+function buildTextOrderItems(items: NormalizedOrderItem[]): string {
+	return getOrderItemGroups(items)
+		.map((group) => {
+			const title = group.isBundle
+				? `Комплект: ${group.title} (${getBundleMetaLabel(group)})`
+				: group.title;
+			const groupItems = group.items
+				.map((item, index) => buildTextOrderItem(item, index))
+				.join("\n\n");
+
+			return [title, groupItems].filter(Boolean).join("\n");
+		})
+		.join("\n\n");
 }
 
 function getBuyerName(order: NormalizedOrder): string {
@@ -527,20 +729,7 @@ function buildTextEmail(order: NormalizedOrder, meta: RequestMeta): string {
 			["Email", order.customer.email],
 		];
 
-	const itemLines = order.items
-		.map((item, index) => {
-			return [
-				`${index + 1}. ${item.name}`,
-				item.sku ? `Артикул: ${item.sku}` : "",
-				`Количество: ${item.quantity}`,
-				item.priceLabel ? `Цена: ${item.priceLabel}` : "",
-				item.lineTotalLabel ? `Сумма: ${item.lineTotalLabel}` : "",
-				item.href ? `Ссылка: ${item.href}` : "",
-			]
-				.filter(Boolean)
-				.join("\n");
-		})
-		.join("\n\n");
+	const itemLines = buildTextOrderItems(order.items);
 
 	return [
 		`Новый заказ ${order.orderId}`,
@@ -676,6 +865,76 @@ function buildHtmlAction(href: string, label: string, isPrimary = false): string
 	`;
 }
 
+function buildHtmlItemOptions(item: NormalizedOrderItem): string {
+	const options = getVisibleItemOptions(item);
+
+	if (options.length === 0) {
+		return "";
+	}
+
+	return `
+		<div style="margin-top:6px;color:#6e6e73;font-size:12px;line-height:1.35;">
+			${options.map((option) => `${escapeHtml(option.label)}: ${escapeHtml(option.value)}`).join(" · ")}
+		</div>
+	`;
+}
+
+function buildHtmlOrderItemRow(
+	item: NormalizedOrderItem,
+	index: number,
+	baseUrl: string,
+): string {
+	return `
+		<tr>
+			<td style="padding:15px 12px;border-top:1px solid #e8e8ed;color:#6e6e73;font-size:13px;vertical-align:top;">${index + 1}</td>
+			<td style="padding:15px 12px;border-top:1px solid #e8e8ed;vertical-align:top;">
+				<div style="color:#161617;font-size:15px;font-weight:700;line-height:1.35;">${escapeHtml(item.name)}</div>
+				${item.sku ? `<div style="margin-top:4px;color:#6e6e73;font-size:12px;line-height:1.35;">Артикул: ${escapeHtml(item.sku)}</div>` : ""}
+				${buildHtmlItemOptions(item)}
+				${item.href ? `<a href="${escapeHtml(getAbsoluteUrl(item.href, baseUrl))}" style="display:inline-block;margin-top:9px;color:#161617;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:2px;">Открыть товар</a>` : ""}
+			</td>
+			<td style="padding:15px 12px;border-top:1px solid #e8e8ed;color:#161617;font-size:14px;font-weight:700;text-align:center;vertical-align:top;">${item.quantity}</td>
+			<td style="padding:15px 12px;border-top:1px solid #e8e8ed;color:#161617;font-size:14px;font-weight:600;text-align:right;vertical-align:top;white-space:nowrap;">${escapeHtml(item.priceLabel || "по запросу")}</td>
+			<td style="padding:15px 12px;border-top:1px solid #e8e8ed;color:#161617;font-size:14px;font-weight:700;text-align:right;vertical-align:top;white-space:nowrap;">${escapeHtml(item.lineTotalLabel || item.priceLabel || "по запросу")}</td>
+		</tr>
+	`;
+}
+
+function buildHtmlOrderItemGroupHeader(group: OrderItemGroup, showHeader: boolean): string {
+	if (!showHeader) {
+		return "";
+	}
+
+	const badgeLabel = group.isBundle ? "Комплект" : "Отдельно";
+	const meta = group.isBundle ? getBundleMetaLabel(group) : `${group.items.length} поз.`;
+
+	return `
+		<tr>
+			<td colspan="5" style="padding:12px 12px;border-top:1px solid #e8e8ed;background:#f5f5f7;">
+				<div style="color:#161617;font-size:14px;font-weight:800;line-height:1.35;">
+					<span style="display:inline-block;margin:0 8px 0 0;padding:5px 8px;border-radius:999px;background:#161617;color:#ffffff;font-size:11px;font-weight:800;line-height:1;">${escapeHtml(badgeLabel)}</span>
+					${escapeHtml(group.title)}
+				</div>
+				<div style="margin-top:4px;color:#6e6e73;font-size:12px;font-weight:600;line-height:1.35;">${escapeHtml(meta)}</div>
+			</td>
+		</tr>
+	`;
+}
+
+function buildHtmlOrderItems(items: NormalizedOrderItem[], baseUrl: string): string {
+	const groups = getOrderItemGroups(items);
+	const hasBundle = groups.some((group) => group.isBundle);
+
+	return groups
+		.map((group) => (
+			[
+				buildHtmlOrderItemGroupHeader(group, hasBundle || groups.length > 1),
+				...group.items.map((item, index) => buildHtmlOrderItemRow(item, index, baseUrl)),
+			].join("")
+		))
+		.join("");
+}
+
 function buildHtmlEmail(order: NormalizedOrder, meta: RequestMeta): string {
 	const customerLines: Array<[string, string]> = order.buyerType === "company"
 		? [
@@ -710,21 +969,7 @@ function buildHtmlEmail(order: NormalizedOrder, meta: RequestMeta): string {
 	const deliveryLabel = [order.delivery.region, order.delivery.city]
 		.filter(Boolean)
 		.join(", ");
-	const items = order.items
-		.map((item, index) => (
-			`<tr>
-				<td style="padding:15px 12px;border-top:${index === 0 ? "0" : "1px solid #e8e8ed"};color:#6e6e73;font-size:13px;vertical-align:top;">${index + 1}</td>
-				<td style="padding:15px 12px;border-top:${index === 0 ? "0" : "1px solid #e8e8ed"};vertical-align:top;">
-					<div style="color:#161617;font-size:15px;font-weight:700;line-height:1.35;">${escapeHtml(item.name)}</div>
-					${item.sku ? `<div style="margin-top:4px;color:#6e6e73;font-size:12px;line-height:1.35;">Артикул: ${escapeHtml(item.sku)}</div>` : ""}
-					${item.href ? `<a href="${escapeHtml(getAbsoluteUrl(item.href, baseUrl))}" style="display:inline-block;margin-top:9px;color:#161617;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:2px;">Открыть товар</a>` : ""}
-				</td>
-				<td style="padding:15px 12px;border-top:${index === 0 ? "0" : "1px solid #e8e8ed"};color:#161617;font-size:14px;font-weight:700;text-align:center;vertical-align:top;">${item.quantity}</td>
-				<td style="padding:15px 12px;border-top:${index === 0 ? "0" : "1px solid #e8e8ed"};color:#161617;font-size:14px;font-weight:600;text-align:right;vertical-align:top;white-space:nowrap;">${escapeHtml(item.priceLabel || "по запросу")}</td>
-				<td style="padding:15px 12px;border-top:${index === 0 ? "0" : "1px solid #e8e8ed"};color:#161617;font-size:14px;font-weight:700;text-align:right;vertical-align:top;white-space:nowrap;">${escapeHtml(item.lineTotalLabel || item.priceLabel || "по запросу")}</td>
-			</tr>`
-		))
-		.join("");
+	const items = buildHtmlOrderItems(order.items, baseUrl);
 
 	return `<!doctype html>
 	<html lang="ru">
@@ -857,12 +1102,26 @@ export default ({ strapi }) => ({
 	async submit(payload: unknown, meta: RequestMeta = {}) {
 		const order = normalizeOrder(payload);
 		const settings = getMailSettings();
-		const storedOrder = await createStoredOrder(
-			strapi,
-			order,
-			meta,
-			settings.enabled ? "pending" : "disabled",
-		);
+		let storedOrder: StoredOrderRecord | null = null;
+		let storedOrderError = "";
+
+		try {
+			storedOrder = await createStoredOrder(
+				strapi,
+				order,
+				meta,
+				settings.enabled ? "pending" : "disabled",
+			);
+		} catch (error) {
+			storedOrderError = getEmailErrorMessage(error);
+			strapi.log.error(
+				`[order] Failed to store order ${order.orderId}: ${storedOrderError}`,
+			);
+
+			if (!settings.enabled) {
+				throw createHttpError(500, "Не удалось сохранить заказ.");
+			}
+		}
 
 		if (!settings.enabled) {
 			strapi.log.info(
@@ -872,7 +1131,7 @@ export default ({ strapi }) => ({
 			return {
 				orderId: order.orderId,
 				mode: "saved" satisfies SubmitOrderMode,
-				recordId: storedOrder.documentId,
+				recordId: storedOrder?.documentId,
 			};
 		}
 
@@ -883,9 +1142,9 @@ export default ({ strapi }) => ({
 				host: settings.host,
 				port: settings.port,
 				secure: settings.secure,
-				connectionTimeout: 10000,
-				greetingTimeout: 10000,
-				socketTimeout: 15000,
+				connectionTimeout: settings.connectionTimeout,
+				greetingTimeout: settings.greetingTimeout,
+				socketTimeout: settings.socketTimeout,
 			};
 
 			if (settings.user && settings.pass) {
@@ -920,7 +1179,7 @@ export default ({ strapi }) => ({
 			return {
 				orderId: order.orderId,
 				mode: "email" satisfies SubmitOrderMode,
-				recordId: storedOrder.documentId,
+				recordId: storedOrder?.documentId,
 			};
 		} catch (error) {
 			const emailError = getEmailErrorMessage(error);
@@ -931,6 +1190,10 @@ export default ({ strapi }) => ({
 			});
 
 			strapi.log.error(`[order] Email failed for ${order.orderId}: ${emailError}`);
+
+			if (storedOrderError) {
+				throw createHttpError(500, "Не удалось отправить заказ.");
+			}
 
 			return {
 				orderId: order.orderId,

@@ -39,6 +39,11 @@ export type CheckoutOrderPayload = {
 			label: string;
 			value: string;
 		}>;
+		bundle?: {
+			id: string;
+			title: string;
+			discountPercent?: number;
+		};
 	}>;
 	comment: string;
 	callBack: boolean;
@@ -97,6 +102,7 @@ export function mapCartLinesToOrderItems(
 		priceLabel: getLinePriceLabel(line),
 		lineTotalLabel: getLineTotalLabel(line),
 		options: line.product.selectedOptions,
+		bundle: line.bundle,
 	}));
 }
 

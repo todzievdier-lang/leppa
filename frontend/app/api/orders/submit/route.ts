@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const ORDER_REQUEST_TIMEOUT_MS = 15000;
+const ORDER_REQUEST_TIMEOUT_MS = 60000;
 
 function normalizeApiUrl(value: string | undefined): string | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
