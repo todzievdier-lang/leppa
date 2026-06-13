@@ -12,18 +12,28 @@ const INSTALLATION_SLUG = 'wenston-installyatsiya-dlya-podvesnogo-unitaza-stw';
 const DEFAULT_WALL_TOILET_SLUG = 'leppa-podvesnoy-unitaz-leppa-448';
 const DEFAULT_MIRROR_SLUG =
   'wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x20';
+const DEFAULT_FLUSH_BUTTON_SLUG = 'wenston-knopka-smyva-603bs';
 
 const FLUSH_BUTTON_BY_COLOR = {
-  black: 'wenston-knopka-smyva-line-chernaya',
-  gray: 'wenston-knopka-smyva-line-seraya',
-  white: 'wenston-knopka-smyva-line-belaya',
+  black: 'wenston-knopka-smyva-608bl',
+  chrome: DEFAULT_FLUSH_BUTTON_SLUG,
+  gold: 'wenston-knopka-smyva-603g',
+  gray: 'wenston-knopka-smyva-608gg',
+  white: DEFAULT_FLUSH_BUTTON_SLUG,
 };
 
 const PRICE_BY_SLUG = {
   [INSTALLATION_SLUG]: 12490,
-  [FLUSH_BUTTON_BY_COLOR.white]: 2490,
-  [FLUSH_BUTTON_BY_COLOR.gray]: 2490,
-  [FLUSH_BUTTON_BY_COLOR.black]: 2990,
+  [DEFAULT_FLUSH_BUTTON_SLUG]: 2490,
+  'wenston-knopka-smyva-001g': 2990,
+  'wenston-knopka-smyva-001s': 2490,
+  'wenston-knopka-smyva-601bl': 2990,
+  'wenston-knopka-smyva-603bl': 2990,
+  'wenston-knopka-smyva-603g': 2990,
+  'wenston-knopka-smyva-606bl': 2990,
+  'wenston-knopka-smyva-608bl': 2990,
+  'wenston-knopka-smyva-608gg': 2490,
+  'wenston-knopka-smyva-608zg': 2990,
 };
 
 const PRICE_BY_MODEL = {
@@ -231,7 +241,7 @@ function buildDefaultBundles(product, productsBySlug) {
       makeBundle([
         product.slug,
         INSTALLATION_SLUG,
-        FLUSH_BUTTON_BY_COLOR.white,
+        DEFAULT_FLUSH_BUTTON_SLUG,
       ]),
     );
   }
@@ -241,7 +251,7 @@ function buildDefaultBundles(product, productsBySlug) {
       makeBundle([
         product.slug,
         DEFAULT_WALL_TOILET_SLUG,
-        FLUSH_BUTTON_BY_COLOR.white,
+        DEFAULT_FLUSH_BUTTON_SLUG,
       ]),
     );
   }
