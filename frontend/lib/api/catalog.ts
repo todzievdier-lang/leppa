@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import {
 	buildBrandOptions,
 	buildFilterGroups,
@@ -32,6 +34,7 @@ const STRAPI_API_URL = getConfiguredStrapiApiUrl();
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
+const CATALOG_REVALIDATE_SECONDS = 300;
 const MAX_BUNDLE_PRODUCTS = 5;
 const DEBUG_CATEGORIES =
 	process.env.DEBUG_CATEGORIES === "true"
@@ -175,7 +178,7 @@ async function fetchStrapiJson(url: URL, pathname: string): Promise<unknown | nu
 	try {
 		const response = await fetch(url, {
 			headers: getStrapiRequestHeaders(),
-			cache: "no-store",
+			next: { revalidate: CATALOG_REVALIDATE_SECONDS },
 		});
 
 		if (!response.ok) {
@@ -757,6 +760,9 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		.filter((product): product is Product => product !== null);
 }
 
+const getCachedStrapiCategories = cache(fetchStrapiCategories);
+const getCachedStrapiProducts = cache(fetchStrapiProducts);
+
 function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 	return {
 		...query,
@@ -769,7 +775,7 @@ function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 }
 
 export async function getCategories(): Promise<Category[]> {
-	const categories = await fetchStrapiCategories();
+	const categories = await getCachedStrapiCategories();
 	logCategoriesDebug("getCategories result", categories);
 
 	return categories;
@@ -798,7 +804,7 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	return fetchStrapiProducts();
+	return getCachedStrapiProducts();
 }
 
 export async function getProductBySlug(

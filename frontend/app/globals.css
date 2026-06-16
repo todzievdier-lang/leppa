@@ -184,12 +184,9 @@ body {
 }
 
 body main {
-	transform: translate3d(0, 0, 0) scale(1);
-	filter: blur(0);
-	transition:
-		filter 500ms cubic-bezier(0.22, 1, 0.36, 1),
-		transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-	will-change: filter, transform;
+	transform: translate3d(0, 0, 0);
+	transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: transform;
 }
 
 body.overlay {
@@ -197,17 +194,22 @@ body.overlay {
 }
 
 body.overlay main {
-	filter: blur(8px);
-	transform: translate3d(0, 0, 0) scale(1.015);
+	transform: translate3d(0, 8px, 0);
 	user-select: none;
 }
 
-/*
- * Do not set pointer-events: none on main here: with filter + transform,
- * some mobile browsers still composite main above fixed UI and swallow taps
- * meant for the mobile menu. Menu is portaled to document.body with a
- * higher z-index instead.
- */
+.mobile-menu-backdrop {
+	background: rgb(var(--palette-canvas) / 0.2);
+	-webkit-backdrop-filter: blur(16px);
+	backdrop-filter: blur(16px);
+	will-change: opacity;
+}
+
+.mobile-menu-panel {
+	-webkit-backdrop-filter: blur(24px) saturate(1.15);
+	backdrop-filter: blur(24px) saturate(1.15);
+	will-change: transform, opacity;
+}
 
 /* Typography */
 
