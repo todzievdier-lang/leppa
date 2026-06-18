@@ -183,31 +183,20 @@ body {
 	color: var(--foreground);
 }
 
-body main {
-	transform: translate3d(0, 0, 0);
-	transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-	will-change: transform;
-}
-
 body.overlay {
 	overflow: hidden;
 }
 
 body.overlay main {
-	transform: translate3d(0, 8px, 0);
 	user-select: none;
 }
 
 .mobile-menu-backdrop {
-	background: rgb(var(--palette-canvas) / 0.2);
-	-webkit-backdrop-filter: blur(16px);
-	backdrop-filter: blur(16px);
-	will-change: opacity;
+	background: rgb(var(--palette-ink) / 0.08);
 }
 
 .mobile-menu-panel {
-	-webkit-backdrop-filter: blur(24px) saturate(1.15);
-	backdrop-filter: blur(24px) saturate(1.15);
+	background: rgb(var(--palette-frost));
 	will-change: transform, opacity;
 }
 
@@ -269,11 +258,6 @@ input {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	body main {
-		transition-duration: 1ms;
-		will-change: auto;
-	}
-
 	.btn-motion {
 		transition-duration: 1ms;
 		will-change: auto;

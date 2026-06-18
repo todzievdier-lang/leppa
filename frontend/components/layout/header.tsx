@@ -199,7 +199,11 @@ const Header = () => {
 	return (
 		<>
 			<header className="fixed left-1/2 top-4 z-[70] isolate w-full max-w-5xl -translate-x-1/2 px-4">
-				<div className="grid w-full grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-3 rounded-full border border-hairline bg-toolbar px-5 py-2 shadow-header md:grid-cols-[minmax(0,auto)_minmax(0,1fr)_minmax(0,auto)] md:gap-4 md:px-6">
+				<div
+					className={cn(
+						"grid w-full grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-3 rounded-full border border-hairline px-5 py-2 transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-cols-[minmax(0,auto)_minmax(0,1fr)_minmax(0,auto)] md:gap-4 md:px-6",
+						isOpen ? "bg-canvas shadow-surface-md" : "bg-toolbar shadow-header",
+					)}>
 					{/* Logo */}
 					<Link
 						href="/"

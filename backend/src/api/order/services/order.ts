@@ -108,6 +108,7 @@ type MailSettings = {
 	host: string;
 	port: number;
 	secure: boolean;
+	family: number;
 	connectionTimeout: number;
 	greetingTimeout: number;
 	socketTimeout: number;
@@ -123,6 +124,7 @@ type SmtpTransportConfig = {
 	host: string;
 	port: number;
 	secure: boolean;
+	family?: number;
 	connectionTimeout?: number;
 	greetingTimeout?: number;
 	socketTimeout?: number;
@@ -237,6 +239,7 @@ function getMailSettings(): MailSettings {
 		host,
 		port,
 		secure: getEnvBoolean(process.env.SMTP_SECURE, port === 465),
+		family: getEnvNumber(process.env.SMTP_FAMILY, 4),
 		connectionTimeout: getEnvNumber(
 			process.env.SMTP_CONNECTION_TIMEOUT_MS,
 			DEFAULT_SMTP_CONNECTION_TIMEOUT_MS,
@@ -1142,6 +1145,7 @@ export default ({ strapi }) => ({
 				host: settings.host,
 				port: settings.port,
 				secure: settings.secure,
+				family: settings.family,
 				connectionTimeout: settings.connectionTimeout,
 				greetingTimeout: settings.greetingTimeout,
 				socketTimeout: settings.socketTimeout,
