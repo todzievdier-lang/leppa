@@ -1,6 +1,6 @@
 import type { CatalogFilters, CatalogQuery, CatalogSort } from "@/types/catalog";
 
-export type SearchParamsValue = string | string[] | undefined;
+type SearchParamsValue = string | string[] | undefined;
 export type CatalogSearchParams = Record<string, SearchParamsValue>;
 
 export const CATALOG_FILTER_PARAM = "filter";

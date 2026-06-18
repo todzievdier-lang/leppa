@@ -1,16 +1,4 @@
-import type { Category, CategoryKey, Product, ProductAttribute } from "@/types/catalog";
-
-export function getCategoryByKey(key: CategoryKey): Category | null {
-	void key;
-
-	return null;
-}
-
-export function getCategoryBySlug(slug: string): Category | null {
-	void slug;
-
-	return null;
-}
+import type { Category, Product } from "@/types/catalog";
 
 export function getCategoryHref(category: Category): string {
 	return `/catalog/${category.slug}`;
@@ -33,15 +21,4 @@ export function getProductHref(
 	const categorySlug = category?.slug ?? product.categoryKey;
 
 	return `/catalog/${categorySlug}/${product.slug}`;
-}
-
-export function getProductCategory(product: Product): Category | null {
-	return getCategoryByKey(product.categoryKey);
-}
-
-export function getProductAttribute(
-	product: Product,
-	attributeKey: string,
-): ProductAttribute | null {
-	return product.attributes.find((attribute) => attribute.key === attributeKey) ?? null;
 }

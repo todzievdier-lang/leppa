@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 
@@ -109,11 +110,12 @@ export function CategoryCard({
 			</Link>
 
 			<div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-hairline sm:aspect-[16/11]">
-				<div
-					aria-label={category.name}
-					role="img"
-					className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
-					style={{ backgroundImage: `url(${imageSrc})` }}
+				<Image
+					src={imageSrc}
+					alt={category.name}
+					fill
+					sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+					className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
 				/>
 				<div className="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
 			</div>

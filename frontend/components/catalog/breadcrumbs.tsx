@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-export type BreadcrumbItem = {
+type BreadcrumbItem = {
 	label: string;
 	href?: string;
 };

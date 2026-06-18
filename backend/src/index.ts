@@ -1,6 +1,5 @@
 import type { Core } from '@strapi/strapi';
 
-const COLOR_UID = 'api::color.color';
 const PUBLIC_COLOR_ACTIONS = ['find', 'findOne'] as const;
 
 async function ensurePublicColorPermissions(strapi: Core.Strapi) {
@@ -34,8 +33,6 @@ async function ensurePublicColorPermissions(strapi: Core.Strapi) {
 }
 
 export default {
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
-
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await ensurePublicColorPermissions(strapi);
   },

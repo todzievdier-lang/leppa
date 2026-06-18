@@ -13,7 +13,7 @@ import { getContactGridClassName } from "./contact-layout";
 import type { Contact } from "@/types";
 import type { LucideIcon } from "lucide-react";
 
-export type ContactCardItem = {
+type ContactCardItem = {
 	id: string;
 	title: string;
 	value: string;

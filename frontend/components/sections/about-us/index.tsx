@@ -15,7 +15,7 @@ type AboutSubsection = {
 	order: number;
 };
 
-export const aboutSubsections = [...(contentBlocks as AboutSubsection[])].sort(
+const aboutSubsections = [...(contentBlocks as AboutSubsection[])].sort(
 	(a, b) => a.order - b.order,
 );
 

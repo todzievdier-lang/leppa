@@ -1,6 +1,6 @@
 import type { CartLine } from "@/types/shop";
 
-export type BuyerType = "person" | "company";
+type BuyerType = "person" | "company";
 
 export type CheckoutCustomer = {
 	organizationSearch: string;
@@ -19,7 +19,7 @@ export type CheckoutCustomer = {
 	checkingAccount: string;
 };
 
-export type CheckoutOrderPayload = {
+type CheckoutOrderPayload = {
 	buyerType: BuyerType;
 	customer: CheckoutCustomer;
 	delivery: {

@@ -1,7 +1,5 @@
 import { cn } from "@/lib/utils";
 
-export const CONTACT_CARD_SKELETON_COUNT = 4;
-
 export function getContactGridClassName(
 	contactCount: number,
 	className?: string,

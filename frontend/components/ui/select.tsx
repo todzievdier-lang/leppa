@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fieldControlClassName } from "@/components/ui/input";
 
-export type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;
+type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 	({ className, disabled, ...props }, ref) => {

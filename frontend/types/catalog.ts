@@ -1,6 +1,6 @@
 export type CategoryKey = string;
 
-export type CategorySeo = {
+type CategorySeo = {
 	title?: string;
 	description?: string;
 };
