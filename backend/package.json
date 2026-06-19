@@ -12,6 +12,7 @@
     "apply:commerce-data": "node scripts/apply-product-commerce-data.js",
     "import:catalog-seed": "node scripts/import-catalog-seed.js",
     "import:products": "node scripts/import-products.js",
+    "migrate:product-editor": "node scripts/migrate-product-editor-fields.js",
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",

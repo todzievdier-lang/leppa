@@ -207,6 +207,31 @@ function setIfPresent(data, product, fieldName) {
   }
 }
 
+const DIMENSION_FIELDS = ['widthMm', 'heightMm', 'depthMm', 'lengthMm', 'diameterMm'];
+
+function findProductAttribute(product, key) {
+  return Array.isArray(product.attributes)
+    ? product.attributes.find((attribute) => attribute?.key === key)
+    : null;
+}
+
+function buildProductSpecifications(product) {
+  if (!Array.isArray(product.attributes)) {
+    return [];
+  }
+
+  return product.attributes
+    .filter((attribute) => attribute?.label && !DIMENSION_FIELDS.includes(attribute.key))
+    .map((attribute) => ({
+      name: String(attribute.label),
+      value: Array.isArray(attribute.value)
+        ? attribute.value.join(', ')
+        : String(attribute.value ?? ''),
+      unit: attribute.unit ? String(attribute.unit) : null,
+    }))
+    .filter((attribute) => attribute.value);
+}
+
 function buildProductData(strapi, product, category, color, mediaFiles, options, warned) {
   const productFields = new Set(getAttributeNames(strapi, PRODUCT_UID));
   const data = {};
@@ -215,6 +240,21 @@ function buildProductData(strapi, product, category, color, mediaFiles, options,
     if (productFields.has(fieldName)) {
       setIfPresent(data, product, fieldName);
     }
+  }
+
+  for (const fieldName of DIMENSION_FIELDS) {
+    if (!productFields.has(fieldName)) {
+      continue;
+    }
+
+    const attribute = findProductAttribute(product, fieldName);
+    const value = Number(attribute?.value);
+
+    data[fieldName] = Number.isFinite(value) ? value : null;
+  }
+
+  if (productFields.has('specifications')) {
+    data.specifications = buildProductSpecifications(product);
   }
 
   if (productFields.has('description')) {
