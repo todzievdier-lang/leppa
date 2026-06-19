@@ -54,7 +54,6 @@ export type Product = {
 	color: ProductColor | null;
 	name: string;
 	brand: string | null;
-	model: string | null;
 	categoryKey: CategoryKey;
 	price: number | null;
 	currency: string | null;

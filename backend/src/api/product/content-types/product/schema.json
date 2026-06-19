@@ -34,9 +34,6 @@
     "brand": {
       "type": "string"
     },
-    "model": {
-      "type": "string"
-    },
     "price": {
       "type": "decimal",
       "required": false

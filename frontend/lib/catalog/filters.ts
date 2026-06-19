@@ -32,7 +32,6 @@ function getSearchContent(product: Product): string {
 		[
 			product.name,
 			product.brand,
-			product.model,
 			product.sku,
 			product.description,
 			...product.attributes.flatMap((attribute) => [

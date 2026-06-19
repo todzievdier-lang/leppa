@@ -156,7 +156,7 @@ export function ProductDetail({
 								)}>
 								<dt className="text-xs text-ink-faint">Модель</dt>
 								<dd className="mt-1 text-sm font-semibold text-ink">
-									{product.model ?? product.sku ?? "—"}
+									{product.sku ?? "—"}
 								</dd>
 							</div>
 						</dl> */}

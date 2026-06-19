@@ -115,12 +115,6 @@ function isLightHex(hex: string) {
 }
 
 function getProductSeriesKey(product: Product) {
-	const model = normalizeText(product.model);
-
-	if (model) {
-		return `model:${model}`;
-	}
-
 	return `name:${normalizeText(product.name).replace(
 		/\b\d{2,4}\s*[xх×]\s*\d{1,4}(?:\s*[xх×]\s*\d{1,4})?\s*(?:mm|мм|cm|см)?\b/gi,
 		"",
@@ -140,10 +134,10 @@ function getStableAttributesKey(product: Product) {
 }
 
 function getColorVariantGroupKey(product: Product) {
-	const baseSku = normalizeText(product.baseSku);
+	const groupSku = normalizeText(product.baseSku ?? product.sku);
 
-	if (baseSku) {
-		return `${product.categoryKey}::baseSku:${baseSku}`;
+	if (groupSku) {
+		return `${product.categoryKey}::sku:${groupSku}`;
 	}
 
 	return [
@@ -159,10 +153,12 @@ function getVariantGroupKey(product: Product) {
 		? `color:${product.color.id}`
 		: "";
 
-	if (product.baseSku) {
+	const groupSku = normalizeText(product.baseSku ?? product.sku);
+
+	if (groupSku) {
 		return [
 			product.categoryKey,
-			`baseSku:${normalizeText(product.baseSku)}`,
+			`sku:${groupSku}`,
 			colorIdentity,
 			getStableAttributesKey(product),
 		].join("::");

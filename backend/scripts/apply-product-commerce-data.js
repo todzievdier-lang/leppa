@@ -99,7 +99,7 @@ function getColorSlug(product) {
 }
 
 function getModel(product) {
-  return product.baseSku ?? product.sku ?? product.model ?? null;
+  return product.baseSku ?? product.sku ?? null;
 }
 
 function getMirrorWidth(product) {
@@ -293,7 +293,7 @@ async function getProducts(strapi, status) {
   return strapi.documents(PRODUCT_UID).findMany({
     status,
     pagination: { pageSize: 1000 },
-    fields: ['slug', 'sku', 'baseSku', 'name', 'brand', 'model', 'price', 'bundles'],
+    fields: ['slug', 'sku', 'baseSku', 'name', 'brand', 'price', 'bundles'],
     populate: {
       category: { fields: ['slug'] },
       color: { fields: ['slug', 'name'] },

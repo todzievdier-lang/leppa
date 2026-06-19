@@ -211,7 +211,7 @@ function buildProductData(strapi, product, category, color, mediaFiles, options,
   const productFields = new Set(getAttributeNames(strapi, PRODUCT_UID));
   const data = {};
 
-  for (const fieldName of ['slug', 'sku', 'baseSku', 'name', 'brand', 'model', 'price', 'attributes', 'bundles', 'inStock']) {
+  for (const fieldName of ['slug', 'sku', 'baseSku', 'name', 'brand', 'price', 'attributes', 'bundles', 'inStock']) {
     if (productFields.has(fieldName)) {
       setIfPresent(data, product, fieldName);
     }
@@ -489,7 +489,7 @@ function mediaFileInfo(product, image, name, folder) {
 }
 
 function getProductSkuFolderName(product) {
-  return sanitizeFolderName(product.sku || product.model || product.slug, product.slug);
+  return sanitizeFolderName(product.sku || product.slug, product.slug);
 }
 
 function getProductMediaFolderPath(category, product) {
