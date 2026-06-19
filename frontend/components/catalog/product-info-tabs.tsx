@@ -123,7 +123,7 @@ export function ProductInfoTabs({
 						role="tabpanel"
 						className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.36fr)]">
 						<ul className="space-y-3 text-base text-ink-muted">
-							{descriptionItems.map((item, index) => (
+							{descriptionItems.length > 0 ? descriptionItems.map((item, index) => (
 								<li
 									key={`${item}-${index}`}
 									className="grid grid-cols-[0.875rem_minmax(0,1fr)] gap-3">
@@ -133,7 +133,9 @@ export function ProductInfoTabs({
 									/>
 									<span>{item}</span>
 								</li>
-							))}
+							)) : (
+								<li>Описание пока не добавлено.</li>
+							)}
 						</ul>
 
 						{highlights.length > 0 ? (

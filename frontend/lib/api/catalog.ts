@@ -417,6 +417,98 @@ function mapProductAttributes(value: unknown): ProductAttribute[] {
 	return attributes;
 }
 
+const ATTRIBUTE_KEYS_BY_LABEL: Record<string, string> = {
+	"тип изделия": "productType",
+	"цвет": "color",
+	"цвет сиденья": "seatColor",
+	"цвет фурнитуры": "hardwareColor",
+	"поверхность": "surface",
+	"материал": "material",
+	"материал корпуса": "bodyMaterial",
+	"покрытие корпуса": "bodyFinish",
+	"материал фасада": "facadeMaterial",
+	"монтаж": "mounting",
+	"способ монтажа": "mountingMethod",
+	"направление выпуска": "outletDirection",
+	"вид смывающего потока": "flushFlowType",
+	"тип лампы": "lampType",
+	"цвет подсветки": "lightingColor",
+	"страна происхождения": "countryOfOrigin",
+	"гарантия": "warranty",
+	"тип установки": "installationType",
+	"мощность": "powerW",
+	"роль в комплекте": "kitRole",
+	"тип кнопки": "buttonType",
+	"режимы смыва": "flushModes",
+	"совместимость": "compatibility",
+	"отделка": "finish",
+	"бачок": "flushTank",
+	"комплект крепежа": "mountingKit",
+	"бренд": "brand",
+};
+
+function getAttributeKeyFromLabel(label: string): string {
+	const normalizedLabel = label.trim().toLocaleLowerCase("ru-RU");
+
+	return ATTRIBUTE_KEYS_BY_LABEL[normalizedLabel]
+		?? `custom:${normalizedLabel.replace(/\s+/g, "-")}`;
+}
+
+function mapProductSpecifications(value: unknown): ProductAttribute[] {
+	return parseJsonArray(value)
+		.filter((entry): entry is PlainRecord => isRecord(entry))
+		.map((entry): ProductAttribute | null => {
+			const label = getString(entry.name) ?? getString(entry.label);
+			const attributeValue = getString(entry.value);
+
+			if (!label || !attributeValue) {
+				return null;
+			}
+
+			const unit = getString(entry.unit);
+
+			return {
+				key: getAttributeKeyFromLabel(label),
+				label,
+				value: attributeValue,
+				...(unit ? { unit } : {}),
+			};
+		})
+		.filter((attribute): attribute is ProductAttribute => attribute !== null);
+}
+
+function mapProductDimensions(fields: PlainRecord): ProductAttribute[] {
+	return [
+		["widthMm", "Ширина"],
+		["heightMm", "Высота"],
+		["depthMm", "Глубина"],
+		["lengthMm", "Длина"],
+		["diameterMm", "Диаметр"],
+	]
+		.map(([key, label]): ProductAttribute | null => {
+			const value = getNumber(fields[key]);
+
+			return value === null
+				? null
+				: { key, label, value, unit: "mm" };
+		})
+		.filter((attribute): attribute is ProductAttribute => attribute !== null);
+}
+
+function mergeProductAttributes(
+	legacyAttributes: ProductAttribute[],
+	specifications: ProductAttribute[],
+	dimensions: ProductAttribute[],
+): ProductAttribute[] {
+	const attributesByKey = new Map<string, ProductAttribute>();
+
+	[...legacyAttributes, ...specifications, ...dimensions].forEach((attribute) => {
+		attributesByKey.set(attribute.key, attribute);
+	});
+
+	return [...attributesByKey.values()];
+}
+
 function normalizeBundleProductSlugs(value: unknown): string[] {
 	if (!Array.isArray(value)) {
 		return [];
@@ -657,6 +749,11 @@ function mapStrapiProduct(entry: unknown): Product | null {
 	}
 
 	const colorFields = unwrapStrapiRelation(fields.color);
+	const attributes = mergeProductAttributes(
+		mapProductAttributes(fields.attributes),
+		mapProductSpecifications(fields.specifications),
+		mapProductDimensions(fields),
+	);
 
 	return {
 		id:
@@ -676,7 +773,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		description: getDescription(fields.description),
 		images: mapProductImages(fields.images, name),
 		videos: mapProductVideos(fields.videos),
-		attributes: mapProductAttributes(fields.attributes),
+		attributes,
 		bundles: mapProductBundles(fields.bundles),
 	};
 }
@@ -709,6 +806,11 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"name",
 			"brand",
 			"price",
+			"widthMm",
+			"heightMm",
+			"depthMm",
+			"lengthMm",
+			"diameterMm",
 			"bundles",
 			"description",
 			"attributes",
@@ -722,6 +824,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"formats",
 		]);
 		addStrapiPopulateFields(url, "videos", ["url"]);
+		addStrapiPopulateFields(url, "specifications", ["name", "value", "unit"]);
 		addStrapiPopulateFields(url, "category", ["slug"]);
 		addStrapiPopulateFields(url, "color", ["name", "slug", "hex", "sortOrder"]);
 		url.searchParams.set("sort", "name:asc");

@@ -49,11 +49,6 @@ export function ProductDetail({
 		category,
 		activeColor ? [{ label: "Цвет", value: activeColor }] : [],
 	);
-	const intro = product.description
-		.split(/\n{2,}/)
-		.at(-1)
-		?.trim();
-
 	return (
 		<article className="bg-canvas text-ink">
 			<ProductScrollToTop />
@@ -94,12 +89,6 @@ export function ProductDetail({
 						<h1 className="mt-3 text-3xl font-semibold tracking-normal text-ink sm:text-4xl lg:text-5xl">
 							{product.name}
 						</h1>
-
-						{intro ? (
-							<p className="mt-5 text-base leading-relaxed text-ink-muted">
-								{intro}
-							</p>
-						) : null}
 
 						<ProductSizeSelector
 							className="mt-6"
