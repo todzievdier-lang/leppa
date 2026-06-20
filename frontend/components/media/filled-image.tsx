@@ -9,6 +9,8 @@ type FilledImageProps = {
 	className?: string;
 	imageClassName?: string;
 	priority?: boolean;
+	quality?: number;
+	unoptimized?: boolean;
 };
 
 export function FilledImage({
@@ -18,6 +20,8 @@ export function FilledImage({
 	className,
 	imageClassName,
 	priority,
+	quality = 100,
+	unoptimized = false,
 }: FilledImageProps) {
 	const safeAlt = alt?.trim() ? alt : "Изображение товара";
 
@@ -32,6 +36,8 @@ export function FilledImage({
 				alt={safeAlt}
 				fill
 				priority={priority}
+				quality={quality}
+				unoptimized={unoptimized}
 				sizes={sizes}
 				className={cn(
 					"pointer-events-none select-none object-cover object-center",

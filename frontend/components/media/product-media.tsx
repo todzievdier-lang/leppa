@@ -31,6 +31,7 @@ export function ProductMedia({
 				alt={alt}
 				sizes={sizes}
 				priority={priority}
+				unoptimized={variant === "gallery"}
 				className="absolute inset-0"
 				imageClassName={imageClassName}
 			/>

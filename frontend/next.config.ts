@@ -53,6 +53,7 @@ const nextConfig: NextConfig = {
 	images: {
 		// Next.js 16 blocks localhost/private IPs unless explicitly allowed.
 		dangerouslyAllowLocalIP: isDevelopment,
+		qualities: [100],
 		remotePatterns: [
 			{
 				protocol: "http",

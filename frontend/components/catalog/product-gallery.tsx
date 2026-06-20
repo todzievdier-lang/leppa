@@ -219,6 +219,7 @@ export function ProductGallery({ images, fallbackAlt }: ProductGalleryProps) {
 						alt={activeImage.alt}
 						fill
 						priority
+						unoptimized
 						sizes="(max-width: 768px) 100vw, 96vw"
 						className="pointer-events-none select-none object-contain object-center"
 					/>

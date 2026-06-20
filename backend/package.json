@@ -13,6 +13,8 @@
     "import:catalog-seed": "node scripts/import-catalog-seed.js",
     "import:products": "node scripts/import-products.js",
     "migrate:product-editor": "node scripts/migrate-product-editor-fields.js",
+    "organize:media": "node scripts/organize-media-library.js",
+    "sync:yandex-images": "node scripts/sync-yandex-product-images.js",
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",

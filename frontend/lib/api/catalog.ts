@@ -282,7 +282,7 @@ function getStrapiImageUrl(value: unknown): string | null {
 	const small = isRecord(formats?.small) ? getString(formats.small.url) : null;
 	const original = getString(media.url);
 
-	return resolveStrapiAssetUrl(medium ?? small ?? original);
+	return resolveStrapiAssetUrl(original ?? medium ?? small);
 }
 
 function blockToText(value: unknown): string {
