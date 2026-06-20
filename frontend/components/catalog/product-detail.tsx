@@ -153,6 +153,7 @@ export function ProductDetail({
 				</div>
 
 				<ProductKitSuggestions
+					key={product.id}
 					category={category}
 					product={product}
 					products={variantProducts}

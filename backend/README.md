@@ -2,6 +2,29 @@
 
 Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
 
+## Настройка комплектов товаров
+
+Комплект настраивается в карточке товара в поле `bundles`. Достаточно указать скидку и стартовые товары:
+
+```json
+[
+  {
+    "discountPercent": 6,
+    "productSlugs": [
+      "slug-tekushchego-tovara",
+      "slug-unitaza",
+      "slug-knopki-smyva"
+    ]
+  }
+]
+```
+
+- Товар, на странице которого показан комплект, всегда остаётся выбранным.
+- Остальные позиции покупатель может включать и выключать.
+- Варианты замены подбираются автоматически среди товаров того же типа и категории. Добавлять их в `bundles` вручную не нужно.
+- Чтобы новая кнопка смыва или новый унитаз появился в выборе, достаточно опубликовать товар с правильной категорией и названием.
+- Для отключения блока очистите `bundles` или укажите `[]`.
+
 ### `develop`
 
 Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)

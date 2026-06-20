@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Check, Plus, ShoppingBag } from "lucide-react";
+import { Check, Plus, ShoppingBag, X } from "lucide-react";
 
 import { FilledImage } from "@/components/media/filled-image";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ type ProductBundle = {
 };
 
 const BUNDLE_DISCOUNT_RATE = 0.06;
-const BUNDLE_OFFER_LABEL = "Выгодное предложение";
+const BUNDLE_OFFER_LABEL = "Выгодный комплект";
 const MAX_BUNDLE_PRODUCTS = 5;
 const MAX_BUNDLES = 1;
 
@@ -54,9 +54,26 @@ function getAttributeString(product: Product, key: string) {
 }
 
 function getKitPart(product: Product): KitPart | null {
+	const categoryKey = normalizeText(product.categoryKey);
 	const productType = normalizeText(getAttributeString(product, "productType"));
 	const kitRole = normalizeText(getAttributeString(product, "kitRole"));
 	const name = normalizeText(product.name);
+
+	if (categoryKey === "installations") {
+		return "installation";
+	}
+
+	if (categoryKey === "flush-buttons") {
+		return "flush-button";
+	}
+
+	if (categoryKey === "zerkala") {
+		return "mirror";
+	}
+
+	if (categoryKey === "unitazy" || categoryKey === "umnye-unitazy") {
+		return "toilet";
+	}
 
 	if (
 		productType.includes("звукоизоляц")
@@ -70,8 +87,7 @@ function getKitPart(product: Product): KitPart | null {
 	}
 
 	if (
-		product.categoryKey === "zerkala"
-		|| productType.includes("зеркал")
+		productType.includes("зеркал")
 		|| kitRole.includes("зеркал")
 		|| name.includes("зеркал")
 	) {
@@ -111,7 +127,7 @@ function getPartLabel(part: KitPart | null) {
 	}
 
 	if (part === "sound-panel") {
-		return "Панель";
+		return "Звукоизоляционная панель";
 	}
 
 	if (part === "mirror") {
@@ -152,7 +168,9 @@ function getBundlePriceTotals(
 		(total, item) => total + (item.price ?? 0),
 		0,
 	);
-	const discountAmount = Math.round(originalTotal * (discountPercent / 100));
+	const discountAmount = items.length > 1
+		? Math.round(originalTotal * (discountPercent / 100))
+		: 0;
 
 	return {
 		originalTotal,
@@ -171,15 +189,13 @@ function getConfiguredBundleProducts(
 	productSlugs: string[],
 	productsBySlug: Map<string, Product>,
 ) {
-	const items = uniqueProducts([
+	return uniqueProducts([
 		product,
 		...productSlugs
 			.filter((slug) => slug !== product.slug)
 			.map((slug) => productsBySlug.get(slug) ?? null)
 			.filter((item): item is Product => item !== null),
-	]);
-
-	return items.slice(0, MAX_BUNDLE_PRODUCTS);
+	]).slice(0, MAX_BUNDLE_PRODUCTS);
 }
 
 function buildConfiguredBundles(product: Product, products: Product[]) {
@@ -215,10 +231,6 @@ function buildConfiguredBundles(product: Product, products: Product[]) {
 			};
 		})
 		.filter((bundle): bundle is ProductBundle => bundle !== null);
-}
-
-function buildBundles(product: Product, products: Product[]) {
-	return buildConfiguredBundles(product, products);
 }
 
 function getDiscountedPrices(items: Product[], bundleTotal: number | null) {
@@ -259,12 +271,7 @@ function getBundleCartProducts(
 		const snapshot = getShopProductSnapshot(
 			item,
 			item.id === currentProduct.id ? category : null,
-			[
-				{
-					label: "Комплект",
-					value: BUNDLE_OFFER_LABEL,
-				},
-			],
+			[{ label: "Комплект", value: BUNDLE_OFFER_LABEL }],
 		);
 		const discountedPrice = discountedPrices?.[index] ?? null;
 
@@ -281,102 +288,267 @@ function getBundleCartProducts(
 	});
 }
 
-function ProductBundleItem({
-	discountAmount,
+function isComparableToilet(candidate: Product, selectedProduct: Product) {
+	const selectedName = normalizeText(selectedProduct.name);
+	const candidateName = normalizeText(candidate.name);
+
+	if (selectedName.includes("подвесн")) {
+		return candidateName.includes("подвесн");
+	}
+
+	if (selectedName.includes("напольн")) {
+		return candidateName.includes("напольн");
+	}
+
+	return true;
+}
+
+function getAlternativeProducts(selectedProduct: Product, products: Product[]) {
+	const selectedPart = getKitPart(selectedProduct);
+	const samePart = products.filter((candidate) => {
+		if (getKitPart(candidate) !== selectedPart) {
+			return false;
+		}
+
+		if (selectedPart === "toilet" && !isComparableToilet(candidate, selectedProduct)) {
+			return false;
+		}
+
+		return true;
+	});
+	const sameCategory = samePart.filter(
+		(candidate) => candidate.categoryKey === selectedProduct.categoryKey,
+	);
+	const candidates = sameCategory.length > 1 ? sameCategory : samePart;
+
+	return [...candidates].sort((first, second) => {
+		if (first.id === selectedProduct.id) {
+			return -1;
+		}
+
+		if (second.id === selectedProduct.id) {
+			return 1;
+		}
+
+		if (first.inStock !== second.inStock) {
+			return first.inStock ? -1 : 1;
+		}
+
+		return first.name.localeCompare(second.name, "ru");
+	});
+}
+
+function BundleJoiner() {
+	return (
+		<div className="flex shrink-0 items-center justify-center px-1 text-ink-faint sm:self-center">
+			<Plus aria-hidden="true" className="size-5" />
+		</div>
+	);
+}
+
+function BundleProductCard({
+	alternativeCount,
 	discountedPrice,
 	isCurrent,
+	isSelected,
+	onOpenAlternatives,
+	onToggle,
 	product,
 }: {
-	discountAmount: number | null;
+	alternativeCount: number;
 	discountedPrice: number | null;
 	isCurrent: boolean;
+	isSelected: boolean;
+	onOpenAlternatives: () => void;
+	onToggle: () => void;
 	product: Product;
 }) {
-	const part = getKitPart(product);
-	const href = getProductHref(product);
-	const hasDiscount = discountedPrice !== null
+	const hasDiscount = isSelected
+		&& discountedPrice !== null
 		&& typeof product.price === "number"
 		&& discountedPrice < product.price;
 
 	return (
 		<article
 			className={cn(
-				surfaceVariants({ variant: "card" }),
-				"relative grid w-full min-w-0 gap-3 p-3 sm:w-60",
+				"relative flex w-44 shrink-0 flex-col px-2 py-3 transition-opacity sm:w-48",
+				!isSelected && !isCurrent && "opacity-75",
 			)}>
-			<span className="absolute right-3 top-3 z-10 inline-flex size-6 items-center justify-center rounded-full bg-ink text-on-dark shadow-control">
-				<Check
-					aria-hidden="true"
-					className="size-3.5"
-				/>
-			</span>
+			{!isCurrent ? (
+				<button
+					type="button"
+					aria-label={isSelected ? `Убрать ${product.name} из комплекта` : `Добавить ${product.name} в комплект`}
+					aria-pressed={isSelected}
+					onClick={onToggle}
+					className={cn(
+						"absolute right-2 top-2 z-10 inline-flex size-7 items-center justify-center rounded-md border bg-canvas shadow-control transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+						isSelected
+							? "border-ink bg-ink text-on-dark"
+							: "border-hairline-strong text-transparent hover:border-ink-faint",
+					)}>
+					<Check aria-hidden="true" className="size-4" />
+				</button>
+			) : null}
 
 			<Link
-				href={href}
+				href={getProductHref(product)}
 				scroll={false}
 				aria-label={`Открыть товар ${product.name}`}
 				className="block">
 				<FilledImage
 					src={getProductPrimaryImage(product)}
 					alt={product.name}
-					sizes="(max-width: 640px) calc(100vw - 4rem), 15rem"
-					className="h-40 w-full rounded-sm bg-frost lg:h-44"
-					imageClassName="object-cover"
+					sizes="12rem"
+					className="h-36 w-full rounded-md bg-canvas sm:h-40"
+					imageClassName="object-contain p-2"
 				/>
 			</Link>
 
-			<div className="min-w-0 self-end">
-				<div className="flex min-w-0 flex-wrap items-center gap-2">
-					<p className="text-xs font-semibold uppercase tracking-normal text-ink-faint">
-						{getPartLabel(part)}
+			<div className="mt-3 flex min-h-28 flex-1 flex-col">
+				<p className="text-lg font-semibold leading-tight text-ink">
+					{hasDiscount
+						? formatPrice(discountedPrice, product.currency ?? "RUB")
+						: formatProductPrice(product)}
+				</p>
+				{hasDiscount ? (
+					<p className="mt-1 text-xs font-semibold text-ink-muted line-through decoration-ink-muted/50">
+						{formatProductPrice(product)}
 					</p>
-					{isCurrent ? (
-						<span className="rounded-full border border-hairline bg-frost px-2 py-0.5 text-[11px] font-semibold text-ink-muted shadow-control">
-							Текущий товар
-						</span>
-					) : null}
-				</div>
+				) : null}
 				<Link
-					href={href}
+					href={getProductHref(product)}
 					scroll={false}
 					className="mt-2 line-clamp-2 text-sm font-semibold leading-snug text-ink transition-colors hover:text-ink-muted">
 					{product.name}
 				</Link>
-				<div className="mt-2 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-					{hasDiscount ? (
-						<>
-							<p className="text-lg font-semibold leading-tight text-ink">
-								{formatPrice(discountedPrice, product.currency ?? "RUB")}
-							</p>
-							<p className="text-sm font-semibold leading-tight text-ink-muted line-through decoration-ink-muted/50">
-								{formatProductPrice(product)}
-							</p>
-							{discountAmount !== null && discountAmount > 0 ? (
-								<span className="rounded-full border border-destructive/15 bg-canvas px-2 py-0.5 text-[11px] font-semibold text-destructive shadow-control">
-									-{formatPrice(discountAmount, product.currency ?? "RUB")}
-								</span>
-							) : null}
-						</>
-					) : (
-						<p className="text-lg font-semibold leading-tight text-ink">
-							{formatProductPrice(product)}
-						</p>
-					)}
-				</div>
+				<p className="mt-1 text-xs text-ink-faint">
+					{product.brand ?? getPartLabel(getKitPart(product))}
+				</p>
+				{!isCurrent && alternativeCount > 1 ? (
+					<button
+						type="button"
+						onClick={onOpenAlternatives}
+						className="mt-auto pt-3 text-left text-sm font-semibold text-ink-muted underline decoration-hairline-strong underline-offset-4 transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+						{alternativeCount > 2
+							? `Выбрать из ${alternativeCount}`
+							: "Выбрать другой"}
+					</button>
+				) : null}
 			</div>
 		</article>
 	);
 }
 
-function BundleJoiner() {
+function BundleOptionsDrawer({
+	candidates,
+	onChoose,
+	onClose,
+	selectedProduct,
+}: {
+	candidates: Product[];
+	onChoose: (product: Product) => void;
+	onClose: () => void;
+	selectedProduct: Product;
+}) {
+	const title = `Выберите: ${getPartLabel(getKitPart(selectedProduct))}`;
+
 	return (
-		<div className="flex shrink-0 items-center justify-center text-ink-faint sm:self-center">
-			<span className="inline-flex size-8 items-center justify-center rounded-full border border-hairline bg-canvas shadow-control">
-				<Plus
-					aria-hidden="true"
-					className="size-4"
-				/>
-			</span>
+		<div className="fixed inset-0 z-[70]" role="presentation">
+			<button
+				type="button"
+				aria-label="Закрыть выбор товара"
+				onClick={onClose}
+				className="absolute inset-0 bg-scrim backdrop-blur-[2px]"
+			/>
+
+			<aside
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="bundle-options-title"
+				className="absolute inset-y-0 right-0 flex w-full max-w-xl flex-col bg-toolbar shadow-surface-lg">
+				<header className="flex shrink-0 items-start justify-between gap-5 border-b border-hairline bg-canvas px-5 py-5 sm:px-7">
+					<div>
+						<p className="text-xs font-semibold uppercase tracking-normal text-ink-faint">
+							Варианты комплектации
+						</p>
+						<h3 id="bundle-options-title" className="mt-1 text-xl font-semibold text-ink sm:text-2xl">
+							{title}
+						</h3>
+						<p className="mt-1 text-sm text-ink-muted">
+							{candidates.length} {candidates.length === 1 ? "товар" : "товаров"}
+						</p>
+					</div>
+					<button
+						type="button"
+						autoFocus
+						aria-label="Закрыть"
+						onClick={onClose}
+						className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-hairline bg-frost text-ink shadow-control transition-colors hover:bg-toolbar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+						<X aria-hidden="true" className="size-5" />
+					</button>
+				</header>
+
+				<div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5">
+					<div className="grid gap-3">
+						{candidates.map((candidate) => {
+							const isSelected = candidate.id === selectedProduct.id;
+
+							return (
+								<article
+									key={candidate.id}
+									className={cn(
+										surfaceVariants({ variant: "card" }),
+										"grid grid-cols-[7.5rem_minmax(0,1fr)] gap-4 p-3 sm:grid-cols-[9rem_minmax(0,1fr)] sm:p-4",
+										isSelected && "ring-2 ring-ink",
+									)}>
+									<Link href={getProductHref(candidate)} scroll={false} className="block self-center">
+										<FilledImage
+											src={getProductPrimaryImage(candidate)}
+											alt={candidate.name}
+											sizes="9rem"
+											className="h-32 w-full rounded-md bg-frost sm:h-36"
+											imageClassName="object-contain p-2"
+										/>
+									</Link>
+
+									<div className="flex min-w-0 flex-col">
+										<p className="text-xl font-semibold text-ink">
+											{formatProductPrice(candidate)}
+										</p>
+										<Link
+											href={getProductHref(candidate)}
+											scroll={false}
+											className="mt-2 line-clamp-3 text-sm font-semibold leading-snug text-ink hover:text-ink-muted">
+											{candidate.name}
+										</Link>
+										<Link
+											href={getProductHref(candidate)}
+											scroll={false}
+											className="mt-1 w-fit text-xs font-semibold text-ink-muted underline decoration-hairline-strong underline-offset-4">
+											О товаре
+										</Link>
+										<Button
+											type="button"
+											size="sm"
+											variant={isSelected ? "dark" : "secondary"}
+											disabled={isSelected || !candidate.inStock}
+											onClick={() => onChoose(candidate)}
+											className="mt-auto w-full">
+											{isSelected ? (
+												<><Check aria-hidden="true" />В комплекте</>
+											) : candidate.inStock ? (
+												"Добавить в комплект"
+											) : (
+												"Нет в наличии"
+											)}
+										</Button>
+									</div>
+								</article>
+							);
+						})}
+					</div>
+				</div>
+			</aside>
 		</div>
 	);
 }
@@ -394,108 +566,180 @@ export function ProductKitSuggestions({
 }) {
 	const { addManyToCart } = useShopState();
 	const bundles = useMemo(
-		() => buildBundles(product, products),
+		() => buildConfiguredBundles(product, products),
 		[product, products],
 	);
+	const configuredBundle = bundles[0] ?? null;
+	const [bundleItems, setBundleItems] = useState<Product[]>(
+		() => configuredBundle?.items ?? [],
+	);
+	const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(
+		() => new Set(configuredBundle?.items.map((item) => item.id) ?? []),
+	);
+	const [drawerSlotIndex, setDrawerSlotIndex] = useState<number | null>(null);
 
-	if (bundles.length === 0) {
+	useEffect(() => {
+		if (drawerSlotIndex === null) {
+			return;
+		}
+
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === "Escape") {
+				setDrawerSlotIndex(null);
+			}
+		}
+
+		document.body.classList.add("overlay");
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.body.classList.remove("overlay");
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [drawerSlotIndex]);
+
+	if (!configuredBundle) {
 		return null;
 	}
 
-	const activeBundle = bundles[0];
-	const originalTotalLabel = activeBundle.originalTotal === null
-		? "Цена по запросу"
-		: formatPrice(activeBundle.originalTotal, activeBundle.currency);
-	const bundleTotalLabel = activeBundle.bundleTotal === null
-		? "Цена по запросу"
-		: formatPrice(activeBundle.bundleTotal, activeBundle.currency);
-	const discountLabel = activeBundle.discountAmount === null
-		? `Скидка ${activeBundle.discountPercent}%`
-		: `Выгода ${formatPrice(activeBundle.discountAmount, activeBundle.currency)}`;
-	const availableCount = activeBundle.items.filter((item) => item.inStock).length;
-	const canAddBundle = availableCount === activeBundle.items.length;
+	const selectedItems = bundleItems.filter(
+		(item) => item.id === product.id || selectedProductIds.has(item.id),
+	);
+	const totals = getBundlePriceTotals(
+		selectedItems,
+		configuredBundle.currency,
+		configuredBundle.discountPercent,
+	);
+	const activeBundle: ProductBundle = {
+		...configuredBundle,
+		items: selectedItems,
+		...totals,
+	};
 	const discountedPrices = getDiscountedPrices(
-		activeBundle.items,
+		selectedItems,
 		activeBundle.bundleTotal,
 	);
+	const discountedPriceById = new Map(
+		selectedItems.map((item, index) => [item.id, discountedPrices?.[index] ?? null]),
+	);
+	const canAddBundle = selectedItems.every((item) => item.inStock);
+	const hasBundleDiscount = (activeBundle.discountAmount ?? 0) > 0;
+	const drawerProduct = drawerSlotIndex === null
+		? null
+		: (bundleItems[drawerSlotIndex] ?? null);
+	const drawerCandidates = drawerProduct
+		? getAlternativeProducts(drawerProduct, products)
+		: [];
+
+	function toggleProduct(item: Product) {
+		if (item.id === product.id) {
+			return;
+		}
+
+		setSelectedProductIds((current) => {
+			const next = new Set(current);
+
+			if (next.has(item.id)) {
+				next.delete(item.id);
+			} else {
+				next.add(item.id);
+			}
+
+			return next;
+		});
+	}
+
+	function replaceProduct(slotIndex: number, nextProduct: Product) {
+		const previousProduct = bundleItems[slotIndex];
+
+		setBundleItems((current) => current.map((item, index) =>
+			index === slotIndex ? nextProduct : item,
+		));
+		setSelectedProductIds((current) => {
+			const next = new Set(current);
+			next.delete(previousProduct.id);
+			next.add(nextProduct.id);
+			return next;
+		});
+		setDrawerSlotIndex(null);
+	}
 
 	return (
 		<section
 			aria-labelledby="product-kit-title"
 			className={cn(
-				"mt-12 p-4 sm:p-5 lg:p-6",
+				"mt-12 p-4 sm:p-6 lg:p-8",
 				surfaceVariants({ variant: "muted" }),
 				className,
 			)}>
-			<div className="flex flex-col gap-1">
-				<div className="min-w-0">
-					<p className="text-xs font-semibold uppercase tracking-normal text-ink-faint">
-						Подобрать вместе
-					</p>
-					<h2
-						id="product-kit-title"
-						className="mt-1 text-xl font-semibold tracking-normal text-ink sm:text-2xl">
-						{BUNDLE_OFFER_LABEL}
-					</h2>
-				</div>
+			<div>
+				<p className="text-xs font-semibold uppercase tracking-normal text-ink-faint">
+					Соберите свой набор
+				</p>
+				<h2 id="product-kit-title" className="mt-1 text-2xl font-semibold tracking-normal text-ink sm:text-3xl">
+					{BUNDLE_OFFER_LABEL}
+				</h2>
+				<p className="mt-2 max-w-2xl text-sm text-ink-muted">
+					Отметьте нужные позиции или замените товар на подходящий вариант.
+				</p>
 			</div>
 
-			<div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,18rem)] lg:items-stretch">
-				<div className="flex min-w-0 max-w-[52rem] flex-wrap items-stretch gap-x-3 gap-y-4">
-					{activeBundle.items.map((item, index) => (
-						<div
-							key={item.id}
-							className={cn(
-								"flex w-full min-w-0 flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-stretch",
-								index > 0 && "sm:min-w-[17.75rem]",
-							)}>
-							{index > 0 ? <BundleJoiner /> : null}
-							<ProductBundleItem
-								discountAmount={
-									discountedPrices?.[index] !== undefined
-									&& typeof item.price === "number"
-										? item.price - discountedPrices[index]
-										: null
-								}
-								discountedPrice={discountedPrices?.[index] ?? null}
-								isCurrent={item.id === product.id}
-								product={item}
-							/>
-						</div>
-					))}
+			<div className="mt-6 overflow-hidden rounded-lg border border-hairline bg-canvas shadow-control lg:grid lg:grid-cols-[minmax(0,1fr)_18rem]">
+				<div className="min-w-0 overflow-x-auto px-2 py-4 sm:px-4">
+					<div className="flex min-w-max items-stretch">
+						{bundleItems.map((item, index) => {
+							const isCurrent = item.id === product.id;
+							const isSelected = isCurrent || selectedProductIds.has(item.id);
+							const alternativeCount = getAlternativeProducts(item, products).length;
+
+							return (
+								<div key={`${index}-${item.id}`} className="flex items-stretch">
+									{index > 0 ? <BundleJoiner /> : null}
+									<BundleProductCard
+										alternativeCount={alternativeCount}
+										discountedPrice={discountedPriceById.get(item.id) ?? null}
+										isCurrent={isCurrent}
+										isSelected={isSelected}
+										onOpenAlternatives={() => setDrawerSlotIndex(index)}
+										onToggle={() => toggleProduct(item)}
+										product={item}
+									/>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 
-				<div className="grid content-center gap-4 border-t border-hairline pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-					<div className="grid gap-3">
+				<div className="flex flex-col justify-center border-t border-hairline p-5 lg:border-l lg:border-t-0 lg:p-6">
+					{hasBundleDiscount && activeBundle.originalTotal !== null ? (
 						<div>
 							<p className="text-sm text-ink-muted">По отдельности:</p>
-							<p
-								className={cn(
-									"mt-1 text-xl font-semibold text-ink-muted",
-									activeBundle.originalTotal !== null
-										&& "line-through decoration-ink-muted/50",
-								)}>
-								{originalTotalLabel}
+							<p className="mt-1 text-lg font-semibold text-ink-muted line-through decoration-ink-muted/50">
+								{formatPrice(activeBundle.originalTotal, activeBundle.currency)}
 							</p>
 						</div>
+					) : null}
 
-						<div>
-							<p className="text-sm font-semibold text-ink">Комплектом:</p>
-							<div className="mt-1 grid gap-2">
-								<p className="text-2xl font-semibold tracking-normal text-ink sm:text-3xl">
-									{bundleTotalLabel}
-								</p>
-								<span className="w-fit rounded-full border border-destructive/15 bg-canvas px-3 py-1 text-xs font-semibold text-destructive shadow-control">
-									{discountLabel}
-								</span>
-							</div>
-						</div>
+					<div className={cn(hasBundleDiscount && "mt-4 border-t border-hairline pt-4")}>
+						<p className="text-sm font-semibold text-ink">
+							{selectedItems.length > 1 ? "Комплектом:" : "Стоимость:"}
+						</p>
+						<p className="mt-1 text-3xl font-semibold tracking-normal text-ink">
+							{activeBundle.bundleTotal === null
+								? "Цена по запросу"
+								: formatPrice(activeBundle.bundleTotal, activeBundle.currency)}
+						</p>
+						{hasBundleDiscount ? (
+							<span className="mt-3 inline-flex w-fit rounded-full border border-destructive/15 bg-canvas px-3 py-1 text-xs font-semibold text-destructive shadow-control">
+								Выгода {formatPrice(activeBundle.discountAmount ?? 0, activeBundle.currency)}
+							</span>
+						) : null}
 					</div>
 
 					<Button
 						type="button"
 						variant="dark"
-						className="w-full"
+						className="mt-5 w-full"
 						disabled={!canAddBundle}
 						onClick={() => {
 							addManyToCart(
@@ -509,8 +753,20 @@ export function ProductKitSuggestions({
 						<ShoppingBag aria-hidden="true" />
 						{canAddBundle ? "В корзину комплектом" : "Нет в наличии"}
 					</Button>
+					<p className="mt-3 text-center text-xs text-ink-faint">
+						Выбрано: {selectedItems.length} из {bundleItems.length}
+					</p>
 				</div>
 			</div>
+
+			{drawerProduct && drawerSlotIndex !== null ? (
+				<BundleOptionsDrawer
+					candidates={drawerCandidates}
+					onChoose={(nextProduct) => replaceProduct(drawerSlotIndex, nextProduct)}
+					onClose={() => setDrawerSlotIndex(null)}
+					selectedProduct={drawerProduct}
+				/>
+			) : null}
 		</section>
 	);
 }
