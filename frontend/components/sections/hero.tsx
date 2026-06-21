@@ -10,7 +10,7 @@ const Hero = () => {
 				alt="Премиальная сантехника и ванная комната"
 				fill
 				priority
-				quality={100}
+				quality={65}
 				sizes="100vw"
 				className="absolute inset-0 object-cover"
 			/>

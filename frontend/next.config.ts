@@ -53,7 +53,11 @@ const nextConfig: NextConfig = {
 	images: {
 		// Next.js 16 blocks localhost/private IPs unless explicitly allowed.
 		dangerouslyAllowLocalIP: isDevelopment,
-		qualities: [100],
+		// Product images use four intentional quality tiers. The original media
+		// remains untouched in Strapi; Next.js serves responsive WebP variants.
+		formats: ["image/webp"],
+		qualities: [60, 65, 75, 85],
+		minimumCacheTTL: 60 * 60 * 24 * 30,
 		remotePatterns: [
 			{
 				protocol: "http",

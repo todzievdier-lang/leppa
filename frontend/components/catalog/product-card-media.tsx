@@ -9,6 +9,11 @@ import {
 	productMediaFrameClassName,
 } from "@/components/media/product-media-frame";
 import { cn } from "@/lib/utils";
+import {
+	getProductImageSource,
+	PRODUCT_IMAGE_QUALITY,
+	PRODUCT_IMAGE_SIZES,
+} from "@/lib/catalog/product-image";
 
 import type { ProductImage } from "@/types/catalog";
 
@@ -26,6 +31,7 @@ function clamp(value: number, min: number, max: number) {
 function normalizeImages(images: ProductImage[], alt: string) {
 	const normalized = images
 		.map((image) => ({
+			...image,
 			url: image.url.trim(),
 			alt: image.alt?.trim() ? image.alt : alt,
 		}))
@@ -120,9 +126,14 @@ export function ProductCardMedia({
 				}
 			}}>
 			<FilledImage
-				src={getSafeProductImageSrc(gallery[activeIndex]?.url)}
+				src={getSafeProductImageSrc(
+					gallery[activeIndex]
+						? getProductImageSource(gallery[activeIndex], "card")
+						: undefined,
+				)}
 				alt={gallery[activeIndex]?.alt ?? alt}
-				sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
+				sizes={PRODUCT_IMAGE_SIZES.card}
+				quality={PRODUCT_IMAGE_QUALITY.card}
 				className="absolute inset-0"
 			/>
 

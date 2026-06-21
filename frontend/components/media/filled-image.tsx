@@ -19,7 +19,7 @@ export function FilledImage({
 	className,
 	imageClassName,
 	priority,
-	quality = 100,
+	quality = 65,
 }: FilledImageProps) {
 	const safeAlt = alt?.trim() ? alt : "Изображение товара";
 

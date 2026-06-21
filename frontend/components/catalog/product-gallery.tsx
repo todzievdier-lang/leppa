@@ -10,6 +10,11 @@ import {
 	getSafeProductImageSrc,
 	PRODUCT_IMAGE_FALLBACK,
 } from "@/components/media/product-media-frame";
+import {
+	getProductImageSource,
+	PRODUCT_IMAGE_QUALITY,
+	PRODUCT_IMAGE_SIZES,
+} from "@/lib/catalog/product-image";
 import { cn } from "@/lib/utils";
 
 import type { ProductImage } from "@/types/catalog";
@@ -19,11 +24,7 @@ type ProductGalleryProps = {
 	fallbackAlt: string;
 };
 
-type GalleryImage = {
-	url: string;
-	alt: string;
-	role?: string;
-};
+type GalleryImage = ProductImage & { alt: string };
 
 function clamp(value: number, min: number, max: number) {
 	return Math.min(max, Math.max(min, value));
@@ -39,6 +40,7 @@ function normalizeGalleryImages(
 ): GalleryImage[] {
 	const normalized = images
 		.map((image) => ({
+			...image,
 			url: image.url.trim(),
 			alt: image.alt?.trim() ? image.alt : fallbackAlt,
 			role: image.role,
@@ -215,12 +217,14 @@ export function ProductGallery({ images, fallbackAlt }: ProductGalleryProps) {
 				<div className="relative h-full max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100dvw-2rem)] sm:max-h-[calc(100dvh-3rem)] sm:max-w-[calc(100dvw-3rem)]">
 					<Image
 						key={`lightbox-${activeImage.url}-${safeActiveIndex}`}
-						src={getSafeProductImageSrc(activeImage.url)}
+						src={getSafeProductImageSrc(
+							getProductImageSource(activeImage, "lightbox"),
+						)}
 						alt={activeImage.alt}
 						fill
 						priority
-						quality={100}
-						sizes="(max-width: 768px) 100vw, 96vw"
+						quality={PRODUCT_IMAGE_QUALITY.lightbox}
+						sizes={PRODUCT_IMAGE_SIZES.lightbox}
 						className="pointer-events-none select-none object-contain object-center"
 					/>
 				</div>
@@ -263,9 +267,10 @@ export function ProductGallery({ images, fallbackAlt }: ProductGalleryProps) {
 										selectImage(index);
 									}}>
 									<ProductMedia
-										src={image.url}
+										src={getProductImageSource(image, "thumbnail")}
 										alt={image.alt}
 										sizes="48px"
+										quality={PRODUCT_IMAGE_QUALITY.thumbnail}
 										variant="thumbnail"
 										className="border-white/15 bg-white/10"
 										imageClassName="object-cover"
@@ -349,10 +354,11 @@ export function ProductGallery({ images, fallbackAlt }: ProductGalleryProps) {
 					onClick={openLightbox}>
 					<ProductMedia
 						key={`${activeImage.url}-${safeActiveIndex}`}
-						src={activeImage.url}
+						src={getProductImageSource(activeImage, "gallery")}
 						alt={activeImage.alt}
 						priority
-						sizes="(max-width: 1024px) 100vw, 58vw"
+						sizes={PRODUCT_IMAGE_SIZES.gallery}
+						quality={PRODUCT_IMAGE_QUALITY.gallery}
 						variant="gallery"
 						className="animate-in fade-in zoom-in-[0.985] duration-300"
 						imageClassName="transition-transform duration-700 ease-out group-hover:scale-[1.015]"
@@ -447,9 +453,10 @@ export function ProductGallery({ images, fallbackAlt }: ProductGalleryProps) {
 									}
 								}}>
 								<ProductMedia
-									src={image.url}
+									src={getProductImageSource(image, "thumbnail")}
 									alt={image.alt}
-									sizes="(max-width: 640px) 22vw, 120px"
+									sizes={PRODUCT_IMAGE_SIZES.thumbnail}
+									quality={PRODUCT_IMAGE_QUALITY.thumbnail}
 									variant="thumbnail"
 									className={cn(
 										"transition duration-300 ease-out",

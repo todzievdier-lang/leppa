@@ -28,6 +28,10 @@ export type ProductAttribute = {
 
 export type ProductImage = {
 	url: string;
+	thumbnailUrl?: string;
+	smallUrl?: string;
+	mediumUrl?: string;
+	largeUrl?: string;
 	role?: string;
 	label?: string;
 	alt?: string;

@@ -276,13 +276,24 @@ function getStrapiImageUrl(value: unknown): string | null {
 	}
 
 	const formats = isRecord(media.formats) ? media.formats : null;
+	const large = isRecord(formats?.large) ? getString(formats.large.url) : null;
 	const medium = isRecord(formats?.medium)
 		? getString(formats.medium.url)
 		: null;
 	const small = isRecord(formats?.small) ? getString(formats.small.url) : null;
 	const original = getString(media.url);
 
-	return resolveStrapiAssetUrl(original ?? medium ?? small);
+	return resolveStrapiAssetUrl(large ?? medium ?? small ?? original);
+}
+
+function getStrapiImageFormatUrl(
+	media: PlainRecord,
+	formatName: "thumbnail" | "small" | "medium" | "large",
+): string | null {
+	const formats = isRecord(media.formats) ? media.formats : null;
+	const format = isRecord(formats?.[formatName]) ? formats[formatName] : null;
+
+	return resolveStrapiAssetUrl(getString(format?.url));
 }
 
 function blockToText(value: unknown): string {
@@ -570,7 +581,12 @@ function mapProductImages(value: unknown, productName: string): ProductImage[] {
 	const images: ProductImage[] = [];
 
 	unwrapStrapiMediaList(value).forEach((media, index) => {
-		const url = getStrapiImageUrl(media);
+		const originalUrl = resolveStrapiAssetUrl(getString(media.url));
+		const thumbnailUrl = getStrapiImageFormatUrl(media, "thumbnail");
+		const smallUrl = getStrapiImageFormatUrl(media, "small");
+		const mediumUrl = getStrapiImageFormatUrl(media, "medium");
+		const largeUrl = getStrapiImageFormatUrl(media, "large");
+		const url = originalUrl ?? largeUrl ?? mediumUrl ?? smallUrl ?? thumbnailUrl;
 
 		if (!url) {
 			return;
@@ -584,6 +600,10 @@ function mapProductImages(value: unknown, productName: string): ProductImage[] {
 
 		images.push({
 			url,
+			...(thumbnailUrl ? { thumbnailUrl } : {}),
+			...(smallUrl ? { smallUrl } : {}),
+			...(mediumUrl ? { mediumUrl } : {}),
+			...(largeUrl ? { largeUrl } : {}),
 			alt,
 			...(label ? { label } : {}),
 			...(index === 0 ? { role: "main" } : {}),

@@ -13,6 +13,7 @@ type ProductMediaProps = {
 	className?: string;
 	imageClassName?: string;
 	priority?: boolean;
+	quality?: number;
 };
 
 export function ProductMedia({
@@ -23,6 +24,7 @@ export function ProductMedia({
 	className,
 	imageClassName,
 	priority,
+	quality,
 }: ProductMediaProps) {
 	return (
 		<div className={productMediaFrameClassName(variant, className)}>
@@ -31,6 +33,7 @@ export function ProductMedia({
 				alt={alt}
 				sizes={sizes}
 				priority={priority}
+				quality={quality}
 				className="absolute inset-0"
 				imageClassName={imageClassName}
 			/>
