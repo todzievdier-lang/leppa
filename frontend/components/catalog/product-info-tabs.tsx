@@ -50,6 +50,27 @@ function getDescriptionItems(description: string): string[] {
 		: [description.trim()].filter(Boolean);
 }
 
+function SpecificationItem({
+	attribute,
+	className,
+}: {
+	attribute: ProductAttribute;
+	className?: string;
+}) {
+	return (
+		<div
+			className={cn(
+				"grid min-h-[3.25rem] items-center gap-3 px-4 py-2.5 text-sm sm:grid-cols-[minmax(160px,0.42fr)_minmax(0,1fr)] sm:px-7 lg:min-h-[3.5rem] lg:grid-cols-[minmax(170px,0.38fr)_minmax(0,1fr)] lg:px-8",
+				className,
+			)}>
+			<dt className="text-ink-muted">{attribute.label}</dt>
+			<dd className="font-medium text-ink">
+				{formatAttributeValue(attribute)}
+			</dd>
+		</div>
+	);
+}
+
 export function ProductInfoTabs({
 	attributes,
 	description,
@@ -65,6 +86,16 @@ export function ProductInfoTabs({
 	const highlights = attributes.filter((attribute) =>
 		HIGHLIGHT_ATTRIBUTE_KEYS.includes(attribute.key),
 	);
+	const specificationRows = useMemo(() => {
+		const midpoint = Math.ceil(attributes.length / 2);
+		const leftColumn = attributes.slice(0, midpoint);
+		const rightColumn = attributes.slice(midpoint);
+
+		return leftColumn.map((attribute, index) => ({
+			left: attribute,
+			right: rightColumn[index] ?? null,
+		}));
+	}, [attributes]);
 
 	return (
 		<section
@@ -156,20 +187,32 @@ export function ProductInfoTabs({
 						) : null}
 					</div>
 				) : (
-					<dl
-						role="tabpanel"
-						className="divide-y divide-hairline">
-						{attributes.map((attribute) => (
-							<div
-								key={`${attribute.key}-${attribute.value}`}
-								className="grid gap-2 px-5 py-4 text-sm sm:grid-cols-[minmax(170px,0.42fr)_minmax(0,1fr)] sm:px-8">
-								<dt className="text-ink-muted">{attribute.label}</dt>
-								<dd className="font-medium text-ink">
-									{formatAttributeValue(attribute)}
-								</dd>
-							</div>
-						))}
-					</dl>
+					<div
+						role="tabpanel">
+						<dl className="divide-y divide-hairline lg:hidden">
+							{attributes.map((attribute) => (
+								<SpecificationItem
+									key={`${attribute.key}-${attribute.value}`}
+									attribute={attribute}
+								/>
+							))}
+						</dl>
+
+						<dl className="hidden divide-y divide-hairline lg:grid">
+							{specificationRows.map(({ left, right }) => (
+								<div
+									key={`${left.key}-${left.value}`}
+									className="grid grid-cols-2 divide-x divide-hairline">
+									<SpecificationItem attribute={left} />
+									{right ? (
+										<SpecificationItem attribute={right} />
+									) : (
+										<div aria-hidden="true" />
+									)}
+								</div>
+							))}
+						</dl>
+					</div>
 				)}
 			</div>
 		</section>
