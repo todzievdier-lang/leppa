@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ShopToasts } from "@/components/shop/shop-toasts";
 
+import { getProductSearchItems } from "@/lib/api/catalog";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -23,11 +24,13 @@ export const viewport: Viewport = {
 	themeColor: "#ffffff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const searchProducts = await getProductSearchItems();
+
 	return (
 		<html
 			lang='ru'
@@ -37,7 +40,7 @@ export default function RootLayout({
 				className={cn(
 					"flex min-h-dvh min-w-0 flex-col bg-background text-foreground antialiased",
 				)}>
-				<Header />
+				<Header searchProducts={searchProducts} />
 				<ShopToasts />
 
 				<main className='flex flex-1 flex-col'>

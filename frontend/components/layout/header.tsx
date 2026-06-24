@@ -10,8 +10,11 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
+import { HeaderProductSearch } from "@/components/layout/header-product-search";
 import { HeaderShopActions } from "@/components/shop/header-shop-actions";
 import { cn } from "@/lib/utils";
+
+import type { ProductSearchItem } from "@/types/catalog";
 
 const navItems = [
 	{
@@ -28,7 +31,11 @@ const navItems = [
 	},
 ];
 
-const Header = () => {
+const Header = ({
+	searchProducts = [],
+}: {
+	searchProducts?: ProductSearchItem[];
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const pathname = usePathname();
@@ -237,6 +244,11 @@ const Header = () => {
 
 					{/* Actions */}
 					<div className="flex items-center justify-end gap-2 md:gap-3">
+						<HeaderProductSearch
+							key={pathname}
+							isNavigationOpen={isOpen}
+							products={searchProducts}
+						/>
 						<HeaderShopActions isNavigationOpen={isOpen} />
 
 						{/* Mobile menu */}

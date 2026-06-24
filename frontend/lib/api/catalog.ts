@@ -10,6 +10,11 @@ import {
 	DEFAULT_CATALOG_PER_PAGE,
 	DEFAULT_CATALOG_SORT,
 } from "@/lib/catalog/query";
+import {
+	getProductHref,
+	getProductImageAlt,
+	getProductPrimaryThumbnail,
+} from "@/lib/catalog/helpers";
 import { isSameSlug } from "@/lib/utils/slug";
 
 import type {
@@ -28,6 +33,7 @@ import type {
 	ProductDescriptionInlineText,
 	ProductDescriptionListItem,
 	ProductImage,
+	ProductSearchItem,
 } from "@/types/catalog";
 
 type PlainRecord = Record<string, unknown>;
@@ -1081,6 +1087,33 @@ export async function getCategoryBySlug(
 
 export async function getProducts(): Promise<Product[]> {
 	return fetchStrapiProducts();
+}
+
+export async function getProductSearchItems(): Promise<ProductSearchItem[]> {
+	const [categories, products] = await Promise.all([
+		getCategories(),
+		getProducts(),
+	]);
+	const categoryByKey = new Map(
+		categories.map((category) => [category.key, category]),
+	);
+
+	return sortProducts(products, "name-asc").map((product) => {
+		const category = categoryByKey.get(product.categoryKey) ?? null;
+
+		return {
+			id: product.id,
+			name: product.name,
+			sku: product.sku,
+			href: getProductHref(product, category),
+			image: getProductPrimaryThumbnail(product),
+			imageAlt: getProductImageAlt(product),
+			categoryName: category?.name ?? "Каталог",
+			price: product.price,
+			currency: product.currency,
+			inStock: product.inStock,
+		};
+	});
 }
 
 export async function getProductBySlug(

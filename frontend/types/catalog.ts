@@ -111,6 +111,19 @@ export type Product = {
 	bundles: ProductBundleConfig[];
 };
 
+export type ProductSearchItem = {
+	id: string;
+	name: string;
+	sku: string | null;
+	href: string;
+	image: string;
+	imageAlt: string;
+	categoryName: string;
+	price: number | null;
+	currency: string | null;
+	inStock: boolean;
+};
+
 export type CatalogSort =
 	| "featured"
 	| "stock-desc"

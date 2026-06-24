@@ -187,7 +187,15 @@ body.overlay {
 	overflow: hidden;
 }
 
+body.search-overlay {
+	overflow: hidden;
+}
+
 body.overlay main {
+	user-select: none;
+}
+
+body.search-overlay main {
 	user-select: none;
 }
 

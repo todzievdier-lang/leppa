@@ -12,6 +12,13 @@ export function getProductPrimaryImage(product: Product): string {
 	return image ? getProductImageSource(image, "card") : "/no-image.png";
 }
 
+export function getProductPrimaryThumbnail(product: Product): string {
+	const image = product.images.find((item) => item.role === "main")
+		?? product.images[0];
+
+	return image ? getProductImageSource(image, "thumbnail") : "/no-image.png";
+}
+
 export function getProductImageAlt(product: Product): string {
 	return product.images.find((image) => image.role === "main")?.alt ?? product.name;
 }
