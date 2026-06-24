@@ -164,7 +164,7 @@
 }
 
 html {
-	scrollbar-width: none;
+	/* scrollbar-width: none; */
 	background: var(--background);
 	scroll-behavior: smooth;
 	height: 100%;

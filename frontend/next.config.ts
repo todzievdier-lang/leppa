@@ -57,7 +57,8 @@ const nextConfig: NextConfig = {
 		// remains untouched in Strapi; Next.js serves responsive WebP variants.
 		formats: ["image/webp"],
 		qualities: [60, 65, 75, 85],
-		minimumCacheTTL: 60 * 60 * 24 * 30,
+		unoptimized: true,
+		minimumCacheTTL: 0,
 		remotePatterns: [
 			{
 				protocol: "http",
