@@ -42,6 +42,47 @@ export type ProductBundleConfig = {
 	productSlugs: string[];
 };
 
+export type ProductDescriptionInlineText = {
+	type: "text";
+	text: string;
+	bold?: boolean;
+	italic?: boolean;
+	underline?: boolean;
+	strikethrough?: boolean;
+	code?: boolean;
+};
+
+export type ProductDescriptionInlineLink = {
+	type: "link";
+	url: string;
+	children: ProductDescriptionInlineNode[];
+};
+
+export type ProductDescriptionInlineNode =
+	| ProductDescriptionInlineText
+	| ProductDescriptionInlineLink;
+
+export type ProductDescriptionListItem = {
+	type: "list-item";
+	children: ProductDescriptionInlineNode[];
+};
+
+export type ProductDescriptionBlock =
+	| {
+			type: "paragraph" | "quote" | "code";
+			children: ProductDescriptionInlineNode[];
+		}
+	| {
+			type: "heading";
+			level: 1 | 2 | 3 | 4 | 5 | 6;
+			children: ProductDescriptionInlineNode[];
+		}
+	| {
+			type: "list";
+			format: "ordered" | "unordered";
+			children: ProductDescriptionListItem[];
+		};
+
 export type ProductColor = {
 	id: string;
 	slug: string;
@@ -63,6 +104,7 @@ export type Product = {
 	currency: string | null;
 	inStock: boolean;
 	description: string;
+	descriptionBlocks: ProductDescriptionBlock[];
 	images: ProductImage[];
 	videos: string[];
 	attributes: ProductAttribute[];

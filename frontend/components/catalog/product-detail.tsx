@@ -162,6 +162,7 @@ export function ProductDetail({
 				<ProductInfoTabs
 					attributes={product.attributes}
 					description={product.description}
+					descriptionBlocks={product.descriptionBlocks}
 				/>
 			</div>
 		</article>

@@ -7,18 +7,13 @@ import { surfaceVariants } from "@/components/ui/surface";
 import { formatAttributeValue } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
 
-import type { ProductAttribute } from "@/types/catalog";
+import type {
+	ProductAttribute,
+	ProductDescriptionBlock,
+	ProductDescriptionInlineNode,
+} from "@/types/catalog";
 
 type ProductInfoTab = "description" | "specifications";
-
-const TECHNICAL_DESCRIPTION_PREFIXES = [
-	"Название",
-	"Производитель",
-	"Артикул",
-	"Цвет",
-	"Материал",
-	"Габариты",
-];
 
 const HIGHLIGHT_ATTRIBUTE_KEYS = [
 	"material",
@@ -26,29 +21,6 @@ const HIGHLIGHT_ATTRIBUTE_KEYS = [
 	"countryOfOrigin",
 	"warranty",
 ];
-
-function getDescriptionItems(description: string): string[] {
-	const technicalLinePattern = new RegExp(
-		`^(${TECHNICAL_DESCRIPTION_PREFIXES.join("|")})\\s*:`,
-		"i",
-	);
-	const lines = description
-		.split(/\n+/)
-		.map((line) => line.trim())
-		.filter((line) => line && !technicalLinePattern.test(line));
-	const joinedDescription = lines.join(" ").trim();
-	const sentenceItems = (joinedDescription.match(/[^.!?;]+(?:[.!?;]+|$)/g) ?? [])
-		.map((item) => item.trim())
-		.filter(Boolean);
-
-	if (lines.length > 1) {
-		return lines;
-	}
-
-	return sentenceItems.length > 1
-		? sentenceItems
-		: [description.trim()].filter(Boolean);
-}
 
 function SpecificationItem({
 	attribute,
@@ -71,18 +43,170 @@ function SpecificationItem({
 	);
 }
 
+function DescriptionInline({
+	node,
+	index,
+}: {
+	node: ProductDescriptionInlineNode;
+	index: number;
+}) {
+	if (node.type === "link") {
+		return (
+			<a
+				key={`link-${node.url}-${index}`}
+				href={node.url}
+				target="_blank"
+				rel="noreferrer"
+				className="font-medium text-ink underline decoration-ink/30 underline-offset-4 transition-colors hover:decoration-ink">
+				{node.children.map((child, childIndex) => (
+					<DescriptionInline
+						key={`${node.url}-${childIndex}`}
+						node={child}
+						index={childIndex}
+					/>
+				))}
+			</a>
+		);
+	}
+
+	if (node.code) {
+		return (
+			<code
+				key={`text-${index}`}
+				className="rounded-sm bg-toolbar px-1 py-0.5 font-mono text-[0.9em] text-ink">
+				{node.text}
+			</code>
+		);
+	}
+
+	const hasMarks = node.bold || node.italic || node.underline || node.strikethrough;
+
+	return hasMarks ? (
+		<span
+			key={`text-${index}`}
+			className={cn(
+				node.bold ? "font-semibold text-ink" : null,
+				node.italic ? "italic" : null,
+				node.underline ? "underline underline-offset-4" : null,
+				node.strikethrough ? "line-through" : null,
+			)}>
+			{node.text}
+		</span>
+	) : node.text;
+}
+
+function DescriptionChildren({
+	children,
+}: {
+	children: ProductDescriptionInlineNode[];
+}) {
+	return children.map((node, index) => (
+		<DescriptionInline
+			key={`${node.type}-${index}`}
+			node={node}
+			index={index}
+		/>
+	));
+}
+
+function getDescriptionInlineText(children: ProductDescriptionInlineNode[]): string {
+	return children
+		.map((child) => child.type === "text"
+			? child.text
+			: getDescriptionInlineText(child.children))
+		.join("");
+}
+
+function DescriptionBlockView({
+	block,
+	index,
+}: {
+	block: ProductDescriptionBlock;
+	index: number;
+}) {
+	if (block.type === "list") {
+		const ListTag = block.format === "ordered" ? "ol" : "ul";
+
+		return (
+			<ListTag
+				key={`list-${index}`}
+				className={cn(
+					"space-y-2 pl-5",
+					block.format === "ordered" ? "list-decimal" : "list-disc",
+				)}>
+				{block.children.map((item, itemIndex) => (
+					<li key={`item-${itemIndex}`}>
+						<DescriptionChildren>{item.children}</DescriptionChildren>
+					</li>
+				))}
+			</ListTag>
+		);
+	}
+
+	if (block.type === "heading") {
+		return (
+			<h3
+				key={`heading-${index}`}
+				className={cn(
+					"pt-1 font-semibold leading-snug text-ink",
+					block.level <= 2 ? "text-xl" : "text-lg",
+				)}>
+				<DescriptionChildren>{block.children}</DescriptionChildren>
+			</h3>
+		);
+	}
+
+	if (block.type === "quote") {
+		return (
+			<blockquote
+				key={`quote-${index}`}
+				className="border-l-2 border-hairline-strong pl-4 text-ink">
+				<DescriptionChildren>{block.children}</DescriptionChildren>
+			</blockquote>
+		);
+	}
+
+	if (block.type === "code") {
+		return (
+			<pre
+				key={`code-${index}`}
+				className="overflow-x-auto rounded-sm bg-toolbar p-4 font-mono text-sm text-ink">
+				<code>{getDescriptionInlineText(block.children)}</code>
+			</pre>
+		);
+	}
+
+	return (
+		<p key={`paragraph-${index}`}>
+			<DescriptionChildren>{block.children}</DescriptionChildren>
+		</p>
+	);
+}
+
 export function ProductInfoTabs({
 	attributes,
 	description,
+	descriptionBlocks,
 }: {
 	attributes: ProductAttribute[];
 	description: string;
+	descriptionBlocks?: ProductDescriptionBlock[];
 }) {
 	const [activeTab, setActiveTab] = useState<ProductInfoTab>("description");
-	const descriptionItems = useMemo(
-		() => getDescriptionItems(description),
-		[description],
-	);
+	const normalizedDescriptionBlocks = useMemo(() => {
+		if (descriptionBlocks && descriptionBlocks.length > 0) {
+			return descriptionBlocks;
+		}
+
+		return description
+			.split(/\n{2,}/)
+			.map((text) => text.trim())
+			.filter(Boolean)
+			.map((text): ProductDescriptionBlock => ({
+				type: "paragraph",
+				children: [{ type: "text", text }],
+			}));
+	}, [description, descriptionBlocks]);
 	const highlights = attributes.filter((attribute) =>
 		HIGHLIGHT_ATTRIBUTE_KEYS.includes(attribute.key),
 	);
@@ -153,21 +277,19 @@ export function ProductInfoTabs({
 					<div
 						role="tabpanel"
 						className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.36fr)]">
-						<ul className="space-y-3 text-base text-ink-muted">
-							{descriptionItems.length > 0 ? descriptionItems.map((item, index) => (
-								<li
-									key={`${item}-${index}`}
-									className="grid grid-cols-[0.875rem_minmax(0,1fr)] gap-3">
-									<span
-										aria-hidden="true"
-										className="mt-2 size-2 rounded-full bg-ink"
+						<div className="space-y-4 text-base leading-7 text-ink-muted">
+							{normalizedDescriptionBlocks.length > 0 ? (
+								normalizedDescriptionBlocks.map((block, index) => (
+									<DescriptionBlockView
+										key={`${block.type}-${index}`}
+										block={block}
+										index={index}
 									/>
-									<span>{item}</span>
-								</li>
-							)) : (
-								<li>Описание пока не добавлено.</li>
+								))
+							) : (
+								<p>Описание пока не добавлено.</p>
 							)}
-						</ul>
+						</div>
 
 						{highlights.length > 0 ? (
 							<dl className="grid content-start gap-3">

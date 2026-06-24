@@ -25,6 +25,10 @@ import type {
 	ProductAttributeValue,
 	ProductBundleConfig,
 	ProductColor,
+	ProductDescriptionBlock,
+	ProductDescriptionInlineNode,
+	ProductDescriptionInlineText,
+	ProductDescriptionListItem,
 	ProductImage,
 } from "@/types/catalog";
 
@@ -302,7 +306,14 @@ function blockToText(value: unknown): string {
 	}
 
 	if (Array.isArray(value)) {
-		return value.map(blockToText).join("");
+		const hasBlockChildren = value.some((item) =>
+			isRecord(item)
+			&& typeof item.type === "string"
+			&& item.type !== "text"
+			&& item.type !== "link",
+		);
+
+		return value.map(blockToText).join(hasBlockChildren ? "\n" : "");
 	}
 
 	if (!isRecord(value)) {
@@ -311,6 +322,10 @@ function blockToText(value: unknown): string {
 
 	if (typeof value.text === "string") {
 		return value.text;
+	}
+
+	if (value.type === "list" && Array.isArray(value.children)) {
+		return value.children.map(blockToText).join("\n");
 	}
 
 	return blockToText(value.children);
@@ -332,6 +347,188 @@ function getDescription(value: unknown, fallback = ""): string {
 	}
 
 	return fallback;
+}
+
+function getDescriptionInlineText(
+	children: ProductDescriptionInlineNode[],
+): string {
+	return children
+		.map((child) => child.type === "text"
+			? child.text
+			: getDescriptionInlineText(child.children))
+		.join("");
+}
+
+function getDescriptionTextNode(value: string): ProductDescriptionInlineText {
+	return {
+		type: "text",
+		text: value,
+	};
+}
+
+function normalizeDescriptionInlineNode(
+	value: unknown,
+): ProductDescriptionInlineNode | null {
+	if (typeof value === "string") {
+		return value ? getDescriptionTextNode(value) : null;
+	}
+
+	if (!isRecord(value)) {
+		return null;
+	}
+
+	if (typeof value.text === "string") {
+		const textNode: ProductDescriptionInlineText = {
+			type: "text",
+			text: value.text,
+			...(value.bold === true ? { bold: true } : {}),
+			...(value.italic === true ? { italic: true } : {}),
+			...(value.underline === true ? { underline: true } : {}),
+			...(value.strikethrough === true ? { strikethrough: true } : {}),
+			...(value.code === true ? { code: true } : {}),
+		};
+
+		return textNode.text ? textNode : null;
+	}
+
+	if (value.type === "link") {
+		const url = getString(value.url);
+		const children = normalizeDescriptionInlineNodes(value.children);
+
+		return url && children.length > 0
+			? { type: "link", url, children }
+			: null;
+	}
+
+	const text = blockToText(value).trim();
+
+	return text ? getDescriptionTextNode(text) : null;
+}
+
+function normalizeDescriptionInlineNodes(
+	value: unknown,
+): ProductDescriptionInlineNode[] {
+	if (!Array.isArray(value)) {
+		const node = normalizeDescriptionInlineNode(value);
+
+		return node ? [node] : [];
+	}
+
+	return value
+		.map(normalizeDescriptionInlineNode)
+		.filter((node): node is ProductDescriptionInlineNode => node !== null);
+}
+
+function normalizeDescriptionListItem(
+	value: unknown,
+): ProductDescriptionListItem | null {
+	if (!isRecord(value)) {
+		return null;
+	}
+
+	const children = normalizeDescriptionInlineNodes(value.children);
+
+	if (getDescriptionInlineText(children).trim()) {
+		return {
+			type: "list-item",
+			children,
+		};
+	}
+
+	const text = blockToText(value).trim();
+
+	return text
+		? {
+				type: "list-item",
+				children: [getDescriptionTextNode(text)],
+			}
+		: null;
+}
+
+function normalizeDescriptionListItems(
+	value: unknown,
+): ProductDescriptionListItem[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	return value
+		.map(normalizeDescriptionListItem)
+		.filter((item): item is ProductDescriptionListItem => item !== null);
+}
+
+function normalizeDescriptionHeadingLevel(
+	value: unknown,
+): 1 | 2 | 3 | 4 | 5 | 6 {
+	const level = getNumber(value);
+
+	return level && level >= 1 && level <= 6
+		? (level as 1 | 2 | 3 | 4 | 5 | 6)
+		: 3;
+}
+
+function normalizeDescriptionBlock(value: unknown): ProductDescriptionBlock | null {
+	if (!isRecord(value)) {
+		return null;
+	}
+
+	const type = getString(value.type);
+
+	if (type === "list") {
+		const children = normalizeDescriptionListItems(value.children);
+
+		return children.length > 0
+			? {
+					type: "list",
+					format: value.format === "ordered" ? "ordered" : "unordered",
+					children,
+				}
+			: null;
+	}
+
+	const children = normalizeDescriptionInlineNodes(value.children);
+
+	if (!getDescriptionInlineText(children).trim()) {
+		return null;
+	}
+
+	if (type === "heading") {
+		return {
+			type: "heading",
+			level: normalizeDescriptionHeadingLevel(value.level),
+			children,
+		};
+	}
+
+	if (type === "quote" || type === "code") {
+		return { type, children };
+	}
+
+	return {
+		type: "paragraph",
+		children,
+	};
+}
+
+function getDescriptionBlocks(value: unknown): ProductDescriptionBlock[] {
+	if (typeof value === "string") {
+		return value
+			.split(/\n{2,}/)
+			.map((line) => line.trim())
+			.filter(Boolean)
+			.map((text) => ({
+				type: "paragraph",
+				children: [getDescriptionTextNode(text)],
+			}));
+	}
+
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	return value
+		.map(normalizeDescriptionBlock)
+		.filter((block): block is ProductDescriptionBlock => block !== null);
 }
 
 function getStrapiSeo(value: unknown): Category["seo"] | undefined {
@@ -791,6 +988,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		currency: getString(fields.currency),
 		inStock: getBoolean(fields.inStock),
 		description: getDescription(fields.description),
+		descriptionBlocks: getDescriptionBlocks(fields.description),
 		images: mapProductImages(fields.images, name),
 		videos: mapProductVideos(fields.videos),
 		attributes,
