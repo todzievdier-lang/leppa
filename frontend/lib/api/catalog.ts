@@ -5,6 +5,7 @@ import {
 	paginateProducts,
 	sortProducts,
 } from "@/lib/catalog/filters";
+import { cache } from "react";
 import {
 	DEFAULT_CATALOG_PAGE,
 	DEFAULT_CATALOG_PER_PAGE,
@@ -56,10 +57,10 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 
 function getConfiguredStrapiApiUrl(): string | null {
 	return (
-		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
+		normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
+		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
 		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
 		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL)
-		?? normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
 	);
 }
 
@@ -1056,6 +1057,9 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		.filter((product): product is Product => product !== null);
 }
 
+const getCachedStrapiCategories = cache(fetchStrapiCategories);
+const getCachedStrapiProducts = cache(fetchStrapiProducts);
+
 function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 	return {
 		...query,
@@ -1068,7 +1072,7 @@ function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 }
 
 export async function getCategories(): Promise<Category[]> {
-	return fetchStrapiCategories();
+	return getCachedStrapiCategories();
 }
 
 export async function getFooterCategories(): Promise<CategoryLink[]> {
@@ -1086,7 +1090,7 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	return fetchStrapiProducts();
+	return getCachedStrapiProducts();
 }
 
 export async function getProductSearchItems(): Promise<ProductSearchItem[]> {
