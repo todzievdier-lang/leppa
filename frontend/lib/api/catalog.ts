@@ -5,7 +5,6 @@ import {
 	paginateProducts,
 	sortProducts,
 } from "@/lib/catalog/filters";
-import { cache } from "react";
 import {
 	DEFAULT_CATALOG_PAGE,
 	DEFAULT_CATALOG_PER_PAGE,
@@ -1057,9 +1056,6 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		.filter((product): product is Product => product !== null);
 }
 
-const getCachedStrapiCategories = cache(fetchStrapiCategories);
-const getCachedStrapiProducts = cache(fetchStrapiProducts);
-
 function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 	return {
 		...query,
@@ -1072,7 +1068,7 @@ function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 }
 
 export async function getCategories(): Promise<Category[]> {
-	return getCachedStrapiCategories();
+	return fetchStrapiCategories();
 }
 
 export async function getFooterCategories(): Promise<CategoryLink[]> {
@@ -1090,7 +1086,7 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	return getCachedStrapiProducts();
+	return fetchStrapiProducts();
 }
 
 export async function getProductSearchItems(): Promise<ProductSearchItem[]> {
