@@ -26,6 +26,10 @@ import type { ProductSearchItem } from "@/types/catalog";
 
 const SEARCH_RESULT_LIMIT = 12;
 
+type ProductSearchResponse = {
+	products?: ProductSearchItem[];
+};
+
 type IndexedProductSearchItem = ProductSearchItem & {
 	compactName: string;
 	compactSku: string;
@@ -82,6 +86,12 @@ export function HeaderProductSearch({
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [query, setQuery] = useState("");
+	const [searchProducts, setSearchProducts] = useState(products);
+	const [hasLoadedSearchProducts, setHasLoadedSearchProducts] = useState(
+		products.length > 0,
+	);
+	const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+	const [searchLoadFailed, setSearchLoadFailed] = useState(false);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const router = useRouter();
 	const prefersReducedMotion = useReducedMotion();
@@ -93,14 +103,14 @@ export function HeaderProductSearch({
 
 	const indexedProducts = useMemo<IndexedProductSearchItem[]>(
 		() =>
-			products.map((product) => ({
+			searchProducts.map((product) => ({
 				...product,
 				compactName: normalizeCompactSearchText(product.name),
 				compactSku: normalizeCompactSearchText(product.sku),
 				normalizedName: normalizeSearchText(product.name),
 				normalizedSku: normalizeSearchText(product.sku),
 			})),
-		[products],
+		[searchProducts],
 	);
 
 	const results = useMemo(() => {
@@ -206,9 +216,38 @@ export function HeaderProductSearch({
 		router.push(createCatalogHref("/catalog", { search: trimmedQuery }));
 	}
 
+	async function loadSearchProducts() {
+		if (hasLoadedSearchProducts || isLoadingProducts) {
+			return;
+		}
+
+		setIsLoadingProducts(true);
+		setSearchLoadFailed(false);
+
+		try {
+			const response = await fetch("/api/catalog/search", {
+				cache: "no-store",
+			});
+
+			if (!response.ok) {
+				throw new Error(`Search products request failed: ${response.status}`);
+			}
+
+			const payload = (await response.json()) as ProductSearchResponse;
+
+			setSearchProducts(Array.isArray(payload.products) ? payload.products : []);
+			setHasLoadedSearchProducts(true);
+		} catch {
+			setSearchLoadFailed(true);
+		} finally {
+			setIsLoadingProducts(false);
+		}
+	}
+
 	function openSearch() {
 		setQuery("");
 		setIsOpen(true);
+		void loadSearchProducts();
 	}
 
 	function closeSearch() {
@@ -334,12 +373,22 @@ export function HeaderProductSearch({
 										className="size-8 text-ink-faint"
 									/>
 									<strong className="mt-1 text-sm font-semibold text-ink">
-										{hasQuery ? "Ничего не найдено" : "Поиск по товарам"}
+										{isLoadingProducts
+											? "Загрузка товаров"
+											: searchLoadFailed
+												? "Поиск недоступен"
+												: hasQuery
+													? "Ничего не найдено"
+													: "Поиск по товарам"}
 									</strong>
 									<span className="max-w-xs text-xs leading-relaxed">
-										{hasQuery
-											? "Проверьте название или артикул товара"
-											: "Название, модель или артикул"}
+										{isLoadingProducts
+											? "Каталог скоро появится"
+											: searchLoadFailed
+												? "Откройте каталог или попробуйте позже"
+												: hasQuery
+													? "Проверьте название или артикул товара"
+													: "Название, модель или артикул"}
 									</span>
 								</div>
 							)}
