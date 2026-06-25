@@ -16,32 +16,31 @@ function normalizeUrl(value: string | undefined): URL | null {
 	}
 }
 
-const configuredStrapiUrl =
-	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
-	?? normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
-	?? normalizeUrl(process.env.NEXT_PUBLIC_API_URL)
-	?? normalizeUrl(process.env.STRAPI_API_URL);
+const configuredStrapiUrls = [
+	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
+	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL),
+	normalizeUrl(process.env.NEXT_PUBLIC_API_URL),
+	normalizeUrl(process.env.STRAPI_API_URL),
+].filter((url): url is URL => url !== null);
 
-const configuredStrapiImagePattern = configuredStrapiUrl
-	? {
-			protocol: configuredStrapiUrl.protocol.replace(":", "") as "http" | "https",
-			hostname: configuredStrapiUrl.hostname,
-			port: configuredStrapiUrl.port,
-			pathname: "/uploads/**",
-		}
-	: null;
+const uniqueConfiguredStrapiUrls = [
+	...new Map(configuredStrapiUrls.map((url) => [url.toString(), url])).values(),
+];
 
-const configuredStrapiCloudImagePattern =
-	configuredStrapiUrl?.hostname.endsWith(".strapiapp.com")
-		? {
-				protocol: "https" as const,
-				hostname: configuredStrapiUrl.hostname.replace(
-					".strapiapp.com",
-					".media.strapiapp.com",
-				),
-				pathname: "/**",
-			}
-		: null;
+const configuredStrapiImagePatterns = uniqueConfiguredStrapiUrls.map((url) => ({
+	protocol: url.protocol.replace(":", "") as "http" | "https",
+	hostname: url.hostname,
+	port: url.port,
+	pathname: "/uploads/**",
+}));
+
+const configuredStrapiCloudImagePatterns = uniqueConfiguredStrapiUrls
+	.filter((url) => url.hostname.endsWith(".strapiapp.com"))
+	.map((url) => ({
+		protocol: "https" as const,
+		hostname: url.hostname.replace(".strapiapp.com", ".media.strapiapp.com"),
+		pathname: "/**",
+	}));
 
 const strapiCloudMediaImagePattern = {
 	protocol: "https" as const,
@@ -93,10 +92,8 @@ const nextConfig: NextConfig = {
 				pathname: "/uploads/**",
 			},
 			strapiCloudMediaImagePattern,
-			...(configuredStrapiImagePattern ? [configuredStrapiImagePattern] : []),
-			...(configuredStrapiCloudImagePattern
-				? [configuredStrapiCloudImagePattern]
-				: []),
+			...configuredStrapiImagePatterns,
+			...configuredStrapiCloudImagePatterns,
 		],
 	},
 };

@@ -38,7 +38,8 @@ import type {
 
 type PlainRecord = Record<string, unknown>;
 
-const STRAPI_API_URL = getConfiguredStrapiApiUrl();
+const STRAPI_API_URLS = getConfiguredStrapiApiUrls();
+const PRIMARY_STRAPI_API_URL = STRAPI_API_URLS[0] ?? null;
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
@@ -54,13 +55,15 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	return normalizedValue;
 }
 
-function getConfiguredStrapiApiUrl(): string | null {
-	return (
-		normalizeStrapiApiUrl(process.env.STRAPI_API_URL)
-		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL)
-		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL)
-		?? normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL)
-	);
+function getConfiguredStrapiApiUrls(): string[] {
+	const urls = [
+		normalizeStrapiApiUrl(process.env.STRAPI_API_URL),
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL),
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL),
+	].filter((url): url is string => url !== null);
+
+	return [...new Set(urls)];
 }
 
 function isLocalStrapiApiUrl(value: string | null): boolean {
@@ -78,7 +81,7 @@ function isLocalStrapiApiUrl(value: string | null): boolean {
 }
 
 function getConfiguredStrapiApiToken(): string | null {
-	if (isLocalStrapiApiUrl(STRAPI_API_URL)) {
+	if (STRAPI_API_URLS.every(isLocalStrapiApiUrl)) {
 		return null;
 	}
 
@@ -121,12 +124,12 @@ function getBoolean(value: unknown): boolean {
 	return false;
 }
 
-function getStrapiApiUrl(pathname: string): URL | null {
-	if (!STRAPI_API_URL) {
+function getStrapiApiUrl(pathname: string, baseUrl: string): URL | null {
+	if (!baseUrl) {
 		return null;
 	}
 
-	return new URL(pathname, STRAPI_API_URL);
+	return new URL(pathname, baseUrl);
 }
 
 function getStrapiRequestHeaders(): HeadersInit | undefined {
@@ -203,11 +206,11 @@ function resolveStrapiAssetUrl(url: string | null): string | null {
 		return url;
 	}
 
-	if (!STRAPI_API_URL) {
+	if (!PRIMARY_STRAPI_API_URL) {
 		return url;
 	}
 
-	return new URL(url, STRAPI_API_URL).toString();
+	return new URL(url, PRIMARY_STRAPI_API_URL).toString();
 }
 
 function getStrapiEntryFields(entry: unknown): PlainRecord | null {
@@ -851,18 +854,40 @@ async function fetchStrapiCollection(
 	pathname: string,
 	configureUrl?: (url: URL) => void,
 ): Promise<unknown[]> {
-	const firstUrl = getStrapiApiUrl(pathname);
-
-	if (!firstUrl) {
+	if (STRAPI_API_URLS.length === 0) {
 		return [];
 	}
 
+	for (const baseUrl of STRAPI_API_URLS) {
+		const entries = await fetchStrapiCollectionFromBaseUrl(
+			baseUrl,
+			pathname,
+			configureUrl,
+		);
+
+		if (entries.length > 0 || STRAPI_API_URLS.length === 1) {
+			return entries;
+		}
+
+		console.warn(
+			`[strapi] Empty collection for ${pathname} from ${baseUrl}; trying next configured URL.`,
+		);
+	}
+
+	return [];
+}
+
+async function fetchStrapiCollectionFromBaseUrl(
+	baseUrl: string,
+	pathname: string,
+	configureUrl?: (url: URL) => void,
+): Promise<unknown[]> {
 	const entries: unknown[] = [];
 	let page = 1;
 	let pageCount: number | null = null;
 
 	do {
-		const url = getStrapiApiUrl(pathname);
+		const url = getStrapiApiUrl(pathname, baseUrl);
 
 		if (!url) {
 			return entries;
