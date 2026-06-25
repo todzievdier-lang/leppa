@@ -12,10 +12,6 @@ type FilledImageProps = {
 	quality?: number;
 };
 
-function shouldUseOriginalImageSource(src: string): boolean {
-	return /^https?:\/\//i.test(src);
-}
-
 export function FilledImage({
 	src,
 	alt,
@@ -40,7 +36,6 @@ export function FilledImage({
 				priority={priority}
 				quality={quality}
 				sizes={sizes}
-				unoptimized={shouldUseOriginalImageSource(src)}
 				className={cn(
 					"pointer-events-none select-none object-cover object-center",
 					imageClassName,
