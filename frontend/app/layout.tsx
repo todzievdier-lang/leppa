@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 
@@ -47,6 +48,7 @@ export default async function RootLayout({
 					<div className='flex-1'>{children}</div>
 					<Footer />
 				</main>
+				<SpeedInsights />
 			</body>
 		</html>
 	);

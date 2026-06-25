@@ -29,9 +29,10 @@ export function getProductImageSource(
 	}
 
 	if (usage === "card") {
-		return image.mediumUrl
+		return image.smallUrl
+			?? image.mediumUrl
+			?? image.thumbnailUrl
 			?? image.largeUrl
-			?? image.smallUrl
 			?? image.url;
 	}
 
