@@ -38,6 +38,7 @@ import type {
 
 type PlainRecord = Record<string, unknown>;
 
+const TEMPORARY_STRAPI_API_URL = "http://85.239.55.103:1337";
 const STRAPI_API_URLS = getConfiguredStrapiApiUrls();
 const PRIMARY_STRAPI_API_URL = STRAPI_API_URLS[0] ?? null;
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
@@ -57,8 +58,9 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 
 function getConfiguredStrapiApiUrls(): string[] {
 	const urls = [
-		normalizeStrapiApiUrl(process.env.STRAPI_API_URL),
+		normalizeStrapiApiUrl(TEMPORARY_STRAPI_API_URL),
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
+		normalizeStrapiApiUrl(process.env.STRAPI_API_URL),
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL),
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL),
 	].filter((url): url is string => url !== null);

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const temporaryStrapiApiUrl = "http://85.239.55.103:1337";
 
 function normalizeUrl(value: string | undefined): URL | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
@@ -17,6 +18,7 @@ function normalizeUrl(value: string | undefined): URL | null {
 }
 
 const configuredStrapiUrls = [
+	normalizeUrl(temporaryStrapiApiUrl),
 	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
 	normalizeUrl(process.env.NEXT_PUBLIC_STRAPI_URL),
 	normalizeUrl(process.env.NEXT_PUBLIC_API_URL),
