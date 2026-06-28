@@ -114,6 +114,21 @@ export async function Footer() {
 					</div>
 				</div>
 			</div>
+
+			<div className="border-t border-hairline">
+				<div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-5 py-5 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+					<p>© {new Date().getFullYear()} Leppa &amp; WenSton</p>
+					<nav
+						aria-label="Правовая информация"
+						className="flex flex-wrap gap-x-5 gap-y-2">
+						<Link
+							href="/privacy"
+							className="transition-colors hover:text-ink">
+							Политика конфиденциальности
+						</Link>
+					</nav>
+				</div>
+			</div>
 		</footer>
 	);
 }

@@ -623,6 +623,7 @@ function CheckoutPanel({
 	const [buyerType, setBuyerType] = useState<BuyerType>("person");
 	const [callBack, setCallBack] = useState(false);
 	const [comment, setComment] = useState("");
+	const [privacyAccepted, setPrivacyAccepted] = useState(false);
 	const [formValues, setFormValues] = useState(EMPTY_CHECKOUT_VALUES);
 	const [honeypot, setHoneypot] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -644,7 +645,8 @@ function CheckoutPanel({
 		return nextErrors;
 	}, [formValues, requiredFields]);
 	const invalidFields = requiredFields.filter((field) => fieldErrors[field]);
-	const isCheckoutReady = invalidFields.length === 0;
+	const areFieldsReady = invalidFields.length === 0;
+	const isCheckoutReady = areFieldsReady && privacyAccepted;
 	const invalidFieldsLabel = invalidFields
 		.slice(0, 4)
 		.map((field) => FIELD_LABELS[field])
@@ -671,12 +673,21 @@ function CheckoutPanel({
 	}
 
 	async function handleSubmitOrder() {
-		if (!isCheckoutReady) {
+		if (!areFieldsReady) {
 			emitShopToast({
 				title: "Проверьте данные",
 				description: invalidFieldsLabel
 					? `Заполните корректно: ${invalidFieldsLabel}`
 					: undefined,
+			});
+
+			return;
+		}
+
+		if (!privacyAccepted) {
+			emitShopToast({
+				title: "Нужно согласие",
+				description: "Подтвердите согласие на обработку персональных данных.",
 			});
 
 			return;
@@ -733,6 +744,7 @@ function CheckoutPanel({
 				setComment("");
 				setHoneypot("");
 				setCallBack(false);
+				setPrivacyAccepted(false);
 			}
 		} catch (error) {
 			const message = error instanceof Error
@@ -1130,10 +1142,43 @@ function CheckoutPanel({
 				</p>
 			) : null}
 
+			<div className="mt-6 rounded-md border border-hairline bg-canvas p-4 shadow-control">
+				<div className="flex items-start gap-3">
+					<input
+						id="privacy-consent"
+						type="checkbox"
+						checked={privacyAccepted}
+						onChange={(event) => {
+							setPrivacyAccepted(event.target.checked);
+						}}
+						className="mt-0.5 size-5 shrink-0 rounded-sm border border-hairline accent-ink"
+					/>
+					<div className="min-w-0">
+						<label
+							htmlFor="privacy-consent"
+							className="block cursor-pointer text-sm font-semibold leading-relaxed text-ink">
+							Я даю согласие Leppa &amp; WenSton на обработку моих
+							персональных данных для оформления и сопровождения заказа.
+						</label>
+						<p className="mt-2 text-xs leading-relaxed text-ink-muted">
+							Состав данных, сроки обработки и порядок отзыва согласия описаны в
+							{" "}
+							<Link
+								href="/privacy"
+								target="_blank"
+								className="font-medium text-ink underline decoration-hairline-strong underline-offset-4 hover:text-ink-muted">
+								политике конфиденциальности
+							</Link>
+							.
+						</p>
+					</div>
+				</div>
+			</div>
+
 			<Button
 				type="button"
 				variant="dark"
-				className="mt-6 w-full"
+				className="mt-4 w-full"
 				disabled={!isCheckoutReady || isSubmitting}
 				onClick={handleSubmitOrder}>
 				{isSubmitting ? "Отправляем заказ..." : "Отправить заказ"}
@@ -1143,10 +1188,15 @@ function CheckoutPanel({
 					{submitError}
 				</p>
 			) : null}
-			{!isCheckoutReady ? (
+			{!areFieldsReady ? (
 				<p className="mt-3 text-xs text-ink-muted">
 					Заполните корректно: {invalidFieldsLabel}
 					{invalidFields.length > 4 ? " и другие поля" : ""}.
+				</p>
+			) : !privacyAccepted ? (
+				<p className="mt-3 text-xs text-ink-muted">
+					Для отправки заказа подтвердите согласие на обработку персональных
+					данных.
 				</p>
 			) : null}
 
