@@ -633,37 +633,6 @@ function mapProductAttributes(value: unknown): ProductAttribute[] {
 	return attributes;
 }
 
-function mapProductDimensions(fields: PlainRecord): ProductAttribute[] {
-	return [
-		["widthMm", "Ширина"],
-		["heightMm", "Высота"],
-		["depthMm", "Глубина"],
-		["lengthMm", "Длина"],
-		["diameterMm", "Диаметр"],
-	]
-		.map(([key, label]): ProductAttribute | null => {
-			const value = getNumber(fields[key]);
-
-			return value === null
-				? null
-				: { key, label, value, unit: "mm" };
-		})
-		.filter((attribute): attribute is ProductAttribute => attribute !== null);
-}
-
-function mergeProductAttributes(
-	attributes: ProductAttribute[],
-	dimensions: ProductAttribute[],
-): ProductAttribute[] {
-	const attributesByKey = new Map<string, ProductAttribute>();
-
-	[...attributes, ...dimensions].forEach((attribute) => {
-		attributesByKey.set(attribute.key, attribute);
-	});
-
-	return [...attributesByKey.values()];
-}
-
 function normalizeBundleProductSlugs(value: unknown): string[] {
 	if (!Array.isArray(value)) {
 		return [];
@@ -935,10 +904,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 	}
 
 	const colorFields = unwrapStrapiRelation(fields.color);
-	const attributes = mergeProductAttributes(
-		mapProductAttributes(fields.attributes),
-		mapProductDimensions(fields),
-	);
+	const attributes = mapProductAttributes(fields.attributes);
 
 	return {
 		id:
@@ -992,11 +958,6 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"name",
 			"brand",
 			"price",
-			"widthMm",
-			"heightMm",
-			"depthMm",
-			"lengthMm",
-			"diameterMm",
 			"bundles",
 			"description",
 			"attributes",

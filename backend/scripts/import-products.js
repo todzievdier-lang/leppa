@@ -209,12 +209,6 @@ function setIfPresent(data, product, fieldName) {
 
 const DIMENSION_FIELDS = ['widthMm', 'heightMm', 'depthMm', 'lengthMm', 'diameterMm'];
 
-function findProductAttribute(product, key) {
-  return Array.isArray(product.attributes)
-    ? product.attributes.find((attribute) => attribute?.key === key)
-    : null;
-}
-
 function buildProductSpecifications(product) {
   if (!Array.isArray(product.attributes)) {
     return [];
@@ -240,17 +234,6 @@ function buildProductData(strapi, product, category, color, mediaFiles, options,
     if (productFields.has(fieldName)) {
       setIfPresent(data, product, fieldName);
     }
-  }
-
-  for (const fieldName of DIMENSION_FIELDS) {
-    if (!productFields.has(fieldName)) {
-      continue;
-    }
-
-    const attribute = findProductAttribute(product, fieldName);
-    const value = Number(attribute?.value);
-
-    data[fieldName] = Number.isFinite(value) ? value : null;
   }
 
   if (productFields.has('specifications')) {

@@ -38,26 +38,6 @@
       "type": "decimal",
       "required": false
     },
-    "widthMm": {
-      "type": "integer",
-      "min": 0
-    },
-    "heightMm": {
-      "type": "integer",
-      "min": 0
-    },
-    "depthMm": {
-      "type": "integer",
-      "min": 0
-    },
-    "lengthMm": {
-      "type": "integer",
-      "min": 0
-    },
-    "diameterMm": {
-      "type": "integer",
-      "min": 0
-    },
     "description": {
       "type": "blocks"
     },

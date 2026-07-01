@@ -32,11 +32,11 @@ function SpecificationItem({
 	return (
 		<div
 			className={cn(
-				"grid min-h-[3.25rem] items-center gap-3 px-4 py-2.5 text-sm sm:grid-cols-[minmax(160px,0.42fr)_minmax(0,1fr)] sm:px-7 lg:min-h-[3.5rem] lg:grid-cols-[minmax(170px,0.38fr)_minmax(0,1fr)] lg:px-8",
+				"grid min-h-[3.25rem] grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-4 px-4 py-3 text-sm sm:grid-cols-[minmax(160px,0.42fr)_minmax(0,1fr)] sm:gap-3 sm:px-7 sm:py-2.5 lg:min-h-[3.5rem] lg:grid-cols-[minmax(170px,0.38fr)_minmax(0,1fr)] lg:px-8",
 				className,
 			)}>
-			<dt className="text-ink-muted">{attribute.label}</dt>
-			<dd className="font-medium text-ink">
+			<dt className="min-w-0 break-words text-ink-muted">{attribute.label}</dt>
+			<dd className="min-w-0 break-words text-right font-medium text-ink sm:text-left">
 				{formatAttributeValue(attribute)}
 			</dd>
 		</div>

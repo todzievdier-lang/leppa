@@ -6,6 +6,13 @@ const { compileStrapi, createStrapi } = require('@strapi/strapi');
 
 const PRODUCT_UID = 'api::product.product';
 const appDir = path.resolve(__dirname, '..');
+const DIMENSION_FIELDS = [
+  ['widthMm', 'Ширина'],
+  ['heightMm', 'Высота'],
+  ['depthMm', 'Глубина'],
+  ['lengthMm', 'Длина'],
+  ['diameterMm', 'Диаметр'],
+];
 
 const ATTRIBUTE_KEYS_BY_LABEL = {
   'тип изделия': 'productType',
@@ -141,11 +148,43 @@ function getLegacyAttributes(product) {
     .filter((attribute) => attribute.value);
 }
 
+function getAttributesWithDimensions(product, dimensionFields) {
+  if (dimensionFields.length === 0) {
+    return getLegacyAttributes(product);
+  }
+
+  const dimensionKeys = new Set(dimensionFields.map(([key]) => key));
+  const attributes = getLegacyAttributes(product)
+    .filter((attribute) => !dimensionKeys.has(attribute?.key));
+  const dimensions = dimensionFields
+    .map(([key, label]) => {
+      const rawValue = product[key];
+      const value = rawValue === null || rawValue === undefined || rawValue === ''
+        ? Number.NaN
+        : Number(rawValue);
+
+      return Number.isFinite(value) && value >= 0
+        ? { key, label, value, unit: 'mm' }
+        : null;
+    })
+    .filter(Boolean);
+
+  return [...attributes, ...dimensions];
+}
+
 async function migrateStatus(strapi, status, dryRun) {
+  const productAttributes = strapi.contentType(PRODUCT_UID).attributes;
+  const dimensionFields = DIMENSION_FIELDS
+    .filter(([key]) => Object.prototype.hasOwnProperty.call(productAttributes, key));
   const products = await strapi.documents(PRODUCT_UID).findMany({
     status,
     pagination: { pageSize: 1000 },
-    fields: ['sku', 'description', 'attributes'],
+    fields: [
+      'sku',
+      'description',
+      'attributes',
+      ...dimensionFields.map(([key]) => key),
+    ],
     populate: {
       specifications: {
         fields: ['name', 'value', 'unit'],
@@ -156,23 +195,31 @@ async function migrateStatus(strapi, status, dryRun) {
   let updated = 0;
   let restoredAttributes = 0;
   let cleanedDescriptions = 0;
+  let migratedDimensions = 0;
 
   for (const product of products) {
     const data = {};
     const description = cleanDescription(product.description);
-    const attributes = getLegacyAttributes(product);
+    const attributes = getAttributesWithDimensions(product, dimensionFields);
 
     if (JSON.stringify(description) !== JSON.stringify(product.description ?? [])) {
       data.description = description;
       cleanedDescriptions += 1;
     }
 
-    if (
-      (!Array.isArray(product.attributes) || product.attributes.length === 0)
-      && attributes.length > 0
-    ) {
+    if (JSON.stringify(attributes) !== JSON.stringify(product.attributes ?? [])) {
       data.attributes = attributes;
-      restoredAttributes += 1;
+      if (!Array.isArray(product.attributes) || product.attributes.length === 0) {
+        restoredAttributes += 1;
+      }
+      if (dimensionFields.some(([key]) => {
+        const value = product[key];
+
+        return value !== null && value !== undefined && value !== ''
+          && Number.isFinite(Number(value));
+      })) {
+        migratedDimensions += 1;
+      }
     }
 
     if (Object.keys(data).length === 0) {
@@ -192,7 +239,8 @@ async function migrateStatus(strapi, status, dryRun) {
 
   console.log(
     `[${status}] ${dryRun ? 'would update' : 'updated'} ${updated} products `
-    + `(${cleanedDescriptions} descriptions, ${restoredAttributes} attribute sets)`
+    + `(${cleanedDescriptions} descriptions, ${restoredAttributes} restored attribute sets, `
+    + `${migratedDimensions} dimension sets)`
   );
 }
 

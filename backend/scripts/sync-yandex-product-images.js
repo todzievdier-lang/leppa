@@ -192,13 +192,24 @@ function strapiUrl(config, pathname) {
 async function fetchProducts(config) {
   const url = new URL(strapiUrl(config, '/api/products'));
   url.searchParams.set('pagination[pageSize]', '100');
-  ['slug', 'sku', 'baseSku', 'name', 'widthMm', 'heightMm'].forEach((field, index) => {
+  ['slug', 'sku', 'baseSku', 'name', 'attributes'].forEach((field, index) => {
     url.searchParams.set(`fields[${index}]`, field);
   });
   url.searchParams.set('populate[category][fields][0]', 'slug');
   url.searchParams.set('populate[images][fields][0]', 'id');
   const body = await fetchJson(url, { headers: authHeaders(config) });
-  return body.data || [];
+  return (body.data || []).map((product) => ({
+    ...product,
+    widthMm: getDimensionValue(product.attributes, 'widthMm'),
+    heightMm: getDimensionValue(product.attributes, 'heightMm'),
+  }));
+}
+
+function getDimensionValue(attributes, key) {
+  if (!Array.isArray(attributes)) return null;
+
+  const value = Number(attributes.find((attribute) => attribute?.key === key)?.value);
+  return Number.isFinite(value) ? value : null;
 }
 
 function heaterVariantName(product) {
