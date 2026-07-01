@@ -51,9 +51,6 @@ export default async function CategoryPage({
 	const result = await getCatalog(query);
 
 	return (
-		<CatalogListing
-			basePath={`/catalog/${category.slug}`}
-			result={result}
-		/>
+		<CatalogListing result={result} />
 	);
 }

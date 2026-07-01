@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -16,14 +16,34 @@ import {
 import { CatalogPagination } from "@/components/catalog/pagination";
 import { Button } from "@/components/ui/button";
 import { surfaceVariants } from "@/components/ui/surface";
-import { filterProducts, paginateProducts } from "@/lib/catalog/filters";
+import {
+	filterProducts,
+	paginateProducts,
+	sortProducts,
+} from "@/lib/catalog/filters";
+import {
+	CATALOG_FILTER_PARAM,
+	parseCatalogSearchParams,
+} from "@/lib/catalog/query";
 import { createCatalogHref } from "@/lib/catalog/url";
 import { getCategoryHref } from "@/lib/catalog/helpers";
 import { cn } from "@/lib/utils";
 
+import type { MouseEvent } from "react";
 import type { CatalogResult, PaginationMeta } from "@/types/catalog";
 
 const SEARCH_SKELETON_DELAY_MS = 180;
+
+function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
+	return (
+		event.button !== 0
+		|| event.altKey
+		|| event.ctrlKey
+		|| event.metaKey
+		|| event.shiftKey
+		|| event.currentTarget.target === "_blank"
+	);
+}
 
 function CatalogStatePagination({
 	onPageChange,
@@ -97,55 +117,75 @@ function CatalogStatePagination({
 }
 
 export function CatalogListing({
-	basePath,
 	result,
 }: {
-	basePath: string;
 	result: CatalogResult;
 }) {
-	const { activeCategory, categories, query } = result;
+	const { categories, query } = result;
 	const categoryByKey = useMemo(
 		() => new Map(categories.map((category) => [category.key, category])),
 		[categories],
 	);
+	const [activeCategoryKey, setActiveCategoryKey] = useState(
+		result.activeCategory?.key,
+	);
 	const [searchValue, setSearchValue] = useState(query.search ?? "");
 	const [appliedSearch, setAppliedSearch] = useState(query.search ?? "");
-	const [searchPage, setSearchPage] = useState(1);
+	const [page, setPage] = useState(query.page);
+	const [perPage, setPerPage] = useState(query.perPage);
+	const [sort, setSort] = useState(query.sort);
+	const [brand, setBrand] = useState(query.brand ?? []);
+	const [filters, setFilters] = useState(query.filters ?? {});
+	const activeCategory = activeCategoryKey
+		? (categoryByKey.get(activeCategoryKey) ?? null)
+		: null;
+	const basePath = activeCategory
+		? getCategoryHref(activeCategory)
+		: "/catalog";
 	const isSearchPending = searchValue !== appliedSearch;
 	const appliedSearchText = appliedSearch.trim();
 	const inputSearchText = searchValue.trim();
 	const isSearchMode = inputSearchText.length > 0 || appliedSearchText.length > 0;
 	const filteredProducts = useMemo(() => {
-		if (!appliedSearchText) {
-			return result.searchableProducts;
-		}
-
-		return filterProducts(result.searchableProducts, {
-			search: appliedSearchText,
-		});
-	}, [appliedSearchText, result.searchableProducts]);
-	const searchResult = useMemo(
+		return sortProducts(
+			filterProducts(result.searchableProducts, {
+				categoryKey: activeCategoryKey,
+				search: appliedSearchText || undefined,
+				brand,
+				filters,
+			}),
+			sort,
+		);
+	}, [
+		activeCategoryKey,
+		appliedSearchText,
+		brand,
+		filters,
+		result.searchableProducts,
+		sort,
+	]);
+	const visibleResult = useMemo(
 		() =>
 			paginateProducts(
 				filteredProducts,
-				searchPage,
-				result.pagination.perPage,
+				page,
+				perPage,
 			),
-		[filteredProducts, result.pagination.perPage, searchPage],
+		[filteredProducts, page, perPage],
 	);
-	const visibleProducts = isSearchMode ? searchResult.items : result.products;
-	const visiblePagination = isSearchMode
-		? searchResult.meta
-		: result.pagination;
+	const visibleProducts = visibleResult.items;
+	const visiblePagination = visibleResult.meta;
 	const linkQuery = {
-		...query,
-		search: undefined,
+		brand,
+		filters,
+		perPage,
+		sort,
 	};
 	const skeletonCount = Math.max(
 		4,
 		Math.min(
-			result.pagination.perPage,
-			visibleProducts.length || result.pagination.perPage,
+			perPage,
+			visibleProducts.length || perPage,
 		),
 	);
 	const title = activeCategory?.name ?? "Каталог";
@@ -159,6 +199,66 @@ export function CatalogListing({
 				{ label: activeCategory.name },
 			]
 		: [{ label: "Главная", href: "/" }, { label: "Каталог" }];
+
+	const applyUrlState = useCallback(
+		(url: URL) => {
+			const pathname = url.pathname.replace(/\/+$/, "") || "/";
+			const nextCategory = categories.find(
+				(category) => getCategoryHref(category) === pathname,
+			);
+			const nextQuery = parseCatalogSearchParams(
+				{
+					q: url.searchParams.get("q") ?? undefined,
+					page: url.searchParams.get("page") ?? undefined,
+					perPage: url.searchParams.get("perPage") ?? undefined,
+					sort: url.searchParams.get("sort") ?? undefined,
+					brand: url.searchParams.getAll("brand"),
+					[CATALOG_FILTER_PARAM]: url.searchParams.getAll(
+						CATALOG_FILTER_PARAM,
+					),
+				},
+				nextCategory ? { categoryKey: nextCategory.key } : {},
+			);
+
+			setActiveCategoryKey(nextCategory?.key);
+			setSearchValue(nextQuery.search ?? "");
+			setAppliedSearch(nextQuery.search ?? "");
+			setPage(nextQuery.page ?? 1);
+			setPerPage(nextQuery.perPage ?? 12);
+			setSort(nextQuery.sort ?? "featured");
+			setBrand(nextQuery.brand ?? []);
+			setFilters(nextQuery.filters ?? {});
+		},
+		[categories],
+	);
+
+	const navigateCatalog = useCallback(
+		(href: string, mode: "push" | "replace") => {
+			const url = new URL(href, window.location.origin);
+			const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
+
+			if (mode === "replace") {
+				window.history.replaceState(null, "", relativeUrl);
+			} else {
+				window.history.pushState(null, "", relativeUrl);
+			}
+
+			applyUrlState(url);
+		},
+		[applyUrlState],
+	);
+
+	useEffect(() => {
+		function handlePopState() {
+			applyUrlState(new URL(window.location.href));
+		}
+
+		window.addEventListener("popstate", handlePopState);
+
+		return () => {
+			window.removeEventListener("popstate", handlePopState);
+		};
+	}, [applyUrlState]);
 
 	useEffect(() => {
 		if (searchValue === appliedSearch) {
@@ -176,7 +276,17 @@ export function CatalogListing({
 
 	function handleSearchChange(nextValue: string) {
 		setSearchValue(nextValue);
-		setSearchPage(1);
+		setPage(1);
+	}
+
+	function handleSortChange(nextSort: CatalogResult["query"]["sort"]) {
+		navigateCatalog(
+			createCatalogHref(basePath, {
+				perPage,
+				sort: nextSort,
+			}),
+			"replace",
+		);
 	}
 
 	return (
@@ -203,8 +313,8 @@ export function CatalogListing({
 						search={searchValue}
 					/>
 					<CatalogSortControl
-						basePath={basePath}
-						sort={query.sort}
+						onSortChange={handleSortChange}
+						sort={sort}
 					/>
 				</div>
 
@@ -217,9 +327,18 @@ export function CatalogListing({
 							variant={!activeCategory ? "dark" : "secondary"}
 							size="sm">
 							<Link
-								href={createCatalogHref("/catalog", {
-									sort: linkQuery.sort,
-								})}
+								href={createCatalogHref("/catalog", { sort })}
+								onClick={(event) => {
+									if (shouldUseBrowserNavigation(event)) {
+										return;
+									}
+
+									event.preventDefault();
+									navigateCatalog(
+										createCatalogHref("/catalog", { sort }),
+										"push",
+									);
+								}}
 								className="shrink-0">
 								Все товары
 							</Link>
@@ -234,8 +353,21 @@ export function CatalogListing({
 								size="sm">
 								<Link
 									href={createCatalogHref(getCategoryHref(category), {
-										sort: linkQuery.sort,
+										sort,
 									})}
+									onClick={(event) => {
+										if (shouldUseBrowserNavigation(event)) {
+											return;
+										}
+
+										event.preventDefault();
+										navigateCatalog(
+											createCatalogHref(getCategoryHref(category), {
+												sort,
+											}),
+											"push",
+										);
+									}}
 									className="shrink-0">
 									{category.name}
 								</Link>
@@ -277,12 +409,15 @@ export function CatalogListing({
 					!isSearchPending && (
 						<CatalogStatePagination
 							pagination={visiblePagination}
-							onPageChange={setSearchPage}
+							onPageChange={setPage}
 						/>
 					)
 				) : (
 					<CatalogPagination
 						basePath={basePath}
+						onPageChange={(href) => {
+							navigateCatalog(href, "push");
+						}}
 						pagination={visiblePagination}
 						query={linkQuery}
 					/>

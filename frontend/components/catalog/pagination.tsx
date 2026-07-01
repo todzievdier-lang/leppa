@@ -6,13 +6,27 @@ import { createCatalogHref } from "@/lib/catalog/url";
 import { cn } from "@/lib/utils";
 
 import type { CatalogQuery, PaginationMeta } from "@/types/catalog";
+import type { MouseEvent } from "react";
+
+function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
+	return (
+		event.button !== 0
+		|| event.altKey
+		|| event.ctrlKey
+		|| event.metaKey
+		|| event.shiftKey
+		|| event.currentTarget.target === "_blank"
+	);
+}
 
 export function CatalogPagination({
 	basePath,
+	onPageChange,
 	pagination,
 	query,
 }: {
 	basePath: string;
+	onPageChange: (href: string, page: number) => void;
 	pagination: PaginationMeta;
 	query: CatalogQuery;
 }) {
@@ -24,17 +38,34 @@ export function CatalogPagination({
 		{ length: pagination.totalPages },
 		(_, index) => index + 1,
 	);
+	const previousPage = Math.max(1, pagination.page - 1);
+	const previousHref = createCatalogHref(basePath, {
+		...query,
+		page: previousPage,
+	});
+	const nextPage = Math.min(pagination.totalPages, pagination.page + 1);
+	const nextHref = createCatalogHref(basePath, {
+		...query,
+		page: nextPage,
+	});
 
 	return (
 		<nav
 			aria-label="Навигация по страницам каталога"
 			className="w-fit mx-auto mt-10 flex flex-wrap items-center justify-center gap-1 rounded-full border border-hairline bg-frost p-2 shadow-surface-lg backdrop-blur">
 			<Link
-				href={createCatalogHref(basePath, {
-					...query,
-					page: Math.max(1, pagination.page - 1),
-				})}
+				href={previousHref}
 				aria-disabled={!pagination.hasPreviousPage}
+				onClick={(event) => {
+					if (shouldUseBrowserNavigation(event)) {
+						return;
+					}
+
+					event.preventDefault();
+					if (pagination.hasPreviousPage) {
+						onPageChange(previousHref, previousPage);
+					}
+				}}
 				className={cn(
 					buttonVariants({ variant: "secondary", size: "icon" }),
 					!pagination.hasPreviousPage && "pointer-events-none opacity-45",
@@ -48,12 +79,21 @@ export function CatalogPagination({
 
 			{pages.map((page) => {
 				const isActive = page === pagination.page;
+				const href = createCatalogHref(basePath, { ...query, page });
 
 				return (
 					<Link
 						key={page}
-						href={createCatalogHref(basePath, { ...query, page })}
+						href={href}
 						aria-current={isActive ? "page" : undefined}
+						onClick={(event) => {
+							if (shouldUseBrowserNavigation(event)) {
+								return;
+							}
+
+							event.preventDefault();
+							onPageChange(href, page);
+						}}
 							className={buttonVariants({
 								className: "border-none",
 								variant: isActive ? "dark" : "secondary",
@@ -65,11 +105,18 @@ export function CatalogPagination({
 			})}
 
 			<Link
-				href={createCatalogHref(basePath, {
-					...query,
-					page: Math.min(pagination.totalPages, pagination.page + 1),
-				})}
+				href={nextHref}
 				aria-disabled={!pagination.hasNextPage}
+				onClick={(event) => {
+					if (shouldUseBrowserNavigation(event)) {
+						return;
+					}
+
+					event.preventDefault();
+					if (pagination.hasNextPage) {
+						onPageChange(nextHref, nextPage);
+					}
+				}}
 				className={cn(
 					buttonVariants({ variant: "secondary", size: "icon" }),
 					!pagination.hasNextPage && "pointer-events-none opacity-45",

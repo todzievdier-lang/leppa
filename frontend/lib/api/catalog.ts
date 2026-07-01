@@ -1060,12 +1060,12 @@ export async function getCatalog(
 			) ?? null)
 		: null;
 	const filteredCatalogProducts = filterProducts(catalogProducts, normalizedQuery);
-	const searchableProducts = sortProducts(
+	const categoryProducts = sortProducts(
 		filterProducts(catalogProducts, searchlessQuery),
 		normalizedQuery.sort,
 	);
 	const paginatedResult = paginateProducts(
-		searchableProducts,
+		categoryProducts,
 		normalizedQuery.page,
 		normalizedQuery.perPage,
 	);
@@ -1074,7 +1074,10 @@ export async function getCatalog(
 		categories,
 		activeCategory,
 		products: paginatedResult.items,
-		searchableProducts,
+		// Keep one complete, lightweight catalog snapshot on the client. Category,
+		// search, sorting and pagination transitions can then update instantly
+		// without requesting a new React Server Component payload.
+		searchableProducts: catalogProducts,
 		total: paginatedResult.meta.total,
 		pagination: paginatedResult.meta,
 		query: normalizedQuery,

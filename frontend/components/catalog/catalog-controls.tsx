@@ -1,45 +1,16 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {
-	CATALOG_FILTER_PARAM,
 	CATALOG_SORT_OPTIONS,
-	DEFAULT_CATALOG_SORT,
 } from "@/lib/catalog/query";
 import { cn } from "@/lib/utils";
 
 import type { CatalogSort } from "@/types/catalog";
-
-function useCatalogNavigation(basePath: string) {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const [, startTransition] = useTransition();
-
-	function replaceParams(update: (params: URLSearchParams) => void) {
-		const params = new URLSearchParams(searchParams.toString());
-
-		update(params);
-		params.delete("q");
-		params.delete("page");
-		params.delete("brand");
-		params.delete(CATALOG_FILTER_PARAM);
-
-		const queryString = params.toString();
-		const nextUrl = queryString ? `${basePath}?${queryString}` : basePath;
-
-		startTransition(() => {
-			router.replace(nextUrl, { scroll: false });
-		});
-	}
-
-	return replaceParams;
-}
 
 export function CatalogSearch({
 	className,
@@ -90,14 +61,12 @@ export function CatalogSearch({
 }
 
 export function CatalogSortControl({
-	basePath,
+	onSortChange,
 	sort,
 }: {
-	basePath: string;
+	onSortChange: (sort: CatalogSort) => void;
 	sort: CatalogSort;
 }) {
-	const replaceParams = useCatalogNavigation(basePath);
-
 	return (
 		<label className="flex w-full items-center gap-2 text-sm text-ink-muted sm:w-auto">
 			<span className="sr-only">Сортировка каталога</span>
@@ -106,14 +75,7 @@ export function CatalogSortControl({
 				className="min-w-[190px]"
 				onChange={(event) => {
 					const nextSort = event.target.value as CatalogSort;
-
-					replaceParams((params) => {
-						if (nextSort === DEFAULT_CATALOG_SORT) {
-							params.delete("sort");
-						} else {
-							params.set("sort", nextSort);
-						}
-					});
+					onSortChange(nextSort);
 				}}>
 				{CATALOG_SORT_OPTIONS.map((option) => (
 					<option

@@ -24,9 +24,6 @@ export default async function CatalogPage({
 	const result = await getCatalog(query);
 
 	return (
-		<CatalogListing
-			basePath="/catalog"
-			result={result}
-		/>
+		<CatalogListing result={result} />
 	);
 }
