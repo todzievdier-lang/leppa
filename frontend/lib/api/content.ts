@@ -48,7 +48,7 @@ const homePageContent: HomePageContent = {
 	heroTitle: "Leppa & WenSton",
 	heroDescription: "Премиальная сантехника и архитектура ванной комнаты: выразительные материалы, точная геометрия и эстетика спокойной роскоши.",
 	heroButtonLabel: "Смотреть каталог",
-	heroButtonHref: "#categories",
+	heroButtonHref: "/catalog",
 	heroImage: "/hero-bg.jpg",
 	categoriesTitle: "Категории",
 	categoriesDescription: "Подборка ключевых направлений Leppa & WenSton для частных интерьеров, дизайнерских проектов и комплектации объектов.",
