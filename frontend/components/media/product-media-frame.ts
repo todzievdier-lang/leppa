@@ -1,7 +1,7 @@
 import { surfaceVariants } from "@/components/ui/surface";
 import { cn } from "@/lib/utils";
 
-export const PRODUCT_IMAGE_FALLBACK = "/no-image.png";
+export const PRODUCT_IMAGE_FALLBACK = "/no-image.webp";
 
 export type ProductMediaFrameVariant =
 	| "card"

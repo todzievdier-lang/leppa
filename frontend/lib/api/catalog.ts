@@ -15,6 +15,7 @@ import {
 	getProductImageAlt,
 	getProductPrimaryThumbnail,
 } from "@/lib/catalog/helpers";
+import { getProductImageSource } from "@/lib/catalog/product-image";
 import { isSameSlug } from "@/lib/utils/slug";
 
 import type {
@@ -43,6 +44,7 @@ const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
 const MAX_BUNDLE_PRODUCTS = 5;
+const CATALOG_REVALIDATE_SECONDS = 300;
 
 function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
@@ -174,7 +176,10 @@ async function fetchStrapiJson(url: URL, pathname: string): Promise<unknown | nu
 	try {
 		const response = await fetch(url, {
 			headers: getStrapiRequestHeaders(),
-			cache: "no-store",
+			next: {
+				revalidate: CATALOG_REVALIDATE_SECONDS,
+				tags: ["catalog"],
+			},
 		});
 
 		if (!response.ok) {
@@ -955,6 +960,21 @@ function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
 	};
 }
 
+function getCatalogProduct(product: Product): Product {
+	return {
+		...product,
+		descriptionBlocks: [],
+		videos: [],
+		bundles: [],
+		images: product.images.slice(0, 5).map((image) => ({
+			url: getProductImageSource(image, "card"),
+			role: image.role,
+			label: image.label,
+			alt: image.alt,
+		})),
+	};
+}
+
 export async function getCategories(): Promise<Category[]> {
 	return fetchStrapiCategories();
 }
@@ -1033,14 +1053,15 @@ export async function getCatalog(
 		getCategories(),
 		getProducts(),
 	]);
+	const catalogProducts = allProducts.map(getCatalogProduct);
 	const activeCategory = normalizedQuery.categoryKey
 		? (categories.find(
 				(category) => category.key === normalizedQuery.categoryKey,
 			) ?? null)
 		: null;
-	const filteredCatalogProducts = filterProducts(allProducts, normalizedQuery);
+	const filteredCatalogProducts = filterProducts(catalogProducts, normalizedQuery);
 	const searchableProducts = sortProducts(
-		filterProducts(allProducts, searchlessQuery),
+		filterProducts(catalogProducts, searchlessQuery),
 		normalizedQuery.sort,
 	);
 	const paginatedResult = paginateProducts(

@@ -125,7 +125,7 @@ const Header = ({
 						exit={{ opacity: 0 }}
 						transition={backdropTransition}
 						onClick={() => handleOpenChange(false)}
-						className="mobile-menu-backdrop fixed inset-0 z-40 md:hidden"
+						className="mobile-menu-backdrop fixed inset-0 z-40 backdrop-blur-[2px] md:hidden"
 					/>
 					<motion.div
 						key="mobile-navigation-menu"
@@ -208,7 +208,18 @@ const Header = ({
 	return (
 		<>
 			<header className="fixed left-1/2 top-4 z-[70] isolate w-full max-w-5xl -translate-x-1/2 px-4">
-				<div
+				<motion.div
+					initial={
+						prefersReducedMotion ? { opacity: 0 } : { y: -24, opacity: 0 }
+					}
+					animate={prefersReducedMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+					exit={
+						prefersReducedMotion ? { opacity: 0 } : { y: -24, opacity: 0 }
+					}
+					transition={{
+						duration: prefersReducedMotion ? 0.01 : 0.55,
+						ease: [0.22, 1, 0.36, 1],
+					}}
 					className={cn(
 						"grid w-full grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-3 rounded-full border border-hairline px-5 py-2 transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-cols-[minmax(0,auto)_minmax(0,1fr)_minmax(0,auto)] md:gap-4 md:px-6",
 						isOpen ? "bg-canvas shadow-surface-md" : "bg-toolbar shadow-header",
@@ -287,7 +298,7 @@ const Header = ({
 							</button>
 						</div>
 					</div>
-				</div>
+				</motion.div>
 			</header>
 			{canUseDocument ? createPortal(mobileNavigationMenu, document.body) : null}
 		</>

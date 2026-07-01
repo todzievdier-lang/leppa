@@ -37,7 +37,7 @@ function normalizeImages(images: ProductImage[], alt: string) {
 		}))
 		.filter((image) => image.url.trim().length > 0);
 
-	return normalized.length > 0 ? normalized.slice(0, 5) : [{ url: "/no-image.png", alt }];
+	return normalized.length > 0 ? normalized.slice(0, 5) : [{ url: "/no-image.webp", alt }];
 }
 
 export function ProductCardMedia({

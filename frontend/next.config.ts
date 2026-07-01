@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30;
 
 function normalizeUrl(value: string | undefined): URL | null {
 	const normalizedValue = value?.trim().replace(/\/+$/, "");
@@ -49,22 +50,34 @@ const strapiCloudMediaImagePattern = {
 };
 
 const nextConfig: NextConfig = {
+	compress: true,
+	poweredByHeader: false,
 	async headers() {
 		return [
 			{
-				source: "/:path*",
+				source: "/hero-bg.jpg",
 				headers: [
 					{
 						key: "Cache-Control",
-						value: "no-store, no-cache, max-age=0, must-revalidate",
+						value: "public, max-age=86400, stale-while-revalidate=2592000",
 					},
+				],
+			},
+			{
+				source: "/no-image.webp",
+				headers: [
 					{
-						key: "Pragma",
-						value: "no-cache",
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
 					},
+				],
+			},
+			{
+				source: "/catalog/:path*",
+				headers: [
 					{
-						key: "Expires",
-						value: "0",
+						key: "Cache-Control",
+						value: "public, max-age=60, s-maxage=300, stale-while-revalidate=3600",
 					},
 				],
 			},
@@ -74,10 +87,10 @@ const nextConfig: NextConfig = {
 		// Next.js 16 blocks localhost/private IPs unless explicitly allowed.
 		dangerouslyAllowLocalIP: isDevelopment,
 		// Product images use four intentional quality tiers. The original media
-		// remains untouched in Strapi; Next.js serves responsive WebP variants.
-		formats: ["image/webp"],
+		// remains untouched in Strapi; Next.js serves responsive AVIF/WebP variants.
+		formats: ["image/avif", "image/webp"],
 		qualities: [60, 65, 75, 85],
-		minimumCacheTTL: 0,
+		minimumCacheTTL: THIRTY_DAYS_IN_SECONDS,
 		remotePatterns: [
 			{
 				protocol: "http",

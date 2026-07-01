@@ -6,12 +6,15 @@ import {
 	getProductBySlug,
 	getProducts,
 } from "@/lib/api";
+import {
+	getProductColorVariants,
+	getProductSizeVariants,
+} from "@/lib/catalog/product-variants";
+import { getProductImageSource } from "@/lib/catalog/product-image";
 
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const revalidate = 300;
 
 type ProductPageProps = {
 	params: Promise<{
@@ -19,6 +22,26 @@ type ProductPageProps = {
 		productSlug: string;
 	}>;
 };
+
+function getBundleProductSnapshot(product: Awaited<ReturnType<typeof getProducts>>[number]) {
+	const primaryImage = product.images.find((image) => image.role === "main")
+		?? product.images[0];
+
+	return {
+		...product,
+		description: "",
+		descriptionBlocks: [],
+		videos: [],
+		bundles: [],
+		images: primaryImage
+			? [{
+				url: getProductImageSource(primaryImage, "card"),
+				role: "main",
+				alt: primaryImage.alt,
+			}]
+			: [],
+	};
+}
 
 export async function generateMetadata({
 	params,
@@ -60,11 +83,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
 		notFound();
 	}
 
+	const sizeVariants = getProductSizeVariants(product, products, category);
+	const colorVariants = getProductColorVariants(product, products, category);
+	const bundleProducts = product.bundles.length > 0
+		? products.map((candidate) =>
+			candidate.id === product.id ? product : getBundleProductSnapshot(candidate),
+		)
+		: [];
+
 	return (
 		<ProductDetail
+			bundleProducts={bundleProducts}
 			category={category}
+			colorVariants={colorVariants}
 			product={product}
-			variantProducts={products}
+			sizeVariants={sizeVariants}
 		/>
 	);
 }

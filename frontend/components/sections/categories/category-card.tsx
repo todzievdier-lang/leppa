@@ -18,7 +18,7 @@ export function CategoryCard({
 }: {
 	category: Category;
 }) {
-	const imageSrc = category.image || "/no-image.png";
+	const imageSrc = category.image || "/no-image.webp";
 	const descriptionId = useId();
 	const descriptionRef = useRef<HTMLParagraphElement>(null);
 	const [isExpanded, setIsExpanded] = useState(false);

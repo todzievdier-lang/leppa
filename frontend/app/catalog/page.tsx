@@ -7,9 +7,7 @@ import {
 	type CatalogSearchParams,
 } from "@/lib/catalog/query";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-export const revalidate = 0;
+export const revalidate = 300;
 
 export const metadata: Metadata = {
 	title: "Каталог | Leppa & WenSton",

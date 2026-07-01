@@ -225,9 +225,7 @@ export function HeaderProductSearch({
 		setSearchLoadFailed(false);
 
 		try {
-			const response = await fetch("/api/catalog/search", {
-				cache: "no-store",
-			});
+			const response = await fetch("/api/catalog/search");
 
 			if (!response.ok) {
 				throw new Error(`Search products request failed: ${response.status}`);
@@ -348,7 +346,7 @@ export function HeaderProductSearch({
 													sizes="48px"
 													className="object-cover object-center"
 													onError={(event) => {
-														event.currentTarget.src = "/no-image.png";
+														event.currentTarget.src = "/no-image.webp";
 													}}
 												/>
 											</span>

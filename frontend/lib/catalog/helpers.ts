@@ -9,14 +9,14 @@ export function getProductPrimaryImage(product: Product): string {
 	const image = product.images.find((item) => item.role === "main")
 		?? product.images[0];
 
-	return image ? getProductImageSource(image, "card") : "/no-image.png";
+	return image ? getProductImageSource(image, "card") : "/no-image.webp";
 }
 
 export function getProductPrimaryThumbnail(product: Product): string {
 	const image = product.images.find((item) => item.role === "main")
 		?? product.images[0];
 
-	return image ? getProductImageSource(image, "thumbnail") : "/no-image.png";
+	return image ? getProductImageSource(image, "thumbnail") : "/no-image.webp";
 }
 
 export function getProductImageAlt(product: Product): string {

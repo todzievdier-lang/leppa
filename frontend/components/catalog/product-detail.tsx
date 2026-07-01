@@ -20,8 +20,8 @@ import {
 	getProductImageAlt,
 } from "@/lib/catalog/helpers";
 import {
-	getProductColorVariants,
-	getProductSizeVariants,
+	type ProductColorVariant,
+	type ProductSizeVariant,
 } from "@/lib/catalog/product-variants";
 import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
@@ -29,18 +29,20 @@ import { formatProductPrice } from "@/lib/utils/price";
 import type { Category, Product } from "@/types/catalog";
 
 export function ProductDetail({
+	bundleProducts = [],
 	category,
+	colorVariants = [],
 	product,
-	variantProducts = [],
+	sizeVariants = [],
 }: {
+	bundleProducts?: Product[];
 	category: Category;
+	colorVariants?: ProductColorVariant[];
 	product: Product;
-	variantProducts?: Product[];
+	sizeVariants?: ProductSizeVariant[];
 }) {
 	const galleryFallbackAlt = getProductImageAlt(product);
 	const categoryHref = getCategoryHref(category);
-	const sizeVariants = getProductSizeVariants(product, variantProducts, category);
-	const colorVariants = getProductColorVariants(product, variantProducts, category);
 	const activeColor = colorVariants.find((variant) => variant.isActive)?.label
 		?? product.color?.name
 		?? null;
@@ -156,7 +158,7 @@ export function ProductDetail({
 					key={product.id}
 					category={category}
 					product={product}
-					products={variantProducts}
+					products={bundleProducts}
 				/>
 
 				<ProductInfoTabs
