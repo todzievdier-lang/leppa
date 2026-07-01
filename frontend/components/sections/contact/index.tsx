@@ -120,7 +120,10 @@ export async function ContactSection() {
 									className="sr-only">
 									Карта проезда
 								</h2>
-								<ContactMap mapEmbed={contact.mapEmbed} />
+								<ContactMap
+									mapEmbed={contact.mapEmbed}
+									mapLink={contact.mapLink}
+								/>
 							</section>
 						) : null}
 					</>

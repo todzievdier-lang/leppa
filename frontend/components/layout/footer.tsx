@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/privacy/cookie-settings-button";
 import { Button } from "@/components/ui/button";
 import { getFooterCategories, getSiteSettings } from "@/lib/api";
 import {
@@ -131,6 +132,7 @@ export async function Footer() {
 							className="transition-colors hover:text-ink">
 							Политика конфиденциальности
 						</Link>
+						<CookieSettingsButton />
 					</nav>
 				</div>
 			</div>
