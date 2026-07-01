@@ -70,7 +70,30 @@
       "type": "json"
     },
     "bundles": {
-      "type": "json"
+      "type": "json",
+      "pluginOptions": {
+        "content-manager": {
+          "visible": false
+        },
+        "content-type-builder": {
+          "visible": false
+        }
+      }
+    },
+    "bundleEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "bundleDiscountPercent": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100,
+      "default": 6
+    },
+    "bundleProducts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product"
     },
     "inStock": {
       "type": "boolean"

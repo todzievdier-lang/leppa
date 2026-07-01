@@ -38,9 +38,7 @@ import type {
 
 type PlainRecord = Record<string, unknown>;
 
-const TEMPORARY_STRAPI_API_URL = "http://85.239.55.103:1337";
-const STRAPI_API_URLS = getConfiguredStrapiApiUrls();
-const PRIMARY_STRAPI_API_URL = STRAPI_API_URLS[0] ?? null;
+const STRAPI_API_URL = getConfiguredStrapiApiUrl();
 const STRAPI_API_TOKEN = getConfiguredStrapiApiToken();
 const STRAPI_PAGE_SIZE = 100;
 const STRAPI_MAX_PAGES = 100;
@@ -56,16 +54,13 @@ function normalizeStrapiApiUrl(value: string | undefined): string | null {
 	return normalizedValue;
 }
 
-function getConfiguredStrapiApiUrls(): string[] {
-	const urls = [
-		normalizeStrapiApiUrl(TEMPORARY_STRAPI_API_URL),
-		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
+function getConfiguredStrapiApiUrl(): string | null {
+	return [
 		normalizeStrapiApiUrl(process.env.STRAPI_API_URL),
+		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL),
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_STRAPI_URL),
 		normalizeStrapiApiUrl(process.env.NEXT_PUBLIC_API_URL),
-	].filter((url): url is string => url !== null);
-
-	return [...new Set(urls)];
+	].find((url): url is string => url !== null) ?? null;
 }
 
 function isLocalStrapiApiUrl(value: string | null): boolean {
@@ -83,7 +78,7 @@ function isLocalStrapiApiUrl(value: string | null): boolean {
 }
 
 function getConfiguredStrapiApiToken(): string | null {
-	if (STRAPI_API_URLS.every(isLocalStrapiApiUrl)) {
+	if (isLocalStrapiApiUrl(STRAPI_API_URL)) {
 		return null;
 	}
 
@@ -208,11 +203,11 @@ function resolveStrapiAssetUrl(url: string | null): string | null {
 		return url;
 	}
 
-	if (!PRIMARY_STRAPI_API_URL) {
+	if (!STRAPI_API_URL) {
 		return url;
 	}
 
-	return new URL(url, PRIMARY_STRAPI_API_URL).toString();
+	return new URL(url, STRAPI_API_URL).toString();
 }
 
 function getStrapiEntryFields(entry: unknown): PlainRecord | null {
@@ -241,6 +236,19 @@ function unwrapStrapiRelation(value: unknown): PlainRecord | null {
 	}
 
 	return getStrapiEntryFields(value);
+}
+
+function unwrapStrapiRelationList(value: unknown): PlainRecord[] {
+	const relations = isRecord(value) && "data" in value ? value.data : value;
+
+	if (!Array.isArray(relations)) {
+		const relation = getStrapiEntryFields(relations);
+		return relation ? [relation] : [];
+	}
+
+	return relations
+		.map(getStrapiEntryFields)
+		.filter((relation): relation is PlainRecord => relation !== null);
 }
 
 function unwrapStrapiMedia(value: unknown): PlainRecord | null {
@@ -633,61 +641,29 @@ function mapProductAttributes(value: unknown): ProductAttribute[] {
 	return attributes;
 }
 
-function normalizeBundleProductSlugs(value: unknown): string[] {
-	if (!Array.isArray(value)) {
+function mapProductBundle(fields: PlainRecord, productSlug: string): ProductBundleConfig[] {
+	if (!getBoolean(fields.bundleEnabled)) {
 		return [];
 	}
 
-	return value
-		.map((item) => {
-			if (typeof item === "string") {
-				return getString(item);
-			}
+	const productSlugs = [
+		productSlug,
+		...unwrapStrapiRelationList(fields.bundleProducts)
+			.map((product) => getString(product.slug))
+			.filter((slug): slug is string => slug !== null),
+	].filter((slug, index, slugs) => slugs.indexOf(slug) === index)
+		.slice(0, MAX_BUNDLE_PRODUCTS);
 
-			if (isRecord(item)) {
-				return (
-					getString(item.slug)
-					?? getString(item.productSlug)
-					?? getString(item.product_slug)
-				);
-			}
+	if (productSlugs.length < 2) {
+		return [];
+	}
 
-			return null;
-		})
-		.filter((slug): slug is string => slug !== null);
-}
+	const configuredDiscount = getNumber(fields.bundleDiscountPercent);
+	const discountPercent = configuredDiscount !== null
+		? Math.min(100, Math.max(0, configuredDiscount))
+		: 6;
 
-function mapProductBundles(value: unknown): ProductBundleConfig[] {
-	const bundleRecords = parseJsonArray(value).filter((entry): entry is PlainRecord =>
-		isRecord(entry),
-	);
-
-	return bundleRecords
-		.map((bundle): ProductBundleConfig | null => {
-			const productSlugs = normalizeBundleProductSlugs(
-				bundle.productSlugs
-					?? bundle.product_slugs
-					?? bundle.items
-					?? bundle.products,
-			).slice(0, MAX_BUNDLE_PRODUCTS);
-
-			if (productSlugs.length < 2) {
-				return null;
-			}
-
-			const discountPercent = getNumber(
-				bundle.discountPercent ?? bundle.discount_percent ?? bundle.discount,
-			);
-
-			return {
-				discountPercent:
-					discountPercent !== null && discountPercent > 0
-						? discountPercent
-						: 6,
-				productSlugs,
-			};
-		})
-		.filter((bundle): bundle is ProductBundleConfig => bundle !== null);
+	return [{ discountPercent, productSlugs }];
 }
 
 function mapProductImages(value: unknown, productName: string): ProductImage[] {
@@ -764,27 +740,16 @@ async function fetchStrapiCollection(
 	pathname: string,
 	configureUrl?: (url: URL) => void,
 ): Promise<unknown[]> {
-	if (STRAPI_API_URLS.length === 0) {
+	if (!STRAPI_API_URL) {
+		console.error("[strapi] API URL is not configured.");
 		return [];
 	}
 
-	for (const baseUrl of STRAPI_API_URLS) {
-		const entries = await fetchStrapiCollectionFromBaseUrl(
-			baseUrl,
-			pathname,
-			configureUrl,
-		);
-
-		if (entries.length > 0 || STRAPI_API_URLS.length === 1) {
-			return entries;
-		}
-
-		console.warn(
-			`[strapi] Empty collection for ${pathname} from ${baseUrl}; trying next configured URL.`,
-		);
-	}
-
-	return [];
+	return fetchStrapiCollectionFromBaseUrl(
+		STRAPI_API_URL,
+		pathname,
+		configureUrl,
+	);
 }
 
 async function fetchStrapiCollectionFromBaseUrl(
@@ -926,7 +891,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		images: mapProductImages(fields.images, name),
 		videos: mapProductVideos(fields.videos),
 		attributes,
-		bundles: mapProductBundles(fields.bundles),
+		bundles: mapProductBundle(fields, slug),
 	};
 }
 
@@ -958,7 +923,8 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"name",
 			"brand",
 			"price",
-			"bundles",
+			"bundleEnabled",
+			"bundleDiscountPercent",
 			"description",
 			"attributes",
 			"inStock",
@@ -973,6 +939,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 		addStrapiPopulateFields(url, "videos", ["url"]);
 		addStrapiPopulateFields(url, "category", ["slug"]);
 		addStrapiPopulateFields(url, "color", ["name", "slug", "hex", "sortOrder"]);
+		addStrapiPopulateFields(url, "bundleProducts", ["slug"]);
 		url.searchParams.set("sort", "name:asc");
 	});
 

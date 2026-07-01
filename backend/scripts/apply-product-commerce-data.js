@@ -6,21 +6,9 @@ const { compileStrapi, createStrapi } = require('@strapi/strapi');
 
 const PRODUCT_UID = 'api::product.product';
 const appDir = path.resolve(__dirname, '..');
-const MAX_BUNDLE_PRODUCTS = 5;
 
 const INSTALLATION_SLUG = 'wenston-installyatsiya-dlya-podvesnogo-unitaza-stw';
-const DEFAULT_WALL_TOILET_SLUG = 'leppa-podvesnoy-unitaz-leppa-448';
-const DEFAULT_MIRROR_SLUG =
-  'wenston-zerkalo-base-s-podsvetkoy-v-alyuminievoy-rame-s-sensornym-vklyucheniem-sistema-antizapotevaniya-800x800x20';
 const DEFAULT_FLUSH_BUTTON_SLUG = 'wenston-knopka-smyva-603bs';
-
-const FLUSH_BUTTON_BY_COLOR = {
-  black: 'wenston-knopka-smyva-608bl',
-  chrome: DEFAULT_FLUSH_BUTTON_SLUG,
-  gold: 'wenston-knopka-smyva-603g',
-  gray: 'wenston-knopka-smyva-608gg',
-  white: DEFAULT_FLUSH_BUTTON_SLUG,
-};
 
 const PRICE_BY_SLUG = {
   [INSTALLATION_SLUG]: 12490,
@@ -149,151 +137,11 @@ function getEstimatedPrice(product) {
   return null;
 }
 
-function makeBundle(productSlugs, discountPercent = 6) {
-  return {
-    discountPercent,
-    productSlugs: productSlugs.slice(0, MAX_BUNDLE_PRODUCTS),
-  };
-}
-
-function isWallHungToilet(product) {
-	return getCategorySlug(product) === 'unitazy' && /подвесн/i.test(product.name);
-}
-
-function normalizeBundleProductSlugs(value) {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  const seenSlugs = new Set();
-
-  return value
-    .map((item) => {
-      if (typeof item === 'string') {
-        return item.trim();
-      }
-
-      if (item && typeof item === 'object') {
-        return String(item.slug ?? item.productSlug ?? item.product_slug ?? '').trim();
-      }
-
-      return '';
-    })
-    .filter((slug) => slug.length > 0)
-    .filter((slug) => {
-      if (seenSlugs.has(slug)) {
-        return false;
-      }
-
-      seenSlugs.add(slug);
-      return true;
-    })
-    .slice(0, MAX_BUNDLE_PRODUCTS);
-}
-
-function normalizeDiscountPercent(value) {
-  const parsedValue = Number(value);
-
-  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : 6;
-}
-
-function sanitizeExistingBundles(product, productsBySlug) {
-  if (!Array.isArray(product.bundles)) {
-    return [];
-  }
-
-  return product.bundles
-    .map((bundle) => {
-      if (!bundle || typeof bundle !== 'object') {
-        return null;
-      }
-
-      const productSlugs = normalizeBundleProductSlugs(
-        bundle.productSlugs
-          ?? bundle.product_slugs
-          ?? bundle.items
-          ?? bundle.products,
-      ).filter((slug) => productsBySlug.has(slug));
-
-      if (productSlugs.length < 2) {
-        return null;
-      }
-
-      const discountPercent = normalizeDiscountPercent(
-        bundle.discountPercent ?? bundle.discount_percent ?? bundle.discount,
-      );
-
-      return {
-        discountPercent,
-        productSlugs,
-      };
-    })
-    .filter((bundle) => bundle !== null)
-    .slice(0, 1);
-}
-
-function buildDefaultBundles(product, productsBySlug) {
-  const bundles = [];
-  const categorySlug = getCategorySlug(product);
-
-  if (isWallHungToilet(product)) {
-    bundles.push(
-      makeBundle([
-        product.slug,
-        INSTALLATION_SLUG,
-        DEFAULT_FLUSH_BUTTON_SLUG,
-      ]),
-    );
-  }
-
-  if (product.slug === INSTALLATION_SLUG) {
-    bundles.push(
-      makeBundle([
-        product.slug,
-        DEFAULT_WALL_TOILET_SLUG,
-        DEFAULT_FLUSH_BUTTON_SLUG,
-      ]),
-    );
-  }
-
-  if (categorySlug === 'flush-buttons') {
-    bundles.push(
-      makeBundle([
-        product.slug,
-        INSTALLATION_SLUG,
-        DEFAULT_WALL_TOILET_SLUG,
-      ]),
-    );
-  }
-
-  if (categorySlug === 'umnye-unitazy' && productsBySlug.has(DEFAULT_MIRROR_SLUG)) {
-    bundles.push(
-      makeBundle([
-        product.slug,
-        DEFAULT_MIRROR_SLUG,
-      ], 5),
-    );
-  }
-
-  return bundles.filter((bundle) =>
-    bundle.productSlugs.length > 1
-    && bundle.productSlugs.every((slug) => productsBySlug.has(slug)),
-  ).slice(0, 1);
-}
-
-function buildBundles(product, productsBySlug) {
-  const existingBundles = sanitizeExistingBundles(product, productsBySlug);
-
-  return existingBundles.length > 0
-    ? existingBundles
-    : buildDefaultBundles(product, productsBySlug);
-}
-
 async function getProducts(strapi, status) {
   return strapi.documents(PRODUCT_UID).findMany({
     status,
     pagination: { pageSize: 1000 },
-    fields: ['slug', 'sku', 'baseSku', 'name', 'brand', 'price', 'bundles'],
+    fields: ['slug', 'sku', 'baseSku', 'name', 'brand', 'price'],
     populate: {
       category: { fields: ['slug'] },
       color: { fields: ['slug', 'name'] },
@@ -303,9 +151,7 @@ async function getProducts(strapi, status) {
 
 async function applyCommerceData(strapi, options) {
   const products = await getProducts(strapi, options.status);
-  const productsBySlug = new Map(products.map((product) => [product.slug, product]));
   const stats = {
-    bundled: 0,
     missingPrices: 0,
     priced: 0,
     skipped: 0,
@@ -314,8 +160,7 @@ async function applyCommerceData(strapi, options) {
 
   for (const product of products) {
     const price = getEstimatedPrice(product);
-    const bundles = buildBundles(product, productsBySlug);
-    const data = { bundles };
+    const data = {};
 
     if (price === null) {
       stats.missingPrices += 1;
@@ -324,13 +169,9 @@ async function applyCommerceData(strapi, options) {
       stats.priced += 1;
     }
 
-    if (bundles.length > 0) {
-      stats.bundled += 1;
-    }
-
     if (options.dryRun) {
       console.log(
-        `[dry-run] ${product.slug} price=${price ?? 'missing'} bundles=${bundles.length}`,
+        `[dry-run] ${product.slug} price=${price ?? 'missing'}`,
       );
       stats.skipped += 1;
       continue;
@@ -343,7 +184,7 @@ async function applyCommerceData(strapi, options) {
     });
 
     stats.updated += 1;
-    console.log(`[updated] ${product.slug} price=${price ?? 'missing'} bundles=${bundles.length}`);
+    console.log(`[updated] ${product.slug} price=${price ?? 'missing'}`);
   }
 
   return stats;
@@ -362,7 +203,7 @@ async function main() {
     const stats = await applyCommerceData(app, options);
 
     console.log(
-      `[done] updated=${stats.updated} priced=${stats.priced} bundled=${stats.bundled} missingPrices=${stats.missingPrices} skipped=${stats.skipped}`,
+      `[done] updated=${stats.updated} priced=${stats.priced} missingPrices=${stats.missingPrices} skipped=${stats.skipped}`,
     );
   } finally {
     if (app) {

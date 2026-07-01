@@ -582,7 +582,29 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     attributes: Schema.Attribute.JSON;
     baseSku: Schema.Attribute.String;
     brand: Schema.Attribute.String;
-    bundles: Schema.Attribute.JSON;
+    bundleDiscountPercent: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<6>;
+    bundleEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    bundleProducts: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::product.product'
+    >;
+    bundles: Schema.Attribute.JSON &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+        'content-type-builder': {
+          visible: false;
+        };
+      }>;
     category: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
     color: Schema.Attribute.Relation<'manyToOne', 'api::color.color'>;
     createdAt: Schema.Attribute.DateTime;
