@@ -5,14 +5,42 @@ const path = require('node:path');
 const { compileStrapi, createStrapi } = require('@strapi/strapi');
 
 const PRODUCT_UID = 'api::product.product';
-const DIMENSION_FIELDS = ['widthMm', 'heightMm', 'depthMm', 'lengthMm', 'diameterMm'];
-const MIRROR_SERIES = new Set(['BASE', 'BERTA', 'MIO', 'ROYAL']);
 const appDir = path.resolve(__dirname, '..');
 
-const TECHNICAL_DESCRIPTION_PATTERN = new RegExp(
-  '^(?:Название|Производитель|Артикул|Цвет(?: рамы)?|Материал(?: рамы)?|Габариты?[^:]*|Габаритные размеры[^:]*|Размеры?[^:]*)\\s*:',
-  'i',
-);
+const ATTRIBUTE_KEYS_BY_LABEL = {
+  'тип изделия': 'productType',
+  'цвет': 'color',
+  'цвет сиденья': 'seatColor',
+  'цвет фурнитуры': 'hardwareColor',
+  'поверхность': 'surface',
+  'материал': 'material',
+  'материал корпуса': 'bodyMaterial',
+  'покрытие корпуса': 'bodyFinish',
+  'материал фасада': 'facadeMaterial',
+  'монтаж': 'mounting',
+  'способ монтажа': 'mountingMethod',
+  'направление выпуска': 'outletDirection',
+  'вид смывающего потока': 'flushFlowType',
+  'тип лампы': 'lampType',
+  'цвет подсветки': 'lightingColor',
+  'страна происхождения': 'countryOfOrigin',
+  'гарантия': 'warranty',
+  'тип установки': 'installationType',
+  'мощность': 'powerW',
+  'роль в комплекте': 'kitRole',
+  'тип кнопки': 'buttonType',
+  'режимы смыва': 'flushModes',
+  'совместимость': 'compatibility',
+  'отделка': 'finish',
+  'бачок': 'flushTank',
+  'комплект крепежа': 'mountingKit',
+  'бренд': 'brand',
+};
+const DIMENSION_HEADING_PATTERN = /^(?:размеры?|габариты?|габаритные размеры)\s*:?\s*$/iu;
+const DIMENSION_VALUE_PATTERN =
+  /^(?:длина|ширина|высота|глубина|диаметр)\s*:\s*\d+(?:[.,]\d+)?\s*(?:мм|mm)?\s*$/iu;
+const COMBINED_DIMENSIONS_PATTERN =
+  /^(?:размеры?|габариты?|габаритные размеры)(?:\s*\([^)]*\))?\s*:\s*[\d\s.,*xх×-]+(?:мм|mm)\s*$/iu;
 
 function getBlockText(value) {
   if (typeof value === 'string') {
@@ -34,57 +62,81 @@ function getBlockText(value) {
   return getBlockText(value.children);
 }
 
-function fixKnownSeriesName(text, sku) {
-  if (!MIRROR_SERIES.has(sku)) {
-    return text;
-  }
+function isDimensionText(text) {
+  const normalizedText = text.trim();
 
-  return text.replace(/Зеркало\s+(?:BASE|BERTA|MIO|ROYAL)\b/giu, `Зеркало ${sku}`);
+  return (
+    DIMENSION_HEADING_PATTERN.test(normalizedText)
+    || DIMENSION_VALUE_PATTERN.test(normalizedText)
+    || COMBINED_DIMENSIONS_PATTERN.test(normalizedText)
+  );
 }
 
-function cleanDescription(description, sku) {
+function removeDimensionLines(text) {
+  return text
+    .split(/\r?\n/)
+    .filter((line) => !isDimensionText(line))
+    .join('\n');
+}
+
+function cleanDescriptionNode(value) {
+  if (Array.isArray(value)) {
+    return value.map(cleanDescriptionNode);
+  }
+
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  const cleaned = { ...value };
+
+  if (typeof cleaned.text === 'string') {
+    cleaned.text = removeDimensionLines(cleaned.text);
+  }
+
+  if (Array.isArray(cleaned.children)) {
+    cleaned.children = cleaned.children.map(cleanDescriptionNode);
+  }
+
+  return cleaned;
+}
+
+function cleanDescription(description) {
   if (!Array.isArray(description)) {
     return [];
   }
 
-  const paragraphs = description
-    .flatMap((block) => getBlockText(block).split(/\n+/))
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .filter((line) => !TECHNICAL_DESCRIPTION_PATTERN.test(line))
-    .filter((line) => !/^Функция антизапотевания\.?$/iu.test(line))
-    .map((line) => fixKnownSeriesName(line, sku));
-
-  return paragraphs.map((text) => ({
-    type: 'paragraph',
-    children: [{ type: 'text', text }],
-  }));
+  return description
+    .filter((block) => !isDimensionText(getBlockText(block)))
+    .map(cleanDescriptionNode)
+    .filter((block) => getBlockText(block).trim());
 }
 
-function getAttributes(product) {
-  return Array.isArray(product.attributes) ? product.attributes : [];
+function getAttributeKeyFromLabel(label) {
+  const normalizedLabel = label.trim().toLocaleLowerCase('ru-RU');
+
+  return (
+    ATTRIBUTE_KEYS_BY_LABEL[normalizedLabel]
+    ?? `custom:${normalizedLabel.replace(/\s+/g, '-')}`
+  );
 }
 
-function getDimensionData(product) {
-  const attributes = getAttributes(product);
+function getLegacyAttributes(product) {
+  if (Array.isArray(product.attributes) && product.attributes.length > 0) {
+    return product.attributes;
+  }
 
-  return Object.fromEntries(DIMENSION_FIELDS.map((fieldName) => {
-    const attribute = attributes.find((entry) => entry?.key === fieldName);
-    const value = Number(attribute?.value);
+  if (!Array.isArray(product.specifications)) {
+    return [];
+  }
 
-    return [fieldName, Number.isFinite(value) ? value : null];
-  }));
-}
-
-function getSpecifications(product) {
-  return getAttributes(product)
-    .filter((attribute) => attribute?.label && !DIMENSION_FIELDS.includes(attribute.key))
-    .map((attribute) => ({
-      name: String(attribute.label),
-      value: Array.isArray(attribute.value)
-        ? attribute.value.join(', ')
-        : String(attribute.value ?? ''),
-      unit: attribute.unit ? String(attribute.unit) : null,
+  return product.specifications
+    .filter((specification) => specification?.name && specification?.value)
+    .map((specification) => ({
+      key: getAttributeKeyFromLabel(String(specification.name)),
+      label: String(specification.name),
+      value: String(specification.value),
+      ...(specification.unit ? { unit: String(specification.unit) } : {}),
     }))
     .filter((attribute) => attribute.value);
 }
@@ -94,16 +146,38 @@ async function migrateStatus(strapi, status, dryRun) {
     status,
     pagination: { pageSize: 1000 },
     fields: ['sku', 'description', 'attributes'],
+    populate: {
+      specifications: {
+        fields: ['name', 'value', 'unit'],
+      },
+    },
   });
 
   let updated = 0;
+  let restoredAttributes = 0;
+  let cleanedDescriptions = 0;
 
   for (const product of products) {
-    const data = {
-      ...getDimensionData(product),
-      specifications: getSpecifications(product),
-      description: cleanDescription(product.description, product.sku),
-    };
+    const data = {};
+    const description = cleanDescription(product.description);
+    const attributes = getLegacyAttributes(product);
+
+    if (JSON.stringify(description) !== JSON.stringify(product.description ?? [])) {
+      data.description = description;
+      cleanedDescriptions += 1;
+    }
+
+    if (
+      (!Array.isArray(product.attributes) || product.attributes.length === 0)
+      && attributes.length > 0
+    ) {
+      data.attributes = attributes;
+      restoredAttributes += 1;
+    }
+
+    if (Object.keys(data).length === 0) {
+      continue;
+    }
 
     if (!dryRun) {
       await strapi.documents(PRODUCT_UID).update({
@@ -116,7 +190,10 @@ async function migrateStatus(strapi, status, dryRun) {
     updated += 1;
   }
 
-  console.log(`[${status}] ${dryRun ? 'would update' : 'updated'} ${updated} products`);
+  console.log(
+    `[${status}] ${dryRun ? 'would update' : 'updated'} ${updated} products `
+    + `(${cleanedDescriptions} descriptions, ${restoredAttributes} attribute sets)`
+  );
 }
 
 async function main() {
