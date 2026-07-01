@@ -41,11 +41,6 @@
     "description": {
       "type": "blocks"
     },
-    "specifications": {
-      "type": "component",
-      "repeatable": true,
-      "component": "product.specification"
-    },
     "images": {
       "type": "media",
       "multiple": true,
@@ -67,26 +62,10 @@
       ]
     },
     "attributes": {
-      "type": "json",
-      "pluginOptions": {
-        "content-manager": {
-          "visible": false
-        },
-        "content-type-builder": {
-          "visible": false
-        }
-      }
+      "type": "json"
     },
     "bundles": {
-      "type": "json",
-      "pluginOptions": {
-        "content-manager": {
-          "visible": false
-        },
-        "content-type-builder": {
-          "visible": false
-        }
-      }
+      "type": "json"
     },
     "inStock": {
       "type": "boolean"

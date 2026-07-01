@@ -1,228 +1,76 @@
-import type {
-	AboutSubsection,
-	BenefitIcon,
-	HomeBenefit,
-	HomePageContent,
-	Messenger,
-	SiteSettings,
-} from "@/types";
+import type { HomePageContent, SiteSettings } from "@/types";
 
-type PlainRecord = Record<string, unknown>;
+const siteSettings: SiteSettings = {
+	companyName: "Leppa & WenSton",
+	footerDescription: "Премиальная сантехника, зеркала и оборудование для современных ванных комнат.",
+	contactTitle: "Контакты",
+	contactDescription: "Свяжитесь с нами удобным способом: поможем подобрать сантехнику, зеркала и оборудование под ваш проект.",
+	phone: "+7 926 126-00-06",
+	email: "jora41san@yandex.ru",
+	messengers: [
+		{ label: "WhatsApp 1", value: "+7 926 126-00-06", href: "https://wa.me/79261260006" },
+		{ label: "WhatsApp 2", value: "+7 980 011-88-03", href: "https://wa.me/79800118803" },
+	],
+	address: "ТЦ Сантехника, павильон A 19/4-5",
+	hours: [{ label: "Пн-Пт", value: "9:00-18:00" }],
+	mapEmbed: "https://yandex.ru/map-widget/v1/?um=constructor%3A8c021b21ed9423cac6605630d3db6c59511c60e32e8e044c27882801f736778b&source=constructor",
+	mapLink: "https://yandex.ru/maps/-/CPgcV-2r",
+};
 
-function getString(value: unknown): string {
-	return typeof value === "string" ? value.trim() : "";
+const aboutSections = [
+	{
+		id: "1",
+		title: "О нас: официальный дистрибьютор Leppa",
+		body: "Мы — эксклюзивный официальный дистрибьютор Chaozhou Fengxi Leppa Ceramics Factory на рынке [ваш регион/страна], обладающий единственным правом прямых поставок оригинальной продукции Leppa в ваш регион. Leppa — китайский производитель санитарной керамики и сантехники с многолетним опытом изготовления унитазов, раковин, туалетов, ванн и смежных изделий для ванной комнаты. Наша компания гарантирует 100% оригинальность продукции, прямые поставки с фабрики, дополнительные услуги по логистике и сопровождению заказа. Мы работаем как с частными покупателями, так и с корпоративными партнёрами, дистрибьюторами, проектными организациями, обеспечивая полную техническую поддержку и гарантии качества. Как уникальный официальный партнёр, мы обеспечиваем доступ к сантехнике Leppa, которую другие поставщики получить не могут.",
+		order: 1,
+	},
+	{
+		id: "2",
+		title: "Ассортимент продукции Leppa",
+		body: "В нашем каталоге представлены современные решения для ванных комнат, от классических изделий до инновационных моделей: Унитазы и туалеты — напольные и подвесные модели с эффективным смывом, долговечным покрытием и эргономичным дизайном; Интеллектуальные туалеты с функциями автоматического смыва и сенсорным управлением; Раковины для ванных комнат — накладные, встроенные, настенные и дизайнерские варианты; Ванны и гидромассажные модели — комфортные решения для полноценного отдыха; Зеркала для ванной, аксессуары и дополнительные элементы интерьера. Каждый продукт производится с соблюдением международных стандартов качества, что подтверждается активным экспортом в разные страны мира.",
+		order: 2,
+	},
+	{
+		id: "3",
+		title: "Почему выбирают нас и Leppa",
+		body: "Сотрудничество с нами и продукцией Leppa даёт вам явные преимущества: Прямой доступ к фабрике Leppa — наши поставки идут напрямую с завода, минуя посредников; Широкий ассортимент сантехнических изделий — унитазы, раковины, интеллектуальные туалеты, ванны и зеркала для ванной; Конкурентные цены и гибкие условия закупки; OEM/ODM возможности — возможна брендовая упаковка, специальные линейки и кастомизация под проект; Профессиональная поддержка — помощь с выбором продукции, расчётами, логистикой и сервисное сопровождение после покупки. Мы обеспечиваем постоянную актуализацию ассортимента и технических данных.",
+		order: 3,
+	},
+	{
+		id: "4",
+		title: "Контакты и предложение",
+		body: "Не откладывайте обустройство ванной мечты — свяжитесь с нами сегодня! Получите коммерческое предложение на унитазы, туалеты, раковины, зеркала для ванной и ванны — с учётом ваших целей и бюджета. Закажите образцы продукции Leppa, чтобы лично убедиться в качестве. Обсудите условия оптовых закупок, кастомизации и проектных поставок. Мы доступны для консультаций и готовы помочь вам реализовать проекты любого масштаба с использованием современной высококачественной сантехники Leppa.",
+		order: 4,
+	},
+];
+
+const homePageContent: HomePageContent = {
+	heroTitle: "Leppa & WenSton",
+	heroDescription: "Премиальная сантехника и архитектура ванной комнаты: выразительные материалы, точная геометрия и эстетика спокойной роскоши.",
+	heroButtonLabel: "Смотреть каталог",
+	heroButtonHref: "#categories",
+	heroImage: "/hero-bg.jpg",
+	categoriesTitle: "Категории",
+	categoriesDescription: "Подборка ключевых направлений Leppa & WenSton для частных интерьеров, дизайнерских проектов и комплектации объектов.",
+	aboutSections,
+	benefitsTitle: "Почему выбирают нас",
+	benefitsDescription: "Качество, поддержка, честные цены и стабильный сервис для каждого проекта.",
+	benefits: [
+		{ id: "1", title: "Качество", description: "Продукты соответствуют международным стандартам и проходят контроль качества", icon: "quality" },
+		{ id: "2", title: "Поддержка", description: "Наша команда предоставляет профессиональные консультации", icon: "support" },
+		{ id: "3", title: "Цены", description: "Лучшие цены на рынке без компромиссов в качестве", icon: "price" },
+		{ id: "4", title: "Надежность", description: "Быстрая доставка и стабильный сервис, на который можно положиться", icon: "delivery" },
+	],
+	ctaTitle: "Готовы обсудить проект?",
+	ctaDescription: "Поможем подобрать сантехнику, зеркала и оборудование под ваш объект, подготовим предложение и ответим на все вопросы.",
+	ctaPhoneLabel: "Позвонить сейчас",
+	ctaMessengerLabel: "Написать в WhatsApp",
+};
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+	return siteSettings;
 }
 
-function getNumber(value: unknown): number | null {
-	if (typeof value === "number" && Number.isFinite(value)) {
-		return value;
-	}
-
-	if (typeof value === "string" && value.trim()) {
-		const parsed = Number(value);
-		return Number.isFinite(parsed) ? parsed : null;
-	}
-
-	return null;
-}
-
-function isRecord(value: unknown): value is PlainRecord {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function getFields(value: unknown): PlainRecord | null {
-	if (!isRecord(value)) {
-		return null;
-	}
-
-	const attributes = isRecord(value.attributes) ? value.attributes : {};
-	return { ...value, ...attributes };
-}
-
-function getArray(value: unknown): unknown[] {
-	if (Array.isArray(value)) {
-		return value;
-	}
-
-	if (isRecord(value) && Array.isArray(value.data)) {
-		return value.data;
-	}
-
-	return [];
-}
-
-function getApiUrl(): string | null {
-	const values = [
-		process.env.STRAPI_API_URL,
-		process.env.NEXT_PUBLIC_STRAPI_GLOBAL_URL,
-		process.env.NEXT_PUBLIC_STRAPI_URL,
-		process.env.NEXT_PUBLIC_API_URL,
-	];
-
-	for (const value of values) {
-		const normalized = value?.trim().replace(/\/+$/, "");
-		if (normalized && !normalized.includes("api.example.com")) {
-			return normalized;
-		}
-	}
-
-	return null;
-}
-
-const STRAPI_API_URL = getApiUrl();
-
-function getHeaders(): HeadersInit | undefined {
-	if (STRAPI_API_URL) {
-		try {
-			const hostname = new URL(STRAPI_API_URL).hostname;
-			if (["localhost", "127.0.0.1", "::1"].includes(hostname)) {
-				return undefined;
-			}
-		} catch {
-			return undefined;
-		}
-	}
-
-	const token = process.env.STRAPI_API_TOKEN?.trim();
-	return token ? { Authorization: `Bearer ${token}` } : undefined;
-}
-
-async function fetchSingleType(pathname: string, populate: string): Promise<PlainRecord | null> {
-	if (!STRAPI_API_URL) {
-		console.error("[strapi] API URL is not configured.");
-		return null;
-	}
-
-	const url = new URL(pathname, STRAPI_API_URL);
-	url.searchParams.set("populate", populate);
-
-	try {
-		const response = await fetch(url, {
-			headers: getHeaders(),
-			cache: "no-store",
-		});
-
-		if (!response.ok) {
-			console.error(`[strapi] ${pathname} failed: ${response.status} ${response.statusText}`);
-			return null;
-		}
-
-		const payload = await response.json() as unknown;
-		return isRecord(payload) ? getFields(payload.data) : null;
-	} catch (error) {
-		console.error(
-			`[strapi] ${pathname} failed: ${error instanceof Error ? error.message : "unknown error"}`,
-		);
-		return null;
-	}
-}
-
-function resolveAssetUrl(value: unknown): string {
-	const media = isRecord(value) && "data" in value ? value.data : value;
-	const fields = getFields(Array.isArray(media) ? media[0] : media);
-	const url = getString(fields?.url);
-
-	if (!url || !STRAPI_API_URL) {
-		return url;
-	}
-
-	return /^https?:\/\//i.test(url) ? url : new URL(url, STRAPI_API_URL).toString();
-}
-
-function mapMessengers(value: unknown): Messenger[] {
-	return getArray(value)
-		.map(getFields)
-		.filter((item): item is PlainRecord => item !== null)
-		.map((item) => ({
-			label: getString(item.label),
-			value: getString(item.value),
-			href: getString(item.href),
-		}))
-		.filter((item) => item.label && item.href);
-}
-
-function mapAboutSections(value: unknown): AboutSubsection[] {
-	return getArray(value)
-		.map(getFields)
-		.filter((item): item is PlainRecord => item !== null)
-		.map((item, index) => ({
-			id: getString(item.id) || String(index + 1),
-			title: getString(item.title),
-			body: getString(item.body),
-			order: getNumber(item.order) ?? index,
-		}))
-		.filter((item) => item.title && item.body)
-		.sort((left, right) => left.order - right.order);
-}
-
-function isBenefitIcon(value: string): value is BenefitIcon {
-	return ["quality", "support", "price", "delivery"].includes(value);
-}
-
-function mapBenefits(value: unknown): HomeBenefit[] {
-	return getArray(value)
-		.map(getFields)
-		.filter((item): item is PlainRecord => item !== null)
-		.map((item, index) => {
-			const icon = getString(item.icon);
-			return {
-				id: getString(item.id) || String(index + 1),
-				title: getString(item.title),
-				description: getString(item.description),
-				icon: isBenefitIcon(icon) ? icon : "quality",
-			};
-		})
-		.filter((item) => item.title && item.description);
-}
-
-export async function getSiteSettings(): Promise<SiteSettings | null> {
-	const fields = await fetchSingleType("/api/site-setting", "*");
-
-	if (!fields) {
-		return null;
-	}
-
-	return {
-		companyName: getString(fields.companyName),
-		footerDescription: getString(fields.footerDescription),
-		contactTitle: getString(fields.contactTitle),
-		contactDescription: getString(fields.contactDescription),
-		phone: getString(fields.phone),
-		email: getString(fields.email),
-		messengers: mapMessengers(fields.messengers),
-		address: getString(fields.address),
-		hours: getArray(fields.hours)
-			.map(getFields)
-			.filter((item): item is PlainRecord => item !== null)
-			.map((item) => ({ label: getString(item.label), value: getString(item.value) }))
-			.filter((item) => item.label && item.value),
-		mapEmbed: getString(fields.mapEmbed),
-		mapLink: getString(fields.mapLink),
-	};
-}
-
-export async function getHomePageContent(): Promise<HomePageContent | null> {
-	const fields = await fetchSingleType("/api/home-page", "*");
-
-	if (!fields) {
-		return null;
-	}
-
-	return {
-		heroTitle: getString(fields.heroTitle),
-		heroDescription: getString(fields.heroDescription),
-		heroButtonLabel: getString(fields.heroButtonLabel),
-		heroButtonHref: getString(fields.heroButtonHref),
-		heroImage: resolveAssetUrl(fields.heroImage),
-		categoriesTitle: getString(fields.categoriesTitle),
-		categoriesDescription: getString(fields.categoriesDescription),
-		aboutSections: mapAboutSections(fields.aboutSections),
-		benefitsTitle: getString(fields.benefitsTitle),
-		benefitsDescription: getString(fields.benefitsDescription),
-		benefits: mapBenefits(fields.benefits),
-		ctaTitle: getString(fields.ctaTitle),
-		ctaDescription: getString(fields.ctaDescription),
-		ctaPhoneLabel: getString(fields.ctaPhoneLabel),
-		ctaMessengerLabel: getString(fields.ctaMessengerLabel),
-	};
+export async function getHomePageContent(): Promise<HomePageContent> {
+	return homePageContent;
 }
