@@ -1,7 +1,5 @@
 import { MessageCircle, Phone } from "lucide-react";
 
-import contacts from "@/data/contacts.json";
-
 import { Button } from "@/components/ui/button";
 import {
 	getFallbackWhatsAppHref,
@@ -9,14 +7,25 @@ import {
 	getPrimaryMessenger,
 } from "@/lib/contact";
 
-const whatsappButtonLabel = "Написать в WhatsApp";
-const phoneButtonLabel = "Позвонить сейчас";
+import type { SiteSettings } from "@/types";
 
-export function ContactCtaSection() {
-	const phoneHref = getPhoneHref(contacts.phone);
+export function ContactCtaSection({
+	description,
+	messengerLabel,
+	phoneLabel,
+	settings,
+	title,
+}: {
+	description: string;
+	messengerLabel: string;
+	phoneLabel: string;
+	settings: SiteSettings;
+	title: string;
+}) {
+	const phoneHref = getPhoneHref(settings.phone);
 	const whatsappHref =
-		getPrimaryMessenger(contacts)?.href ??
-		getFallbackWhatsAppHref(contacts.phone);
+		getPrimaryMessenger(settings)?.href ??
+		getFallbackWhatsAppHref(settings.phone);
 
 	return (
 		<section
@@ -43,12 +52,11 @@ export function ContactCtaSection() {
 						<h2
 							id="contact-cta-title"
 							className="text-3xl font-semibold tracking-normal text-on-dark sm:text-4xl lg:text-6xl">
-							Готовы обсудить проект?
+							{title}
 						</h2>
 
 						<p className="mx-auto mt-5 max-w-2xl text-base text-on-dark/78 sm:text-lg">
-							Поможем подобрать сантехнику, зеркала и оборудование под ваш
-							объект, подготовим предложение и ответим на все вопросы.
+							{description}
 						</p>
 
 						<div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -58,13 +66,13 @@ export function ContactCtaSection() {
 								className="w-full border-neutral-line sm:w-auto">
 								<a
 									href={phoneHref}
-									aria-label={`${phoneButtonLabel}: ${contacts.phone}`}>
+									aria-label={`${phoneLabel}: ${settings.phone}`}>
 									<Phone
 										aria-hidden="true"
 										strokeWidth={1.8}
 									/>
 
-									{phoneButtonLabel}
+									{phoneLabel}
 								</a>
 							</Button>
 
@@ -76,13 +84,13 @@ export function ContactCtaSection() {
 									href={whatsappHref}
 									target="_blank"
 									rel="noreferrer"
-									aria-label={whatsappButtonLabel}>
+									aria-label={messengerLabel}>
 									<MessageCircle
 										aria-hidden="true"
 										strokeWidth={1.8}
 									/>
 
-									{whatsappButtonLabel}
+									{messengerLabel}
 								</a>
 							</Button>
 						</div>

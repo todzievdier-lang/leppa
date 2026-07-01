@@ -25,7 +25,6 @@ import type {
 	CategoryLink,
 	Product,
 	ProductAttribute,
-	ProductAttributeValue,
 	ProductBundleConfig,
 	ProductColor,
 	ProductDescriptionBlock,
@@ -558,112 +557,77 @@ function getStrapiSeo(value: unknown): Category["seo"] | undefined {
 	return title || description ? { title, description } : undefined;
 }
 
-function isAttributeValue(value: unknown): value is ProductAttributeValue {
-	return (
-		typeof value === "string"
-		|| typeof value === "number"
-		|| typeof value === "boolean"
-		|| (
-			Array.isArray(value)
-			&& value.every((item) => typeof item === "string")
-		)
-	);
-}
+const ATTRIBUTE_KEYS_BY_LABEL: Record<string, string> = {
+	"тип изделия": "productType",
+	"роль в комплекте": "kitRole",
+	"цвет": "color",
+	"цвет сиденья": "seatColor",
+	"цвет фурнитуры": "hardwareColor",
+	"материал": "material",
+	"материал корпуса": "bodyMaterial",
+	"монтаж": "mounting",
+	"способ монтажа": "mountingMethod",
+	"ширина": "widthMm",
+	"высота": "heightMm",
+	"глубина": "depthMm",
+	"длина": "lengthMm",
+	"диаметр": "diameterMm",
+};
 
-function parseJsonArray(value: unknown): unknown[] {
-	if (Array.isArray(value)) {
-		return value;
-	}
+function mapProductSpecifications(value: unknown): ProductAttribute[] {
+	return (Array.isArray(value) ? value : [])
+		.map(getStrapiEntryFields)
+		.filter((item): item is PlainRecord => item !== null)
+		.flatMap((item): ProductAttribute[] => {
+			const label = getString(item.name);
+			const attributeValue = getString(item.value);
 
-	if (typeof value === "string" && value.trim()) {
-		try {
-			const parsed = JSON.parse(value);
+			if (!label || !attributeValue) {
+				return [];
+			}
 
-			return Array.isArray(parsed) ? parsed : [];
-		} catch {
-			return [];
-		}
-	}
+			const normalizedLabel = label.toLocaleLowerCase("ru-RU");
+			const key = ATTRIBUTE_KEYS_BY_LABEL[normalizedLabel]
+				?? `custom:${normalizedLabel.replace(/\s+/g, "-")}`;
+			const unit = getString(item.unit);
 
-	return [];
-}
-
-function normalizeAttributeRecords(value: unknown): PlainRecord[] {
-	const normalizedArray = parseJsonArray(value);
-
-	if (normalizedArray.length > 0) {
-		return normalizedArray.filter((entry): entry is PlainRecord => isRecord(entry));
-	}
-
-	if (isRecord(value)) {
-		if (Array.isArray(value.attributes)) {
-			return value.attributes.filter((entry): entry is PlainRecord => isRecord(entry));
-		}
-
-		return Object.entries(value)
-			.filter(([, attributeValue]) => isAttributeValue(attributeValue))
-			.map(([key, attributeValue]) => ({
+			return [{
 				key,
-				label: key,
+				label,
 				value: attributeValue,
-			}));
-	}
-
-	return [];
-}
-
-function mapProductAttributes(value: unknown): ProductAttribute[] {
-	const attributes: ProductAttribute[] = [];
-
-	normalizeAttributeRecords(value).forEach((attribute) => {
-		if (!isRecord(attribute)) {
-			return;
-		}
-
-		const key = getString(attribute.key);
-		const label = getString(attribute.label);
-		const attributeValue = attribute.value;
-
-		if (!key || !label || !isAttributeValue(attributeValue)) {
-			return;
-		}
-
-		const unit = getString(attribute.unit);
-
-		attributes.push({
-			key,
-			label,
-			value: attributeValue,
-			...(unit ? { unit } : {}),
+				...(unit ? { unit } : {}),
+			}];
 		});
-	});
-
-	return attributes;
 }
 
-function mapProductBundle(fields: PlainRecord, productSlug: string): ProductBundleConfig[] {
-	if (!getBoolean(fields.bundleEnabled)) {
-		return [];
+function mapStrapiProductBundle(entry: unknown): ProductBundleConfig | null {
+	const fields = getStrapiEntryFields(entry);
+
+	if (!fields || !getBoolean(fields.enabled)) {
+		return null;
 	}
 
-	const productSlugs = [
-		productSlug,
-		...unwrapStrapiRelationList(fields.bundleProducts)
-			.map((product) => getString(product.slug))
-			.filter((slug): slug is string => slug !== null),
-	].filter((slug, index, slugs) => slugs.indexOf(slug) === index)
+	const title = getString(fields.title);
+	const productSlugs = unwrapStrapiRelationList(fields.products)
+		.map((product) => getString(product.slug))
+		.filter((slug): slug is string => slug !== null)
+		.filter((slug, index, slugs) => slugs.indexOf(slug) === index)
 		.slice(0, MAX_BUNDLE_PRODUCTS);
 
-	if (productSlugs.length < 2) {
-		return [];
+	if (!title || productSlugs.length < 2) {
+		return null;
 	}
 
-	const configuredDiscount = getNumber(fields.bundleDiscountPercent);
-	const discountPercent = configuredDiscount !== null
-		? Math.min(100, Math.max(0, configuredDiscount))
-		: 6;
+	const configuredDiscount = getNumber(fields.discountPercent);
 
-	return [{ discountPercent, productSlugs }];
+	return {
+		id: getString(fields.documentId) ?? getString(fields.id) ?? title,
+		title,
+		discountPercent: configuredDiscount !== null
+			? Math.min(100, Math.max(0, configuredDiscount))
+			: 0,
+		productSlugs,
+	};
 }
 
 function mapProductImages(value: unknown, productName: string): ProductImage[] {
@@ -869,7 +833,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 	}
 
 	const colorFields = unwrapStrapiRelation(fields.color);
-	const attributes = mapProductAttributes(fields.attributes);
+	const attributes = mapProductSpecifications(fields.specifications);
 
 	return {
 		id:
@@ -891,7 +855,7 @@ function mapStrapiProduct(entry: unknown): Product | null {
 		images: mapProductImages(fields.images, name),
 		videos: mapProductVideos(fields.videos),
 		attributes,
-		bundles: mapProductBundle(fields, slug),
+		bundles: [],
 	};
 }
 
@@ -923,10 +887,7 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"name",
 			"brand",
 			"price",
-			"bundleEnabled",
-			"bundleDiscountPercent",
 			"description",
-			"attributes",
 			"inStock",
 		]);
 		addStrapiPopulateFields(url, "images", [
@@ -937,15 +898,38 @@ async function fetchStrapiProducts(): Promise<Product[]> {
 			"formats",
 		]);
 		addStrapiPopulateFields(url, "videos", ["url"]);
+		addStrapiPopulateFields(url, "specifications", ["name", "value", "unit"]);
 		addStrapiPopulateFields(url, "category", ["slug"]);
 		addStrapiPopulateFields(url, "color", ["name", "slug", "hex", "sortOrder"]);
-		addStrapiPopulateFields(url, "bundleProducts", ["slug"]);
 		url.searchParams.set("sort", "name:asc");
 	});
 
 	return entries
 		.map(mapStrapiProduct)
 		.filter((product): product is Product => product !== null);
+}
+
+async function fetchStrapiProductBundles(): Promise<ProductBundleConfig[]> {
+	const entries = await fetchStrapiCollection("/api/product-bundles", (url) => {
+		addStrapiFields(url, ["title", "enabled", "discountPercent"]);
+		addStrapiPopulateFields(url, "products", ["slug"]);
+		url.searchParams.set("filters[enabled][$eq]", "true");
+		url.searchParams.set("sort", "createdAt:asc");
+	});
+
+	return entries
+		.map(mapStrapiProductBundle)
+		.filter((bundle): bundle is ProductBundleConfig => bundle !== null);
+}
+
+function attachProductBundles(
+	products: Product[],
+	bundles: ProductBundleConfig[],
+): Product[] {
+	return products.map((product) => ({
+		...product,
+		bundles: bundles.filter((bundle) => bundle.productSlugs.includes(product.slug)),
+	}));
 }
 
 function normalizeCatalogQuery(query: CatalogQuery): CatalogResult["query"] {
@@ -978,7 +962,12 @@ export async function getCategoryBySlug(
 }
 
 export async function getProducts(): Promise<Product[]> {
-	return fetchStrapiProducts();
+	const [products, bundles] = await Promise.all([
+		fetchStrapiProducts(),
+		fetchStrapiProductBundles(),
+	]);
+
+	return attachProductBundles(products, bundles);
 }
 
 export async function getProductSearchItems(): Promise<ProductSearchItem[]> {

@@ -6,3 +6,4 @@ export {
 	getProductBySlug,
 	getProducts,
 } from "./catalog";
+export { getHomePageContent, getSiteSettings } from "./content";

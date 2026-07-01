@@ -1,0 +1,58 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "Настройки сайта",
+    "description": "Контакты и общие данные сайта"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "companyName": {
+      "type": "string",
+      "required": true
+    },
+    "footerDescription": {
+      "type": "text"
+    },
+    "contactTitle": {
+      "type": "string",
+      "required": true
+    },
+    "contactDescription": {
+      "type": "text",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "messengers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "common.messenger"
+    },
+    "address": {
+      "type": "text"
+    },
+    "hours": {
+      "type": "component",
+      "repeatable": true,
+      "component": "common.working-hour"
+    },
+    "mapEmbed": {
+      "type": "text"
+    },
+    "mapLink": {
+      "type": "string"
+    }
+  }
+}

@@ -9,6 +9,7 @@ import { Footer } from "@/components/layout/footer";
 import { ShopToasts } from "@/components/shop/shop-toasts";
 
 import { cn } from "@/lib/utils";
+import { getSiteSettings } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -25,11 +26,13 @@ export const viewport: Viewport = {
 	themeColor: "#ffffff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const settings = await getSiteSettings();
+
 	return (
 		<html
 			lang='ru'
@@ -39,7 +42,7 @@ export default function RootLayout({
 				className={cn(
 					"flex min-h-dvh min-w-0 flex-col bg-background text-foreground antialiased",
 				)}>
-				<Header />
+				<Header companyName={settings?.companyName} />
 				<ShopToasts />
 
 				<main className='flex flex-1 flex-col'>

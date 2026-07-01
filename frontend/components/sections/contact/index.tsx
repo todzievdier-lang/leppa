@@ -51,6 +51,11 @@ function hasContactContent(contact: Contact, cardCount: number) {
 
 export async function ContactSection() {
 	const contact = await getContact();
+
+	if (!contact) {
+		return <ContactState />;
+	}
+
 	const contactItems = getContactCardItems(contact);
 	const hasContent = hasContactContent(contact, contactItems.length);
 
@@ -64,12 +69,11 @@ export async function ContactSection() {
 					<h1
 						id="contact-title"
 						className="text-4xl font-semibold tracking-normal text-ink sm:text-5xl lg:text-7xl">
-						Контакты
+						{contact.contactTitle}
 					</h1>
 
 					<p className="mx-auto mt-5 max-w-2xl text-base text-ink-muted sm:text-lg">
-						Свяжитесь с нами удобным способом: поможем подобрать сантехнику,
-						зеркала и оборудование под ваш проект.
+						{contact.contactDescription}
 					</p>
 				</div>
 

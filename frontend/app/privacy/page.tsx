@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { ShieldCheck } from "lucide-react";
 
-import contacts from "@/data/contacts.json";
+import { getSiteSettings } from "@/lib/api";
 
 export const metadata: Metadata = {
 	title: "Политика конфиденциальности | Leppa & WenSton",
@@ -28,7 +28,13 @@ const sectionClassName =
 
 const listClassName = "mt-4 grid gap-2 pl-5 text-ink-muted marker:text-ink-faint";
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+	const contacts = await getSiteSettings();
+
+	if (!contacts) {
+		return null;
+	}
+
 	return (
 		<div className="relative flex min-h-dvh w-full flex-1 flex-col bg-canvas text-ink">
 			<section

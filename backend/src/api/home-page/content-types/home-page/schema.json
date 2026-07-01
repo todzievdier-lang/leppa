@@ -1,0 +1,82 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "Главная страница",
+    "description": "Все редактируемые секции главной страницы"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "heroTitle": {
+      "type": "string",
+      "required": true
+    },
+    "heroDescription": {
+      "type": "text",
+      "required": true
+    },
+    "heroButtonLabel": {
+      "type": "string",
+      "required": true
+    },
+    "heroButtonHref": {
+      "type": "string",
+      "required": true
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "categoriesTitle": {
+      "type": "string",
+      "required": true
+    },
+    "categoriesDescription": {
+      "type": "text",
+      "required": true
+    },
+    "aboutSections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.about-section"
+    },
+    "benefitsTitle": {
+      "type": "string",
+      "required": true
+    },
+    "benefitsDescription": {
+      "type": "text",
+      "required": true
+    },
+    "benefits": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.benefit"
+    },
+    "ctaTitle": {
+      "type": "string",
+      "required": true
+    },
+    "ctaDescription": {
+      "type": "text",
+      "required": true
+    },
+    "ctaPhoneLabel": {
+      "type": "string",
+      "required": true
+    },
+    "ctaMessengerLabel": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

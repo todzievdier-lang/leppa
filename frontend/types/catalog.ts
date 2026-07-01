@@ -38,6 +38,8 @@ export type ProductImage = {
 };
 
 export type ProductBundleConfig = {
+	id: string;
+	title: string;
 	discountPercent: number;
 	productSlugs: string[];
 };

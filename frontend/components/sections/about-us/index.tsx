@@ -5,19 +5,7 @@ import { useReducedMotion } from "framer-motion";
 
 import { AboutDesktopSlider } from "./about-desktop-slider";
 
-import contentBlocks from "@/data/about-us.json";
-
-type AboutSubsection = {
-	id: string;
-	title: string;
-	body: string;
-	seo_keywords?: string[];
-	order: number;
-};
-
-const aboutSubsections = [...(contentBlocks as AboutSubsection[])].sort(
-	(a, b) => a.order - b.order,
-);
+import type { AboutSubsection } from "@/types";
 
 const clampIndex = (value: number, maxIndex: number) => {
 	return Math.min(Math.max(value, 0), Math.max(maxIndex, 0));
@@ -30,7 +18,7 @@ const isDesktopViewport = () => {
 	);
 };
 
-export function AboutUsSection() {
+export function AboutUsSection({ subsections }: { subsections: AboutSubsection[] }) {
 	const sectionRef = useRef<HTMLElement | null>(null);
 	const activeIndexRef = useRef(0);
 	const mobileSlideScrollFrameRef = useRef<number | null>(null);
@@ -40,6 +28,7 @@ export function AboutUsSection() {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [direction, setDirection] = useState(1);
 
+	const aboutSubsections = subsections;
 	const slideCount = aboutSubsections.length;
 	const activeSubsection = aboutSubsections[activeIndex];
 

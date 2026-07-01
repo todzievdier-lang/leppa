@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_home_about_sections",
+  "info": {
+    "displayName": "Раздел «О нас»"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    }
+  }
+}

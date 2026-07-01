@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_common_messengers",
+  "info": {
+    "displayName": "Мессенджер",
+    "description": "Ссылка на WhatsApp, Telegram или другой мессенджер"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

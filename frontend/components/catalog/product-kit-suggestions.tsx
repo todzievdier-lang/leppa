@@ -23,6 +23,7 @@ type KitPart = "toilet" | "installation" | "flush-button" | "sound-panel" | "mir
 
 type ProductBundle = {
 	id: string;
+	title: string;
 	items: Product[];
 	discountPercent: number;
 	originalTotal: number | null;
@@ -31,8 +32,6 @@ type ProductBundle = {
 	currency: string;
 };
 
-const BUNDLE_DISCOUNT_RATE = 0.06;
-const BUNDLE_OFFER_LABEL = "Выгодный комплект";
 const MAX_BUNDLE_PRODUCTS = 5;
 const MAX_BUNDLES = 1;
 
@@ -219,12 +218,11 @@ function buildConfiguredBundles(product: Product, products: Product[]) {
 				return null;
 			}
 
-			const discountPercent = bundle.discountPercent ?? Math.round(
-				BUNDLE_DISCOUNT_RATE * 100,
-			);
+			const discountPercent = bundle.discountPercent;
 
 			return {
-				id: `${product.id}-configured-${bundleIndex}`,
+				id: bundle.id || `${product.id}-configured-${bundleIndex}`,
+				title: bundle.title,
 				items,
 				discountPercent,
 				...getBundlePriceTotals(items, currency, discountPercent),
@@ -271,7 +269,7 @@ function getBundleCartProducts(
 		const snapshot = getShopProductSnapshot(
 			item,
 			item.id === currentProduct.id ? category : null,
-			[{ label: "Комплект", value: BUNDLE_OFFER_LABEL }],
+			[{ label: "Комплект", value: bundle.title }],
 		);
 		const discountedPrice = discountedPrices?.[index] ?? null;
 
@@ -677,7 +675,7 @@ export function ProductKitSuggestions({
 					Соберите свой набор
 				</p>
 				<h2 id="product-kit-title" className="mt-1 text-2xl font-semibold tracking-normal text-ink sm:text-3xl">
-					{BUNDLE_OFFER_LABEL}
+					{activeBundle.title}
 				</h2>
 				<p className="mt-2 max-w-2xl text-sm text-ink-muted">
 					Отметьте нужные позиции или замените товар на подходящий вариант.
@@ -745,7 +743,7 @@ export function ProductKitSuggestions({
 							addManyToCart(
 								getBundleCartProducts(activeBundle, product, category),
 								{
-									bundleTitle: BUNDLE_OFFER_LABEL,
+									bundleTitle: activeBundle.title,
 									discountPercent: activeBundle.discountPercent,
 								},
 							);

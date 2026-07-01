@@ -1,19 +1,25 @@
 import Link from "next/link";
-import contacts from "@/data/contacts.json";
 import { Button } from "@/components/ui/button";
-import { getFooterCategories } from "@/lib/api";
+import { getFooterCategories, getSiteSettings } from "@/lib/api";
 import {
 	getEmailHref,
 	getMessengerKey,
 	getPhoneHref,
 	isExternalContactHref,
 } from "@/lib/contact";
-import type { CategoryLink, Contact } from "@/types";
-
-const footerContact: Contact = contacts;
+import type { CategoryLink } from "@/types";
 
 export async function Footer() {
-	const footerCategories: CategoryLink[] = await getFooterCategories();
+	const [categories, footerContact] = await Promise.all([
+		getFooterCategories(),
+		getSiteSettings(),
+	]);
+
+	if (!footerContact) {
+		return null;
+	}
+
+	const footerCategories: CategoryLink[] = categories;
 	const phoneHref = getPhoneHref(footerContact.phone);
 	const emailHref = getEmailHref(footerContact.email);
 
@@ -24,12 +30,11 @@ export async function Footer() {
 					<Link
 						href="/"
 						className="text-xl font-semibold text-ink">
-						Leppa & WenSton
+						{footerContact.companyName}
 					</Link>
 
 					<p className="mt-4 max-w-md text-sm text-ink-muted">
-						Премиальная сантехника, зеркала и оборудование для современных
-						ванных комнат.
+						{footerContact.footerDescription}
 					</p>
 				</div>
 
@@ -92,7 +97,7 @@ export async function Footer() {
 						</a>
 
 						<a
-							href="https://yandex.ru/maps/-/CPgcV-2r"
+							href={footerContact.mapLink}
 							target="_blank"
 							rel="noreferrer"
 							className="max-w-xs leading-relaxed transition-colors hover:text-ink">

@@ -1,8 +1,15 @@
 import type { Core } from '@strapi/strapi';
 
-const PUBLIC_COLOR_ACTIONS = ['find', 'findOne'] as const;
+const PUBLIC_API_ACTIONS = {
+  'api::category.category': ['find', 'findOne'],
+  'api::color.color': ['find', 'findOne'],
+  'api::home-page.home-page': ['find'],
+  'api::product-bundle.product-bundle': ['find', 'findOne'],
+  'api::product.product': ['find', 'findOne'],
+  'api::site-setting.site-setting': ['find'],
+} as const;
 
-async function ensurePublicColorPermissions(strapi: Core.Strapi) {
+async function ensurePublicApiPermissions(strapi: Core.Strapi) {
   const publicRole = await strapi.db
     .query('plugin::users-permissions.role')
     .findOne({ where: { type: 'public' } });
@@ -11,29 +18,32 @@ async function ensurePublicColorPermissions(strapi: Core.Strapi) {
     return;
   }
 
-  for (const action of PUBLIC_COLOR_ACTIONS) {
-    const permissionExists = await strapi.db
-      .query('plugin::users-permissions.permission')
-      .findOne({
-        where: {
-          action: `api::color.color.${action}`,
-          role: publicRole.id,
-        },
-      });
+  for (const [uid, actions] of Object.entries(PUBLIC_API_ACTIONS)) {
+    for (const action of actions) {
+      const permissionAction = `${uid}.${action}`;
+      const permissionExists = await strapi.db
+        .query('plugin::users-permissions.permission')
+        .findOne({
+          where: {
+            action: permissionAction,
+            role: publicRole.id,
+          },
+        });
 
-    if (!permissionExists) {
-      await strapi.db.query('plugin::users-permissions.permission').create({
-        data: {
-          action: `api::color.color.${action}`,
-          role: publicRole.id,
-        },
-      });
+      if (!permissionExists) {
+        await strapi.db.query('plugin::users-permissions.permission').create({
+          data: {
+            action: permissionAction,
+            role: publicRole.id,
+          },
+        });
+      }
     }
   }
 }
 
 export default {
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
-    await ensurePublicColorPermissions(strapi);
+    await ensurePublicApiPermissions(strapi);
   },
 };

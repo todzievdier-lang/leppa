@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_common_working_hours",
+  "info": {
+    "displayName": "Время работы"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

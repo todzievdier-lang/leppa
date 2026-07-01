@@ -4,7 +4,13 @@ import { CategoryCard } from "./category-card";
 import { CategoryState } from "./category-state";
 import { getCategoryGridClassName } from "./category-layout";
 
-export async function CategoriesSection() {
+export async function CategoriesSection({
+	description,
+	title,
+}: {
+	description: string;
+	title: string;
+}) {
 	const visibleCategories = await getCategories();
 	const categoryCount = visibleCategories.length;
 
@@ -18,11 +24,10 @@ export async function CategoriesSection() {
 					<h2
 						id="categories-title"
 						className="text-3xl font-semibold tracking-normal text-ink sm:text-4xl lg:text-6xl">
-						Категории
+						{title}
 					</h2>
 					<p className="mx-auto mt-4 max-w-2xl text-sm text-ink-muted sm:text-base lg:text-lg">
-						Подборка ключевых направлений Leppa & WenSton для частных
-						интерьеров, дизайнерских проектов и комплектации объектов.
+						{description}
 					</p>
 				</div>
 
@@ -47,7 +52,13 @@ export async function CategoriesSection() {
 	);
 }
 
-export function CategoriesSectionSkeleton() {
+export function CategoriesSectionSkeleton({
+	description = "",
+	title = "",
+}: {
+	description?: string;
+	title?: string;
+}) {
 	return (
 		<section
 			id="categories"
@@ -58,11 +69,10 @@ export function CategoriesSectionSkeleton() {
 					<h2
 						id="categories-title"
 						className="text-3xl font-semibold tracking-normal text-ink sm:text-4xl lg:text-6xl">
-						Категории
+						{title}
 					</h2>
 					<p className="mx-auto mt-4 max-w-2xl text-sm text-ink-muted sm:text-base lg:text-lg">
-						Подборка ключевых направлений Leppa & WenSton для частных
-						интерьеров, дизайнерских проектов и комплектации объектов.
+						{description}
 					</p>
 				</div>
 

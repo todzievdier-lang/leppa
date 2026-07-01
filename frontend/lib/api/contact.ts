@@ -1,9 +1,7 @@
-import contacts from "@/data/contacts.json";
+import { getSiteSettings } from "./content";
 
-import type { Contact } from "@/types";
+import type { SiteSettings } from "@/types";
 
-const contactData: Contact = contacts;
-
-export async function getContact(): Promise<Contact> {
-	return contactData;
+export async function getContact(): Promise<SiteSettings | null> {
+	return getSiteSettings();
 }

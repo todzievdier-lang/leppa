@@ -1,6 +1,7 @@
 import { BadgeCheck, BadgePercent, Headphones, Truck } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
+import type { BenefitIcon, HomeBenefit } from "@/types";
 
 type WhyChooseUsItem = {
 	title: string;
@@ -8,30 +9,12 @@ type WhyChooseUsItem = {
 	icon: LucideIcon;
 };
 
-const whyChooseUsItems: WhyChooseUsItem[] = [
-	{
-		title: "Качество",
-		description:
-			"Продукты соответствуют международным стандартам и проходят контроль качества",
-		icon: BadgeCheck,
-	},
-	{
-		title: "Поддержка",
-		description: "Наша команда предоставляет профессиональные консультации",
-		icon: Headphones,
-	},
-	{
-		title: "Цены",
-		description: "Лучшие цены на рынке без компромиссов в качестве",
-		icon: BadgePercent,
-	},
-	{
-		title: "Надежность",
-		description:
-			"Быстрая доставка и стабильный сервис, на который можно положиться",
-		icon: Truck,
-	},
-];
+const benefitIcons: Record<BenefitIcon, LucideIcon> = {
+	quality: BadgeCheck,
+	support: Headphones,
+	price: BadgePercent,
+	delivery: Truck,
+};
 
 function WhyChooseUsCard({ title, description, icon: Icon }: WhyChooseUsItem) {
 	return (
@@ -54,7 +37,25 @@ function WhyChooseUsCard({ title, description, icon: Icon }: WhyChooseUsItem) {
 	);
 }
 
-export function WhyChooseUsSection() {
+export function WhyChooseUsSection({
+	description,
+	items,
+	title,
+}: {
+	description: string;
+	items: HomeBenefit[];
+	title: string;
+}) {
+	const whyChooseUsItems: WhyChooseUsItem[] = items.map((item) => ({
+		title: item.title,
+		description: item.description,
+		icon: benefitIcons[item.icon],
+	}));
+
+	if (whyChooseUsItems.length === 0) {
+		return null;
+	}
+
 	return (
 		<section
 			id="why-choose-us"
@@ -63,11 +64,10 @@ export function WhyChooseUsSection() {
 			<div className="mx-auto w-full max-w-6xl px-5 pb-10 pt-14 sm:px-8 sm:pb-12 sm:pt-16 lg:px-14 lg:pb-14 lg:pt-20">
 				<div className="mx-auto max-w-3xl text-center">
 					<h2 className="text-3xl font-semibold text-ink sm:text-4xl lg:text-6xl">
-						Почему выбирают нас
+						{title}
 					</h2>
 					<p className="mx-auto mt-4 max-w-2xl text-sm text-ink-muted sm:text-base lg:text-lg">
-						Качество, поддержка, честные цены и стабильный сервис для каждого
-						проекта.
+						{description}
 					</p>
 				</div>
 

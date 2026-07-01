@@ -32,8 +32,10 @@ const navItems = [
 ];
 
 const Header = ({
+	companyName,
 	searchProducts = [],
 }: {
+	companyName?: string;
 	searchProducts?: ProductSearchItem[];
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -216,7 +218,7 @@ const Header = ({
 						href="/"
 						prefetch={true}
 						onClick={handleNavClick}
-						aria-label="Leppa & WenSton — на главную"
+						aria-label={`${companyName || "L&W"} — на главную`}
 						className="flex shrink-0 items-center text-lg font-bold text-ink transition-opacity hover:opacity-85">
 						L&W
 					</Link>
