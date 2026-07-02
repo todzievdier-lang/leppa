@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { createPortal } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 
 import { getSafeProductImageSrc } from "@/components/media/product-media-frame";
 import { Button } from "@/components/ui/button";
@@ -243,8 +243,11 @@ export function HeaderProductSearch({
 	}
 
 	function openSearch() {
-		setQuery("");
-		setIsOpen(true);
+		flushSync(() => {
+			setQuery("");
+			setIsOpen(true);
+		});
+		inputRef.current?.focus({ preventScroll: true });
 		void loadSearchProducts();
 	}
 
@@ -340,10 +343,9 @@ export function HeaderProductSearch({
 											<span className="relative isolate aspect-square overflow-hidden rounded-sm border border-hairline bg-toolbar">
 												<Image
 													src={getSafeProductImageSrc(product.image)}
-													alt={product.imageAlt}
-													fill
-													unoptimized
-													sizes="48px"
+												alt={product.imageAlt}
+												fill
+												sizes="48px"
 													className="object-cover object-center"
 													onError={(event) => {
 														event.currentTarget.src = "/no-image.webp";
@@ -408,7 +410,15 @@ export function HeaderProductSearch({
 				aria-expanded={isOpen}
 				aria-label="Поиск по товарам"
 				className={cn(isNavigationOpen && "pointer-events-none opacity-45")}
-				onClick={openSearch}>
+				onPointerDown={(event) => {
+					event.preventDefault();
+					openSearch();
+				}}
+				onClick={() => {
+					if (!isOpen) {
+						openSearch();
+					}
+				}}>
 				<Search aria-hidden="true" />
 			</Button>
 			{canUseDocument ? createPortal(searchDialog, document.body) : null}

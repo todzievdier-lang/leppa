@@ -201,11 +201,48 @@ body.search-overlay main {
 
 .mobile-menu-backdrop {
 	background: rgb(var(--palette-ink) / 0.08);
+	opacity: 0;
+	pointer-events: none;
+	visibility: hidden;
+	transition:
+		opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+		visibility 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-menu-backdrop.is-open {
+	opacity: 1;
+	pointer-events: auto;
+	visibility: visible;
+}
+
+.mobile-navigation-menu {
+	opacity: 0;
+	transform: translateY(-10px) scale(0.98);
+	transform-origin: top center;
+	visibility: hidden;
+	transition:
+		opacity 0.24s ease,
+		transform 0.24s ease,
+		visibility 0.24s ease;
+}
+
+.mobile-navigation-menu.is-open {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0) scale(1);
+	visibility: visible;
 }
 
 .mobile-menu-panel {
 	background: rgb(var(--palette-frost));
 	will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mobile-menu-backdrop,
+	.mobile-navigation-menu {
+		transition-duration: 0.01ms;
+	}
 }
 
 /* Typography */

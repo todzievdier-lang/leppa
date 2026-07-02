@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import { usePathname, useRouter } from "next/navigation";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
@@ -42,7 +41,6 @@ const Header = ({
 
 	const pathname = usePathname();
 	const router = useRouter();
-	const prefersReducedMotion = useReducedMotion();
 	const canUseDocument = typeof document !== "undefined";
 
 	const handleOpenChange = (open: boolean) => {
@@ -103,85 +101,31 @@ const Header = ({
 		};
 	}, [isOpen]);
 
-	const menuTransition = {
-		duration: prefersReducedMotion ? 0.01 : 0.46,
-		ease: [0.22, 1, 0.36, 1],
-	};
-
-	const backdropTransition = {
-		duration: prefersReducedMotion ? 0.01 : 0.28,
-		ease: [0.22, 1, 0.36, 1],
-	};
-
 	const mobileNavigationMenu = (
-		<AnimatePresence>
-			{isOpen ? (
-				<>
-					<motion.div
-						key="mobile-navigation-backdrop"
+		<>
+			<div
 						aria-hidden="true"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={backdropTransition}
 						onClick={() => handleOpenChange(false)}
-						className="mobile-menu-backdrop fixed inset-0 z-40 backdrop-blur-[2px] md:hidden"
+						className={cn(
+							"mobile-menu-backdrop fixed inset-0 z-40 backdrop-blur-[2px] md:hidden",
+							isOpen && "is-open",
+						)}
 					/>
-					<motion.div
-						key="mobile-navigation-menu"
+			<div
 						id="mobile-navigation-menu"
-						initial={
-							prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -18 }
-						}
-						animate={
-							prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
-						}
-						exit={
-							prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }
-						}
-						transition={menuTransition}
-						className="pointer-events-none fixed inset-x-0 top-[5.25rem] z-[60] px-4 md:hidden">
+						aria-hidden={!isOpen}
+						className={cn(
+							"mobile-navigation-menu pointer-events-none fixed inset-x-0 top-[5.25rem] z-[60] px-4 md:hidden",
+							isOpen && "is-open",
+						)}>
 						<div className="mx-auto w-full max-w-5xl">
 							<div className="mobile-menu-panel pointer-events-auto max-h-[calc(100dvh-6.5rem)] overflow-y-auto overscroll-contain rounded-chrome-panel border border-hairline bg-frost px-4 py-3 shadow-surface-lg">
-								<motion.nav
-									initial="closed"
-									animate="open"
-									exit="closed"
-									variants={{
-										open: {
-											transition: {
-												delayChildren: prefersReducedMotion ? 0 : 0.08,
-												staggerChildren: prefersReducedMotion ? 0 : 0.045,
-											},
-										},
-										closed: {
-											transition: {
-												staggerChildren: prefersReducedMotion ? 0 : 0.025,
-												staggerDirection: -1,
-											},
-										},
-									}}
-									className="flex flex-col gap-2">
+								<nav className="flex flex-col gap-2">
 									{navItems.map((item) => {
 										const isActive = pathname === item.href;
 
 										return (
-											<motion.div
-												key={item.href}
-												variants={{
-													open: {
-														opacity: 1,
-														y: 0,
-													},
-													closed: {
-														opacity: 0,
-														y: prefersReducedMotion ? 0 : -8,
-													},
-												}}
-												transition={{
-													duration: prefersReducedMotion ? 0.01 : 0.28,
-													ease: [0.22, 1, 0.36, 1],
-												}}>
+											<div key={item.href}>
 												<Link
 													href={item.href}
 													prefetch={true}
@@ -193,33 +137,20 @@ const Header = ({
 													}`}>
 													{item.label}
 												</Link>
-											</motion.div>
+											</div>
 										);
 									})}
-								</motion.nav>
+								</nav>
 							</div>
 						</div>
-					</motion.div>
-				</>
-			) : null}
-		</AnimatePresence>
+			</div>
+		</>
 	);
 
 	return (
 		<>
 			<header className="fixed left-1/2 top-4 z-[70] isolate w-full max-w-5xl -translate-x-1/2 px-4">
-				<motion.div
-					initial={
-						prefersReducedMotion ? { opacity: 0 } : { y: -24, opacity: 0 }
-					}
-					animate={prefersReducedMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
-					exit={
-						prefersReducedMotion ? { opacity: 0 } : { y: -24, opacity: 0 }
-					}
-					transition={{
-						duration: prefersReducedMotion ? 0.01 : 0.55,
-						ease: [0.22, 1, 0.36, 1],
-					}}
+				<div
 					className={cn(
 						"grid w-full grid-cols-[minmax(0,auto)_minmax(0,1fr)] items-center gap-3 rounded-full border border-hairline px-5 py-2 transition-[background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-cols-[minmax(0,auto)_minmax(0,1fr)_minmax(0,auto)] md:gap-4 md:px-6",
 						isOpen ? "bg-canvas shadow-surface-md" : "bg-toolbar shadow-header",
@@ -298,7 +229,7 @@ const Header = ({
 							</button>
 						</div>
 					</div>
-				</motion.div>
+				</div>
 			</header>
 			{canUseDocument ? createPortal(mobileNavigationMenu, document.body) : null}
 		</>
