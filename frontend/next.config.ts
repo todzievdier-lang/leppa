@@ -52,6 +52,15 @@ const strapiCloudMediaImagePattern = {
 const nextConfig: NextConfig = {
 	compress: true,
 	poweredByHeader: false,
+	experimental: {
+		// Keep dynamic product page payloads in the client Router Cache. Next.js
+		// otherwise gives dynamic pages a 0 second TTL, so opening the same product
+		// again performs the same server navigation and shows its loading boundary.
+		staleTimes: {
+			dynamic: 300,
+			static: 300,
+		},
+	},
 	async headers() {
 		return [
 			{

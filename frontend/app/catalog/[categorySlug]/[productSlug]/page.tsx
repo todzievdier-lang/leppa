@@ -16,6 +16,12 @@ import type { Metadata } from "next";
 
 export const revalidate = 300;
 
+// Opt this dynamic route into on-demand ISR. The first request renders and
+// stores a product page; subsequent global requests reuse it for `revalidate`.
+export function generateStaticParams() {
+	return [];
+}
+
 type ProductPageProps = {
 	params: Promise<{
 		categorySlug: string;
