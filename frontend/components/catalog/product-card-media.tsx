@@ -14,6 +14,7 @@ import {
 	PRODUCT_IMAGE_QUALITY,
 	PRODUCT_IMAGE_SIZES,
 } from "@/lib/catalog/product-image";
+import { scrollToPageTopInstantly } from "@/lib/navigation/scroll";
 
 import type { ProductImage } from "@/types/catalog";
 
@@ -49,7 +50,6 @@ export function ProductCardMedia({
 	const router = useRouter();
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const rafRef = useRef<number | null>(null);
-	const isDraggingRef = useRef(false);
 	const [activeIndex, setActiveIndex] = useState(0);
 	const gallery = useMemo(() => normalizeImages(images, alt), [images, alt]);
 
@@ -94,26 +94,19 @@ export function ProductCardMedia({
 			}}
 			onPointerLeave={() => {
 				setActiveIndex(0);
-				isDraggingRef.current = false;
 			}}
 			onPointerDown={(event) => {
 				if (gallery.length <= 1) return;
 				event.currentTarget.setPointerCapture(event.pointerId);
-				isDraggingRef.current = true;
 				scheduleMove(event.clientX);
 			}}
 			onPointerUp={(event) => {
 				if (gallery.length > 1) {
 					event.currentTarget.releasePointerCapture(event.pointerId);
 				}
-				// Standard click routing (ignoring heavy drag selections)
-				if (isDraggingRef.current) {
-					router.push(href, { scroll: false });
-				}
-				isDraggingRef.current = false;
 			}}
 			onClick={() => {
-				// Fallback navigation handler
+				scrollToPageTopInstantly();
 				router.push(href, { scroll: false });
 			}}
 			role="link"
@@ -122,6 +115,7 @@ export function ProductCardMedia({
 			onKeyDown={(event) => {
 				if (event.key === "Enter" || event.key === " ") {
 					event.preventDefault();
+					scrollToPageTopInstantly();
 					router.push(href, { scroll: false });
 				}
 			}}>

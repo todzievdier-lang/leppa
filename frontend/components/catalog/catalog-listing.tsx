@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import {
@@ -28,6 +29,7 @@ import {
 import { createCatalogHref } from "@/lib/catalog/url";
 import { getCategoryHref } from "@/lib/catalog/helpers";
 import { cn } from "@/lib/utils";
+import { scrollToPageTopInstantly } from "@/lib/navigation/scroll";
 
 import type { MouseEvent } from "react";
 import type { CatalogResult, PaginationMeta } from "@/types/catalog";
@@ -121,6 +123,7 @@ export function CatalogListing({
 }: {
 	result: CatalogResult;
 }) {
+	const router = useRouter();
 	const { categories, query } = result;
 	const categoryByKey = useMemo(
 		() => new Map(categories.map((category) => [category.key, category])),
@@ -238,14 +241,15 @@ export function CatalogListing({
 			const relativeUrl = `${url.pathname}${url.search}${url.hash}`;
 
 			if (mode === "replace") {
-				window.history.replaceState(null, "", relativeUrl);
+				router.replace(relativeUrl, { scroll: false });
 			} else {
-				window.history.pushState(null, "", relativeUrl);
+				router.push(relativeUrl, { scroll: false });
 			}
 
 			applyUrlState(url);
+			scrollToPageTopInstantly();
 		},
-		[applyUrlState],
+		[applyUrlState, router],
 	);
 
 	useEffect(() => {
@@ -409,7 +413,10 @@ export function CatalogListing({
 					!isSearchPending && (
 						<CatalogStatePagination
 							pagination={visiblePagination}
-							onPageChange={setPage}
+							onPageChange={(nextPage) => {
+								setPage(nextPage);
+								scrollToPageTopInstantly();
+							}}
 						/>
 					)
 				) : (

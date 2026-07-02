@@ -19,6 +19,7 @@ import { getShopProductSnapshot } from "@/lib/shop/product";
 import { formatProductPrice } from "@/lib/utils/price";
 import { cn } from "@/lib/utils";
 import { ProductCardMedia } from "@/components/catalog/product-card-media";
+import { scrollToPageTopInstantly } from "@/lib/navigation/scroll";
 
 import type { Category, Product } from "@/types/catalog";
 
@@ -57,6 +58,9 @@ export function ProductCard({
 				href={href}
 				prefetch={true}
 				scroll={false}
+				onClick={() => {
+					scrollToPageTopInstantly();
+				}}
 				aria-label={`Открыть товар ${product.name}`}
 				className="absolute inset-0 z-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			/>
